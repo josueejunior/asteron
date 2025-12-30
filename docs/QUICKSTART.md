@@ -1,19 +1,19 @@
 # 🚀 Quick Start - Asteron
 
-Guia rápido para começar a usar o Asteron em 5 minutos.
+Quick guide to get started with Asteron in 5 minutes.
 
-## 1. Instalação Rápida
+## 1. Quick Installation
 
 ```bash
-# Clone e compile
-git clone https://github.com/seu-usuario/asteron.git
+# Clone and compile
+git clone https://github.com/your-user/asteron.git
 cd asteron
 bash compile.sh
 ```
 
-## 2. Seu Primeiro Programa
+## 2. Your First Program
 
-Crie um arquivo `hello.ast`:
+Create a file `hello.ast`:
 
 ```asteron
 function main() {
@@ -22,15 +22,15 @@ function main() {
 }
 ```
 
-Execute:
+Run:
 
 ```bash
 ./asteron hello.ast
 ```
 
-## 3. Conceitos Básicos
+## 3. Basic Concepts
 
-### Variáveis
+### Variables
 
 ```asteron
 let x = 10
@@ -38,7 +38,7 @@ let y = 20
 let sum = x + y
 ```
 
-### Funções
+### Functions
 
 ```asteron
 function add(a, b) {
@@ -49,15 +49,15 @@ let result = add(5, 3)
 print(result)  // 8
 ```
 
-### Condicionais
+### Conditionals
 
 ```asteron
 let x = 10
 
 if (x > 5) {
-    print("x é maior que 5")
+    print("x is greater than 5")
 } else {
-    print("x é menor ou igual a 5")
+    print("x is less than or equal to 5")
 }
 ```
 
@@ -71,7 +71,7 @@ while (i < 10) {
 }
 ```
 
-## 4. Exemplo Completo
+## 4. Complete Example
 
 ```asteron
 function factorial(n) {
@@ -84,45 +84,45 @@ function factorial(n) {
 function main() {
     let n = 5
     let result = factorial(n)
-    print("Factorial de " + n + " é " + result)
+    print("Factorial of " + n + " is " + result)
     return 0
 }
 ```
 
-## 5. Usando Módulos
+## 5. Using Modules
 
 ```asteron
-// Módulo net
+// net module
 let socket = tcp_connect("example.com", 80)
 tcp_send(socket, "GET / HTTP/1.1\r\n\r\n")
 let response = tcp_recv(socket, 1024)
 print(response)
 tcp_close(socket)
 
-// Módulo fs
-let content = read_file("arquivo.txt")
+// fs module
+let content = read_file("file.txt")
 print(content)
 
-// Módulo math
+// math module
 let result = sqrt(16)
 print(result)  // 4.0
 ```
 
-## 6. Sistema Reativo
+## 6. Reactive System
 
 ```asteron
-// Estado reativo
+// Reactive state
 let count = state(0)
 
-// Derivado (atualiza automaticamente)
+// Derived (updates automatically)
 let doubled = derived(() => count * 2)
 
-// Efeito (executa quando count muda)
+// Effect (executes when count changes)
 effect(() => {
     print("Count: " + count + ", Doubled: " + doubled)
 })
 
-count = 10  // Efeito executa automaticamente
+count = 10  // Effect executes automatically
 ```
 
 ## 7. Intent-Based Scheduling
@@ -130,55 +130,54 @@ count = 10  // Efeito executa automaticamente
 ```asteron
 @intent optimize_latency
 function process_data(data) {
-    // Runtime otimiza automaticamente para baixa latência
+    // Runtime automatically optimizes for low latency
     return heavy_computation(data)
 }
 ```
 
-## 8. Próximos Passos
+## 8. Next Steps
 
-- Veja [EXAMPLES.md](EXAMPLES.md) para mais exemplos
-- Veja [CONCEPTS.md](CONCEPTS.md) para entender conceitos
-- Veja [ARCHITECTURE.md](ARCHITECTURE.md) para arquitetura
-- Veja [API.md](API.md) para referência de API
+- See [EXAMPLES.md](EXAMPLES.md) for more examples
+- See [CONCEPTS.md](CONCEPTS.md) to understand concepts
+- See [ARCHITECTURE.md](ARCHITECTURE.md) for architecture
+- See [API.md](API.md) for API reference
 
-## Dicas
+## Tips
 
-1. **Use o modo interativo** (quando disponível):
+1. **Use interactive mode** (when available):
    ```bash
    ./asteron -i
    ```
 
-2. **Compile com debug**:
+2. **Compile with debug**:
    ```bash
-   ./asteron --debug seu_arquivo.ast
+   ./asteron --debug your_file.ast
    ```
 
-3. **Veja o grafo unificado**:
+3. **View unified graph**:
    ```bash
-   ./asteron --graph seu_arquivo.ast
+   ./asteron --graph your_file.ast
    ```
 
-4. **Use o servidor Wasm** para visualização:
+4. **Use Wasm server for visualization**:
    ```bash
    ./run_wasm_server.sh
-   # Acesse http://localhost:8080
+   # Access http://localhost:8080
    ```
 
-## Recursos
+## Resources
 
-- **Documentação**: [docs/](../docs/)
-- **Exemplos**: [examples/](../examples/)
-- **Issues**: [GitHub Issues](https://github.com/seu-usuario/asteron/issues)
-- **Discord/Forum**: [Link para comunidade]
+- **Documentation**: [docs/](../docs/)
+- **Examples**: [examples/](../examples/)
+- **Issues**: [GitHub Issues](https://github.com/your-user/asteron/issues)
+- **Discord/Forum**: [Community link]
 
-## Ajuda
+## Help
 
-Precisa de ajuda?
-1. Veja a [documentação completa](../README.md)
-2. Procure em [Issues](https://github.com/seu-usuario/asteron/issues)
-3. Abra uma nova issue
-4. Entre em contato com a comunidade
+Need help?
+1. See the [complete documentation](../README.md)
+2. Search [Issues](https://github.com/your-user/asteron/issues)
+3. Open a new issue
+4. Contact the community
 
-Bem-vindo ao Asteron! 🚀
-
+Welcome to Asteron! 🚀

@@ -1,112 +1,112 @@
-# 🤝 Guia de Contribuição
+# 🤝 Contributing Guide
 
-Obrigado por considerar contribuir com o Asteron! Este documento fornece diretrizes para contribuições.
+Thank you for considering contributing to Asteron! This document provides guidelines for contributions.
 
-## Código de Conduta
+## Code of Conduct
 
-Este projeto segue o [Código de Conduta do Contributor Covenant](https://www.contributor-covenant.org/). Ao participar, você concorda em manter este código.
+This project follows the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). By participating, you agree to uphold this code.
 
-## Como Contribuir
+## How to Contribute
 
-### 1. Reportar Bugs
+### 1. Report Bugs
 
-Antes de reportar um bug:
+Before reporting a bug:
 
-1. Verifique se o bug já foi reportado nas [Issues](https://github.com/seu-usuario/asteron/issues)
-2. Se não foi, crie uma nova issue com:
-   - **Título claro e descritivo**
-   - **Descrição do problema**
-   - **Passos para reproduzir**
-   - **Comportamento esperado vs. atual**
-   - **Ambiente** (OS, versão, etc.)
-   - **Logs/erros** (se aplicável)
+1. Check if the bug has already been reported in [Issues](https://github.com/your-user/asteron/issues)
+2. If not, create a new issue with:
+   - **Clear and descriptive title**
+   - **Problem description**
+   - **Steps to reproduce**
+   - **Expected vs. actual behavior**
+   - **Environment** (OS, version, etc.)
+   - **Logs/errors** (if applicable)
 
-### 2. Sugerir Melhorias
+### 2. Suggest Improvements
 
-Para sugerir uma nova funcionalidade:
+To suggest a new feature:
 
-1. Verifique se já foi sugerida
-2. Crie uma issue com:
-   - **Título claro**
-   - **Descrição detalhada**
-   - **Casos de uso**
-   - **Benefícios**
-   - **Possíveis implementações** (se tiver ideias)
+1. Check if it has already been suggested
+2. Create an issue with:
+   - **Clear title**
+   - **Detailed description**
+   - **Use cases**
+   - **Benefits**
+   - **Possible implementations** (if you have ideas)
 
-### 3. Contribuir com Código
+### 3. Contribute Code
 
-#### Setup do Ambiente
+#### Environment Setup
 
-1. **Fork** o repositório
-2. **Clone** seu fork:
+1. **Fork** the repository
+2. **Clone** your fork:
    ```bash
-   git clone https://github.com/seu-usuario/asteron.git
+   git clone https://github.com/your-user/asteron.git
    cd asteron
    ```
-3. **Compile** o projeto:
+3. **Compile** the project:
    ```bash
    bash compile.sh
    ```
 
-#### Processo de Desenvolvimento
+#### Development Process
 
-1. **Crie uma branch**:
+1. **Create a branch**:
    ```bash
-   git checkout -b feature/nova-funcionalidade
-   # ou
-   git checkout -b fix/correcao-bug
+   git checkout -b feature/new-feature
+   # or
+   git checkout -b fix/bug-fix
    ```
 
-2. **Faça suas alterações**:
-   - Siga o estilo de código existente
-   - Adicione comentários quando necessário
-   - Mantenha a licença GPL v3
+2. **Make your changes**:
+   - Follow existing code style
+   - Add comments when necessary
+   - Maintain GPL v3 license
 
-3. **Teste suas alterações**:
+3. **Test your changes**:
    ```bash
    bash compile.sh
    ./asteron test/test.ast
    ```
 
-4. **Commit suas mudanças**:
+4. **Commit your changes**:
    ```bash
    git add .
-   git commit -m "feat: adiciona nova funcionalidade X"
+   git commit -m "feat: add new feature X"
    ```
 
-   **Convenção de Commits:**
-   - `feat:` Nova funcionalidade
-   - `fix:` Correção de bug
-   - `docs:` Documentação
-   - `style:` Formatação (não afeta código)
-   - `refactor:` Refatoração
-   - `test:` Testes
-   - `chore:` Manutenção
+   **Commit Convention:**
+   - `feat:` New feature
+   - `fix:` Bug fix
+   - `docs:` Documentation
+   - `style:` Formatting (doesn't affect code)
+   - `refactor:` Refactoring
+   - `test:` Tests
+   - `chore:` Maintenance
 
-5. **Push para seu fork**:
+5. **Push to your fork**:
    ```bash
-   git push origin feature/nova-funcionalidade
+   git push origin feature/new-feature
    ```
 
-6. **Abra um Pull Request**:
-   - Descreva suas mudanças
-   - Referencie issues relacionadas
-   - Adicione screenshots (se aplicável)
+6. **Open a Pull Request**:
+   - Describe your changes
+   - Reference related issues
+   - Add screenshots (if applicable)
 
-## Diretrizes de Código
+## Code Guidelines
 
-### Estilo C
+### C Style
 
-- Use **4 espaços** para indentação
-- Máximo de **100 caracteres** por linha
-- Use **snake_case** para funções e variáveis
-- Use **UPPER_CASE** para constantes
-- Use **PascalCase** para tipos/structs
+- Use **4 spaces** for indentation
+- Maximum of **100 characters** per line
+- Use **snake_case** for functions and variables
+- Use **UPPER_CASE** for constants
+- Use **PascalCase** for types/structs
 
-### Exemplo:
+### Example:
 
 ```c
-// Bom
+// Good
 void process_data(DataContainer* container) {
     if (container == NULL) {
         return;
@@ -117,82 +117,81 @@ void process_data(DataContainer* container) {
     }
 }
 
-// Ruim
+// Bad
 void processData(DataContainer* c){
 if(c==NULL)return;
 for(int i=0;i<c->count;i++)processItem(&c->items[i]);
 }
 ```
 
-### Comentários
+### Comments
 
-- Use comentários para explicar **por quê**, não **o quê**
-- Documente funções públicas
-- Use `//` para comentários de linha
-- Use `/* */` para comentários de bloco
+- Use comments to explain **why**, not **what**
+- Document public functions
+- Use `//` for line comments
+- Use `/* */` for block comments
 
-### Estrutura de Arquivos
+### File Structure
 
 ```
 src/
-├── core/           # Core do runtime
-│   ├── lexer/      # Tokenização
+├── core/           # Runtime core
+│   ├── lexer/      # Tokenization
 │   ├── parser/     # Parsing
 │   ├── ast/        # AST
 │   ├── vm/         # Virtual Machine
 │   └── jit/        # JIT Compiler
-├── modules/        # Módulos nativos
-├── graph/          # Sistema de grafos
-└── utils/          # Utilitários
+├── modules/        # Native modules
+├── graph/          # Graph system
+└── utils/          # Utilities
 ```
 
-### Testes
+### Tests
 
-- Adicione testes para novas funcionalidades
-- Testes devem ser simples e focados
-- Use `test/` para arquivos de teste
+- Add tests for new features
+- Tests should be simple and focused
+- Use `test/` for test files
 
-## Áreas que Precisam de Contribuição
+## Areas Needing Contribution
 
-### Prioridade Alta
+### High Priority
 
-1. **Testes**: Mais testes unitários e de integração
-2. **Documentação**: Melhorar documentação de APIs
-3. **Performance**: Otimizações de performance
-4. **Bugs**: Correção de bugs conhecidos
+1. **Tests**: More unit and integration tests
+2. **Documentation**: Improve API documentation
+3. **Performance**: Performance optimizations
+4. **Bugs**: Fix known bugs
 
-### Prioridade Média
+### Medium Priority
 
-1. **Módulos**: Novos módulos nativos
-2. **Otimizações JIT**: Melhorias no JIT
-3. **WebAssembly**: Melhorias na integração Wasm
-4. **Tooling**: Ferramentas de desenvolvimento
+1. **Modules**: New native modules
+2. **JIT Optimizations**: JIT improvements
+3. **WebAssembly**: Wasm integration improvements
+4. **Tooling**: Development tools
 
-### Prioridade Baixa
+### Low Priority
 
-1. **Exemplos**: Mais exemplos de código
-2. **Tutoriais**: Tutoriais passo a passo
-3. **Traduções**: Tradução de documentação
+1. **Examples**: More code examples
+2. **Tutorials**: Step-by-step tutorials
+3. **Translations**: Documentation translation
 
-## Processo de Review
+## Review Process
 
-1. **Mantenedores** revisam PRs
-2. **Feedback** é dado em até 7 dias
-3. **Correções** podem ser solicitadas
-4. **Aprovação** quando tudo estiver OK
-5. **Merge** é feito pelos mantenedores
+1. **Maintainers** review PRs
+2. **Feedback** is given within 7 days
+3. **Corrections** may be requested
+4. **Approval** when everything is OK
+5. **Merge** is done by maintainers
 
-## Licença
+## License
 
-Ao contribuir, você concorda que suas contribuições serão licenciadas sob a **GNU GPL v3**.
+By contributing, you agree that your contributions will be licensed under **GNU GPL v3**.
 
-## Perguntas?
+## Questions?
 
-- Abra uma issue para perguntas
-- Entre em contato com os mantenedores
-- Veja a [documentação](../README.md)
+- Open an issue for questions
+- Contact the maintainers
+- See the [documentation](../README.md)
 
-## Agradecimentos
+## Acknowledgments
 
-Obrigado por contribuir com o Asteron! 🚀
-
+Thank you for contributing to Asteron! 🚀

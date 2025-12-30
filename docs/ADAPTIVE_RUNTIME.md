@@ -1,16 +1,16 @@
-# 🧠 Runtime Adaptativo Consolidado
+# 🧠 Consolidated Adaptive Runtime
 
-O **Adaptive Runtime** é o sistema consolidado que coordena todos os componentes de auto-adaptação do Asteron.
+The **Adaptive Runtime** is the consolidated system that coordinates all auto-adaptation components of Asteron.
 
-## 🎯 Visão Geral
+## 🎯 Overview
 
-O Adaptive Runtime une três sistemas principais:
+The Adaptive Runtime unites three main systems:
 
-1. **Context Brain** - Meta-layer coordenador que observa e decide
-2. **Intent Engine** - Sistema de intenção declarativa
-3. **Self-Tuning Runtime** - Aprendizado contínuo
+1. **Context Brain** - Meta-layer coordinator that observes and decides
+2. **Intent Engine** - Declarative intention system
+3. **Self-Tuning Runtime** - Continuous learning
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -19,91 +19,90 @@ O Adaptive Runtime une três sistemas principais:
 │                                                          │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
 │  │ Context Brain│  │Intent Engine │  │ Self-Tuning  │ │
-│  │ (Coordenador)│  │ (Intenções)  │  │ (Aprendizado)│ │
+│  │ (Coordinator)│  │ (Intentions) │  │ (Learning)   │ │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘ │
 │         │                  │                 │          │
 │         └──────────────────┴─────────────────┘          │
 │                        │                                 │
 │         ┌──────────────▼──────────────┐                 │
-│         │   Adaptação Automática      │                 │
+│         │   Automatic Adaptation     │                 │
 │         └─────────────────────────────┘                 │
 │                        │                                 │
 │         ┌──────────────▼──────────────┐                 │
-│         │   VM / Unified Graph        │                 │
+│         │   VM / Unified Graph       │                 │
 │         └─────────────────────────────┘                 │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## 🔄 Ciclo de Adaptação
+## 🔄 Adaptation Cycle
 
-1. **Observação**: Context Brain coleta métricas do sistema
-2. **Análise**: Analisa métricas e gera decisões
-3. **Execução**: Executa decisões (paralelização, JIT, etc.)
-4. **Aprendizado**: Self-Tuning aprende com resultados
-5. **Refinamento**: Estratégias são refinadas
+1. **Observation**: Context Brain collects system metrics
+2. **Analysis**: Analyzes metrics and generates decisions
+3. **Execution**: Executes decisions (parallelization, JIT, etc.)
+4. **Learning**: Self-Tuning learns from results
+5. **Refinement**: Strategies are refined
 
-## 📊 Métricas Coletadas
+## 📊 Collected Metrics
 
-- **CPU Usage**: Uso de CPU do sistema
-- **Memory Usage**: Uso de memória
-- **Hot Paths**: Número de caminhos quentes
-- **JIT Compilations**: Número de compilações JIT
-- **Execution Time**: Tempo médio de execução
+- **CPU Usage**: System CPU usage
+- **Memory Usage**: Memory usage
+- **Hot Paths**: Number of hot paths
+- **JIT Compilations**: Number of JIT compilations
+- **Execution Time**: Average execution time
 
-## 🎛️ Decisões Automáticas
+## 🎛️ Automatic Decisions
 
-O sistema pode tomar as seguintes decisões automaticamente:
+The system can automatically make the following decisions:
 
-- **Paralelização**: Paralelizar nós independentes
-- **JIT Tier**: Mudar tier JIT (Baseline → Optimizing)
-- **Deoptimização**: Reduzir otimizações sob pressão
-- **Ajuste Fino**: Refinar estratégias
+- **Parallelization**: Parallelize independent nodes
+- **JIT Tier**: Change JIT tier (Baseline → Optimizing)
+- **Deoptimization**: Reduce optimizations under pressure
+- **Fine Tuning**: Refine strategies
 
-## 🚀 Uso
+## 🚀 Usage
 
 ```c
-// Criar runtime adaptativo
+// Create adaptive runtime
 AdaptiveRuntime* rt = adaptive_runtime_create(vm, graph, healer, scheduler);
 
-// Iniciar adaptação automática
+// Start automatic adaptation
 adaptive_runtime_start(rt);
 
-// Durante execução, o sistema se adapta automaticamente
-// (chamado periodicamente ou após eventos)
+// During execution, the system adapts automatically
+// (called periodically or after events)
 
-// Parar adaptação
+// Stop adaptation
 adaptive_runtime_stop(rt);
 
-// Limpar
+// Cleanup
 adaptive_runtime_destroy(rt);
 ```
 
-## 📈 Estatísticas
+## 📈 Statistics
 
-O sistema mantém estatísticas de:
-- Total de adaptações
-- Adaptações bem-sucedidas
-- Taxa de sucesso
-- Melhorias observadas
+The system maintains statistics on:
+- Total adaptations
+- Successful adaptations
+- Success rate
+- Observed improvements
 
-## 🔧 Configuração
+## 🔧 Configuration
 
-- **Adaptation Interval**: Intervalo entre adaptações (padrão: 1 segundo)
-- **Decision Threshold**: Threshold de confiança para decisões (padrão: 0.7)
-- **Auto-Adapt**: Habilitar/desabilitar adaptação automática
+- **Adaptation Interval**: Interval between adaptations (default: 1 second)
+- **Decision Threshold**: Confidence threshold for decisions (default: 0.7)
+- **Auto-Adapt**: Enable/disable automatic adaptation
 
-## 🎓 Aprendizado
+## 🎓 Learning
 
-O Self-Tuning Runtime aprende continuamente:
-- Quais estratégias funcionam melhor
-- Quando paralelizar
-- Quando otimizar JIT
-- Quando deoptimizar
+The Self-Tuning Runtime continuously learns:
+- Which strategies work best
+- When to parallelize
+- When to optimize JIT
+- When to deoptimize
 
-## 🔮 Futuro
+## 🔮 Future
 
-- Integração com GPU
-- Previsão de carga via IA
-- Adaptação baseada em intenções declarativas
-- Aprendizado por reforço completo
-
+- GPU integration
+- AI-driven load prediction
+- Adaptation based on declarative intentions
+- Complete reinforcement learning

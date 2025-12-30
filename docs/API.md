@@ -1,42 +1,42 @@
 # 📚 API Reference
 
-Referência completa da API do Asteron.
+Complete API reference for Asteron.
 
 ## Core Language
 
-### Variáveis
+### Variables
 
 ```asteron
-let x = 10              // Número
+let x = 10              // Number
 let y = "hello"        // String
 let z = true           // Boolean
 let w = nil            // Nil
 ```
 
-### Funções
+### Functions
 
 ```asteron
-function nome(param1, param2) {
-    // Código
-    return valor
+function name(param1, param2) {
+    // Code
+    return value
 }
 ```
 
-### Condicionais
+### Conditionals
 
 ```asteron
-if (condição) {
-    // Código
+if (condition) {
+    // Code
 } else {
-    // Código
+    // Code
 }
 ```
 
 ### Loops
 
 ```asteron
-while (condição) {
-    // Código
+while (condition) {
+    // Code
 }
 ```
 
@@ -45,37 +45,37 @@ while (condição) {
 ### I/O
 
 ```asteron
-print(value)           // Imprime valor
-read_line()            // Lê linha do stdin
+print(value)           // Prints value
+read_line()            // Reads line from stdin
 ```
 
 ### Strings
 
 ```asteron
-len(str)               // Tamanho da string
+len(str)               // String length
 substr(str, start, len) // Substring
-index_of(str, substr)  // Índice de substring
+index_of(str, substr)  // Substring index
 ```
 
 ### Arrays
 
 ```asteron
-array_push(arr, item)  // Adiciona item
-array_pop(arr)        // Remove último item
-array_len(arr)        // Tamanho do array
+array_push(arr, item)  // Adds item
+array_pop(arr)        // Removes last item
+array_len(arr)        // Array length
 ```
 
-## Módulo Net
+## Net Module
 
 ### TCP
 
 ```asteron
-tcp_connect(host, port)           // Conecta
-tcp_listen(port)                  // Escuta
-tcp_accept(listener)              // Aceita conexão
-tcp_send(socket, data)            // Envia dados
-tcp_recv(socket, max_bytes)       // Recebe dados
-tcp_close(socket)                 // Fecha socket
+tcp_connect(host, port)           // Connects
+tcp_listen(port)                  // Listens
+tcp_accept(listener)              // Accepts connection
+tcp_send(socket, data)            // Sends data
+tcp_recv(socket, max_bytes)       // Receives data
+tcp_close(socket)                 // Closes socket
 ```
 
 ### HTTP
@@ -85,54 +85,54 @@ http_get(url)          // GET request
 http_post(url, body)   // POST request
 ```
 
-## Módulo FS
+## FS Module
 
 ```asteron
-read_file(path)        // Lê arquivo
-write_file(path, data) // Escreve arquivo
-exists(path)          // Verifica existência
-mkdir(path)           // Cria diretório
-list_dir(path)        // Lista diretório
+read_file(path)        // Reads file
+write_file(path, data) // Writes file
+exists(path)          // Checks existence
+mkdir(path)           // Creates directory
+list_dir(path)        // Lists directory
 ```
 
-## Módulo Math
+## Math Module
 
 ```asteron
-sqrt(x)               // Raiz quadrada
-pow(x, y)             // Potência
-sin(x)                // Seno
-cos(x)                // Cosseno
-abs(x)                // Valor absoluto
+sqrt(x)               // Square root
+pow(x, y)             // Power
+sin(x)                // Sine
+cos(x)                // Cosine
+abs(x)                // Absolute value
 ```
 
-## Módulo Time
+## Time Module
 
 ```asteron
-time_now()            // Timestamp atual
-sleep(seconds)         // Dorme
-format_time(timestamp, format) // Formata tempo
+time_now()            // Current timestamp
+sleep(seconds)         // Sleeps
+format_time(timestamp, format) // Formats time
 ```
 
-## Sistema Reativo
+## Reactive System
 
 ```asteron
-state(initial_value)              // Estado reativo
-derived(() => expression)         // Valor derivado
-effect(() => { /* código */ })    // Efeito colateral
-computed(() => expression)       // Valor computado (com cache)
+state(initial_value)              // Reactive state
+derived(() => expression)         // Derived value
+effect(() => { /* code */ })    // Side effect
+computed(() => expression)       // Computed value (with cache)
 ```
 
 ## Intent-Based Scheduling
 
 ```asteron
 @intent optimize_latency
-function minha_funcao() {
-    // Código otimizado para latência
+function my_function() {
+    // Code optimized for latency
 }
 
 @intent optimize_throughput
-function outra_funcao() {
-    // Código otimizado para throughput
+function another_function() {
+    // Code optimized for throughput
 }
 ```
 
@@ -141,15 +141,15 @@ function outra_funcao() {
 ```asteron
 let x = create_object()  // Ownership
 let y = borrow(x)        // Borrow (read-only)
-let z = borrow_mut(x)    // Borrow mutável (exclusivo)
+let z = borrow_mut(x)    // Mutable borrow (exclusive)
 ```
 
 ## Region Memory
 
 ```asteron
-let region = create_region("nome")
+let region = create_region("name")
 let data = alloc_in_region(region, size)
-destroy_region(region)  // Libera tudo
+destroy_region(region)  // Frees everything
 ```
 
 ## Distributed Memory
@@ -157,7 +157,7 @@ destroy_region(region)  // Libera tudo
 ```asteron
 let obj = create_object()
 let remote = borrow_remote(obj, "node_id")
-// Usa como se fosse local
+// Use as if it were local
 ```
 
 ## Persistent Memory
@@ -166,16 +166,16 @@ let remote = borrow_remote(obj, "node_id")
 let config = persistent_state({
     key: "value"
 })
-// Sobrevive a reinicializações
+// Survives reboots
 ```
 
-## Task (Concorrência)
+## Task (Concurrency)
 
 ```asteron
 let task = task_spawn(function() {
-    // Código em paralelo
+    // Parallel code
 })
-task_join(task)  // Espera terminar
+task_join(task)  // Waits to finish
 ```
 
 ## Graph
@@ -190,11 +190,11 @@ graph_get_context(node_id)
 ## Hot Reload
 
 ```asteron
-// Modifica função
-function minha_funcao() {
-    // Nova implementação
+// Modify function
+function my_function() {
+    // New implementation
 }
-// Runtime recarrega automaticamente
+// Runtime reloads automatically
 ```
 
 ## Annotations
@@ -203,8 +203,8 @@ function minha_funcao() {
 @intent optimize_latency
 @inline
 @no_side_effects
-function minha_funcao() {
-    // Código
+function my_function() {
+    // Code
 }
 ```
 
@@ -212,9 +212,9 @@ function minha_funcao() {
 
 ```asteron
 try {
-    // Código que pode falhar
+    // Code that may fail
 } catch (error) {
-    // Tratamento de erro
+    // Error handling
 }
 ```
 
@@ -226,7 +226,7 @@ let y: string = "hello"
 let z: bool = true
 ```
 
-## Generics (Futuro)
+## Generics (Future)
 
 ```asteron
 function identity<T>(x: T): T {
@@ -234,7 +234,7 @@ function identity<T>(x: T): T {
 }
 ```
 
-## Traits/Interfaces (Futuro)
+## Traits/Interfaces (Future)
 
 ```asteron
 trait Printable {
@@ -243,22 +243,21 @@ trait Printable {
 
 impl Printable for MyType {
     function print() {
-        // Implementação
+        // Implementation
     }
 }
 ```
 
-## Pattern Matching (Futuro)
+## Pattern Matching (Future)
 
 ```asteron
 match value {
-    case 1 => print("um")
-    case 2 => print("dois")
-    default => print("outro")
+    case 1 => print("one")
+    case 2 => print("two")
+    default => print("other")
 }
 ```
 
 ---
 
-**Nota**: Esta é uma referência em desenvolvimento. Algumas funcionalidades podem estar em desenvolvimento ou planejadas.
-
+**Note**: This is a reference in development. Some features may be in development or planned.

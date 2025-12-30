@@ -1,22 +1,22 @@
-# 🏗️ Arquitetura do Asteron
+# 🏗️ Asteron Architecture
 
-## Visão Geral
+## Overview
 
-O **Asteron** é um runtime autoconsciente que combina múltiplas tecnologias avançadas para criar uma linguagem de programação de alto desempenho com capacidades únicas.
+**Asteron** is a self-aware runtime that combines multiple advanced technologies to create a high-performance programming language with unique capabilities.
 
-## Componentes Principais
+## Main Components
 
 ### 1. Core Runtime
 
 #### Lexer & Parser
-- **Lexer**: Tokenização do código fonte
-- **Parser**: Análise sintática e construção da AST
-- **Type Checker**: Verificação de tipos estática
+- **Lexer**: Source code tokenization
+- **Parser**: Syntactic analysis and AST construction
+- **Type Checker**: Static type checking
 
 #### Virtual Machine (VM)
-- **Bytecode Compiler**: Compilação para bytecode otimizado
-- **Stack-based VM**: Máquina virtual baseada em pilha
-- **Interpreter**: Execução direta da AST (modo interpretado)
+- **Bytecode Compiler**: Compilation to optimized bytecode
+- **Stack-based VM**: Stack-based virtual machine
+- **Interpreter**: Direct AST execution (interpreted mode)
 
 ### 2. JIT Compilation (Just-In-Time)
 
@@ -26,166 +26,166 @@ O **Asteron** é um runtime autoconsciente que combina múltiplas tecnologias av
 │   Interpreter (Cold Code)           │
 ├─────────────────────────────────────┤
 │   Baseline JIT (Tier 1)             │
-│   - Compilação rápida               │
-│   - Sem otimizações pesadas         │
+│   - Fast compilation                │
+│   - No heavy optimizations          │
 ├─────────────────────────────────────┤
 │   Optimizing JIT (Tier 2)           │
-│   - SSA (Static Single Assignment)   │
-│   - Graph Coloring (Register Alloc)  │
+│   - SSA (Static Single Assignment)  │
+│   - Graph Coloring (Register Alloc) │
 │   - OSR (On-Stack Replacement)      │
 └─────────────────────────────────────┘
 ```
 
-**Características:**
-- **Hot Path Detection**: Identifica código executado frequentemente
-- **Type Feedback**: Coleta informações de tipos em tempo de execução
-- **Deoptimization**: Volta ao interpretador quando necessário
+**Characteristics:**
+- **Hot Path Detection**: Identifies frequently executed code
+- **Type Feedback**: Collects type information at runtime
+- **Deoptimization**: Falls back to interpreter when needed
 
 ### 3. Unified Graph
 
-Sistema de grafo que combina múltiplas representações:
+Graph system that combines multiple representations:
 
-- **CFG (Control Flow Graph)**: Fluxo de controle
-- **Call Graph**: Chamadas de funções
-- **Data Flow Graph**: Fluxo de dados
-- **Dependency Graph**: Dependências entre nós
+- **CFG (Control Flow Graph)**: Control flow
+- **Call Graph**: Function calls
+- **Data Flow Graph**: Data flow
+- **Dependency Graph**: Dependencies between nodes
 
-**Métricas Coletadas:**
-- Tempo de execução
-- Contagem de execuções
-- Uso de memória
+**Collected Metrics:**
+- Execution time
+- Execution count
+- Memory usage
 - Cache misses
 - Branch mispredictions
-- Contention (contenção)
+- Contention
 
 ### 4. Memory Management
 
 #### Reference Counting
-- Gerenciamento automático de memória
-- Contagem de referências para objetos
+- Automatic memory management
+- Reference counting for objects
 
 #### Ownership & Borrowing
-- Sistema inspirado em Rust
-- Prevenção de vazamentos e use-after-free
-- Verificação estática de lifetime
+- Rust-inspired system
+- Prevents leaks and use-after-free
+- Static lifetime checking
 
 #### Region-based Memory
-- **Arenas/Regions**: Alocação em blocos
-- **Zero-Copy**: Integração sem cópias desnecessárias
-- **Desalocação em massa**: Libera regiões inteiras
+- **Arenas/Regions**: Block allocation
+- **Zero-Copy**: Integration without unnecessary copies
+- **Bulk Deallocation**: Frees entire regions
 
 #### Holographic Memory (DVM)
-- **Distributed Virtual Machine**: Memória distribuída
-- **Global Address Space**: Endereçamento unificado
-- **Distributed Ownership**: Ownership entre nós
-- **Persistent Memory**: Suporte a PMEM/NVMe
+- **Distributed Virtual Machine**: Distributed memory
+- **Global Address Space**: Unified addressing
+- **Distributed Ownership**: Ownership between nodes
+- **Persistent Memory**: PMEM/NVMe support
 
 ### 5. Reactive System
 
 #### Local Reactivity
-- **Reactive Nodes**: Nós reativos (STATE, DERIVED, EFFECT)
-- **Dependency Tracking**: Rastreamento automático de dependências
-- **Automatic Updates**: Atualização automática quando dependências mudam
+- **Reactive Nodes**: Reactive nodes (STATE, DERIVED, EFFECT)
+- **Dependency Tracking**: Automatic dependency tracking
+- **Automatic Updates**: Automatic updates when dependencies change
 
 #### Distributed Reactivity
-- **Transparent RPC**: Chamadas remotas como se fossem locais
-- **State Propagation**: Propagação de estado entre nós
-- **Cluster-Aware**: Consciência de cluster
+- **Transparent RPC**: Remote calls as if they were local
+- **State Propagation**: State propagation between nodes
+- **Cluster-Aware**: Cluster awareness
 
 ### 6. Self-Healing Runtime
 
-Sistema que monitora e otimiza automaticamente:
+System that monitors and optimizes automatically:
 
-- **Auto-Paralelização**: Detecta código paralelizável
-- **Profile-Guided Re-optimization**: Re-otimiza baseado em métricas
-- **Performance Monitoring**: Monitora degradação de performance
-- **Automatic Healing**: Corrige problemas automaticamente
+- **Auto-Parallelization**: Detects parallelizable code
+- **Profile-Guided Re-optimization**: Re-optimizes based on metrics
+- **Performance Monitoring**: Monitors performance degradation
+- **Automatic Healing**: Fixes problems automatically
 
 ### 7. Intent-Based Scheduling
 
-O programador declara **intenção**, não implementação:
+The programmer declares **intention**, not implementation:
 
 ```asteron
-// Programador declara intenção
+// Programmer declares intention
 @intent optimize_latency
 function process_data(data) {
-    // Código...
+    // Code...
 }
 ```
 
-O sistema decide:
-- **Hardware Heuristics**: Detecta AVX-512, SIMD, etc.
-- **SIMD Rewriting**: Reescreve bytecode para SIMD
-- **Load Prediction**: Previsão de carga via IA
-- **Pre-allocation**: Pré-aloca memória
-- **JIT Warming**: Aquece JIT antes de uso
+The system decides:
+- **Hardware Heuristics**: Detects AVX-512, SIMD, etc.
+- **SIMD Rewriting**: Rewrites bytecode for SIMD
+- **Load Prediction**: Load prediction via AI
+- **Pre-allocation**: Pre-allocates memory
+- **JIT Warming**: Warms up JIT before use
 
 ### 8. WebAssembly Integration
 
-- **Emscripten Compilation**: Compila C para Wasm
-- **Browser Runtime**: Executa no navegador
-- **Real-time Visualization**: Visualização de grafo em tempo real
-- **Interactive Editor**: Editor interativo no navegador
+- **Emscripten Compilation**: Compiles C to Wasm
+- **Browser Runtime**: Executes in the browser
+- **Real-time Visualization**: Real-time graph visualization
+- **Interactive Editor**: Interactive editor in the browser
 
-## Fluxo de Execução
+## Execution Flow
 
 ```
-Código Fonte
+Source Code
     ↓
 Lexer → Tokens
     ↓
 Parser → AST
     ↓
-Type Checker → AST Tipado
+Type Checker → Typed AST
     ↓
 Optimizer (SSA, Escape, Inline, Reg Alloc)
     ↓
 Bytecode Compiler → Bytecode
     ↓
-VM (Interpreter ou JIT)
+VM (Interpreter or JIT)
     ↓
-Unified Graph (coleta métricas)
+Unified Graph (collects metrics)
     ↓
-Self-Healing (re-otimiza se necessário)
+Self-Healing (re-optimizes if needed)
     ↓
-Resultado
+Result
 ```
 
-## Módulos Nativos
+## Native Modules
 
 - **net**: Networking (TCP, HTTP)
-- **fs**: Sistema de arquivos
-- **math**: Operações matemáticas
-- **time**: Manipulação de tempo
-- **task**: Concorrência (tasks)
-- **graph**: Sistema de grafos
-- **agent**: Sistema de agentes
-- **os**: Operações do sistema
+- **fs**: File system
+- **math**: Mathematical operations
+- **time**: Time manipulation
+- **task**: Concurrency (tasks)
+- **graph**: Graph system
+- **agent**: Agent system
+- **os**: System operations
 
-## Extensibilidade
+## Extensibility
 
-O Asteron é projetado para ser extensível:
+Asteron is designed to be extensible:
 
-1. **Módulos Nativos**: Adicione módulos em C
-2. **Built-in Functions**: Adicione funções built-in
-3. **JIT Strategies**: Implemente estratégias JIT customizadas
-4. **Memory Managers**: Implemente gerenciadores de memória customizados
+1. **Native Modules**: Add modules in C
+2. **Built-in Functions**: Add built-in functions
+3. **JIT Strategies**: Implement custom JIT strategies
+4. **Memory Managers**: Implement custom memory managers
 
 ## Performance
 
-- **Zero-Copy**: Minimiza cópias desnecessárias
-- **Region Allocation**: Alocação eficiente em blocos
-- **JIT Optimization**: Otimizações agressivas em hot paths
-- **SIMD**: Uso automático de instruções SIMD
-- **Parallelization**: Paralelização automática quando possível
+- **Zero-Copy**: Minimizes unnecessary copies
+- **Region Allocation**: Efficient block allocation
+- **JIT Optimization**: Aggressive optimizations on hot paths
+- **SIMD**: Automatic use of SIMD instructions
+- **Parallelization**: Automatic parallelization when possible
 
-## Segurança
+## Security
 
-- **Sandbox**: Isolamento de código
-- **Ownership System**: Prevenção de bugs de memória
-- **Type Safety**: Verificação de tipos
-- **Failure Analytics**: Análise de falhas
+- **Sandbox**: Code isolation
+- **Ownership System**: Prevention of memory bugs
+- **Type Safety**: Type checking
+- **Failure Analytics**: Failure analysis
 
-## Próximos Passos
+## Next Steps
 
-Veja [ROADMAP.md](../ROADMAP.md) para o roadmap completo.
+See [ROADMAP.md](../ROADMAP.md) for the complete roadmap.

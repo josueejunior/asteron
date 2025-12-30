@@ -4,13 +4,13 @@ TARGET = asteron
 SRCDIR = src
 OBJDIR = obj
 
-# Diretórios
+# Directories
 LEXER_DIR = $(SRCDIR)/lexer
 PARSER_DIR = $(SRCDIR)/parser
 AST_DIR = $(SRCDIR)/ast
 UTILS_DIR = $(SRCDIR)/utils
 
-# Diretórios
+# Directories
 INTERPRETER_DIR = $(SRCDIR)/interpreter
 GRAPH_DIR = $(SRCDIR)/graph
 TYPECHECKER_DIR = $(SRCDIR)/typechecker
@@ -22,7 +22,7 @@ VM_DIR = $(SRCDIR)/vm
 SCHEDULER_DIR = $(SRCDIR)/scheduler
 GRAPH_DECLARATIVE_DIR = $(SRCDIR)/graph_declarative
 
-# Arquivos fonte
+# Source files
 SOURCES = $(SRCDIR)/main.c \
           $(LEXER_DIR)/lexer.c \
           $(PARSER_DIR)/parser.c \
@@ -41,7 +41,7 @@ SOURCES = $(SRCDIR)/main.c \
           $(GRAPH_DECLARATIVE_DIR)/graph_declarative.c \
           $(GRAPH_DIR)/graph.c
 
-# Arquivos objeto (mapeamento manual para subdiretórios)
+# Object files (manual mapping to subdirectories)
 OBJECTS = $(OBJDIR)/main.o \
           $(OBJDIR)/lexer/lexer.o \
           $(OBJDIR)/parser/parser.o \
@@ -60,7 +60,7 @@ OBJECTS = $(OBJDIR)/main.o \
           $(OBJDIR)/graph_declarative/graph_declarative.o \
           $(OBJDIR)/graph/graph.o
 
-# Cria diretórios necessários
+# Create necessary directories
 $(OBJDIR):
 	mkdir -p $(OBJDIR)/lexer
 	mkdir -p $(OBJDIR)/parser
@@ -74,14 +74,14 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)/graph_declarative
 	mkdir -p $(OBJDIR)/graph
 
-# Regra padrão
+# Default rule
 all: $(TARGET)
 
-# Compila o executável
+# Compile executable
 $(TARGET): $(OBJDIR) $(OBJECTS)
 	$(CC) $(CFLAGS) -pthread -o $(TARGET) $(OBJECTS)
 
-# Compila arquivos objeto
+# Compile object files
 $(OBJDIR)/lexer/lexer.o: $(LEXER_DIR)/lexer.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -133,16 +133,16 @@ $(OBJDIR)/graph/graph.o: $(GRAPH_DIR)/graph.c
 $(OBJDIR)/main.o: $(SRCDIR)/main.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Limpa arquivos compilados
+# Clean compiled files
 clean:
 	rm -rf $(OBJDIR) $(TARGET)
 
-# Testa com os arquivos de teste
+# Test with test files
 test: $(TARGET)
-	@echo "=== Teste 1 ==="
+	@echo "=== Test 1 ==="
 	./$(TARGET) tests/test1.ast
 	@echo ""
-	@echo "=== Teste 2 ==="
+	@echo "=== Test 2 ==="
 	./$(TARGET) tests/test2.ast
 
 .PHONY: all clean test
