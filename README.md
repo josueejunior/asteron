@@ -1,5 +1,7 @@
 # 🚀 Asteron - Runtime Autoconsciente com JIT Avançado
 
+**Desenvolvido por:** Josué Junior da Cruz de Freitas
+
 **Asteron** é uma linguagem de programação e runtime revolucionário que combina:
 - ⚡ **JIT Tiered** (Baseline + Optimizing)
 - 🧠 **Grafo Unificado** (CFG + Call Graph + Dependencies)
@@ -203,6 +205,12 @@ A GPL v3 garante que:
 - **Proteção:** Previne apropriação indevida do trabalho comunitário
 
 **Texto completo da licença:** Veja o arquivo [LICENSE](LICENSE) na raiz do projeto.
+
+## 👨‍💻 Desenvolvedor
+
+**Josué Junior da Cruz de Freitas**
+
+Desenvolvedor principal e mantenedor do projeto Asteron.
 
 ## 📞 Contato
 
