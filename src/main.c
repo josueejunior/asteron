@@ -41,6 +41,12 @@
 #include "core/hotreload/hotreload.h"
 // #include "core/analytics/failure_analytics.h"  // TEMPORARIAMENTE DESABILITADO devido a crash
 
+/* Sistemas Brain (Meta-layer) */
+#include "core/brain/context_brain.h"
+#include "core/brain/intent_engine.h"
+#include "core/brain/self_tuning.h"
+#include "devtools/visual_debugger.h"
+
 /* Módulos nativos */
 #include "modules/native/net_module.h"
 #include "modules/native/fs_module.h"
@@ -344,6 +350,36 @@ int main(int argc, char* argv[]) {
             fprintf(stderr, "Erro durante execução na VM\n");
         }
         
+        // ============================================================
+        // ANÁLISE E ADAPTAÇÃO PÓS-EXECUÇÃO
+        // ============================================================
+        if (brain != NULL) {
+            printf("\n=== Context Brain: Análise Pós-Execução ===\n");
+            context_brain_observe(brain);
+            BrainDecision* decision = context_brain_analyze(brain);
+            if (decision != NULL) {
+                printf("  Decisão: %s (confiança: %.2f%%)\n", 
+                    decision->reason ? decision->reason : "N/A",
+                    decision->confidence * 100.0);
+                context_brain_execute_decision(brain, decision);
+                free(decision);
+            }
+            context_brain_print_state(brain);
+        }
+        
+        if (self_tuning != NULL && unified != NULL) {
+            printf("\n=== Self-Tuning: Análise de Estratégias ===\n");
+            self_tuning_print_strategies(self_tuning);
+        }
+        
+        if (debugger != NULL) {
+            printf("\n=== Visual Debugger: Timeline ===\n");
+            visual_debugger_stop_recording(debugger);
+            visual_debugger_print_timeline(debugger);
+            visual_debugger_export_timeline_json(debugger, "execution_timeline.json");
+            printf("  Timeline exportada para 'execution_timeline.json'\n");
+        }
+        
         // NOTA: VM e bytecode são mantidos vivos para análises posteriores
         // Serão destruídos após todas as análises
         
@@ -400,6 +436,43 @@ int main(int argc, char* argv[]) {
                 printf("✓ Grafo unificado criado com %zu nós\n", unified->node_count);
                 unified_graph_export_dot(unified, "unified_graph.dot");
                 printf("Grafo unificado exportado para 'unified_graph.dot'\n");
+            }
+        }
+        
+        // ============================================================
+        // SISTEMAS BRAIN (Meta-layer Coordenador)
+        // ============================================================
+        printf("\n=== Inicializando Sistemas Brain ===\n");
+        
+        ContextBrain* brain = NULL;
+        IntentEngine* intent_engine = NULL;
+        SelfTuningRuntime* self_tuning = NULL;
+        VisualDebugger* debugger = NULL;
+        
+        if (vm != NULL && unified != NULL) {
+            // Context Brain - Meta-layer coordenador
+            brain = context_brain_create(vm, unified);
+            if (brain != NULL) {
+                printf("✓ Context Brain inicializado\n");
+            }
+            
+            // Intent Engine - Sistema de intenção declarativa
+            intent_engine = intent_engine_create(vm);
+            if (intent_engine != NULL) {
+                printf("✓ Intent Engine inicializado\n");
+            }
+            
+            // Self-Tuning Runtime - Aprendizado contínuo
+            self_tuning = self_tuning_create(unified);
+            if (self_tuning != NULL) {
+                printf("✓ Self-Tuning Runtime inicializado\n");
+            }
+            
+            // Visual Debugger - Developer Experience
+            debugger = visual_debugger_create(vm, unified);
+            if (debugger != NULL) {
+                printf("✓ Visual Debugger inicializado\n");
+                visual_debugger_start_recording(debugger);
             }
         }
         
@@ -505,6 +578,26 @@ int main(int argc, char* argv[]) {
         // Snapshot Manager e Hot-Reload são demonstrações
         // (Em produção, seriam usados durante execução, não após)
         // Por isso, não os criamos aqui já que a VM será destruída
+        
+        // ============================================================
+        // LIMPEZA DOS SISTEMAS BRAIN
+        // ============================================================
+        if (debugger != NULL) {
+            visual_debugger_destroy(debugger);
+            debugger = NULL;
+        }
+        if (self_tuning != NULL) {
+            self_tuning_destroy(self_tuning);
+            self_tuning = NULL;
+        }
+        if (intent_engine != NULL) {
+            intent_engine_destroy(intent_engine);
+            intent_engine = NULL;
+        }
+        if (brain != NULL) {
+            context_brain_destroy(brain);
+            brain = NULL;
+        }
         
         // Destrói VM e bytecode APÓS todas as análises
         if (vm != NULL) {
