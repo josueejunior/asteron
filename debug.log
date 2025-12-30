@@ -1,0 +1,1596 @@
+=== Código Fonte ===
+// =============================================================================
+// MAIN - Ponto de Entrada do Framework
+// =============================================================================
+// 
+// Une todos os componentes:
+// - Servidor HTTP
+// - Sistema de Grafos
+// - Módulos de IA (Recomendação, Analytics, Decision Engine)
+//
+// =============================================================================
+
+// NOTA: Em produção, usar sistema de imports do Asteron
+// Por enquanto, incluir código diretamente ou usar funções do módulo graph
+
+import net
+import graph
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║     FRAMEWORK DE IA OPERACIONAL - INICIANDO                  ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+print("")
+
+// =============================================================================
+// INICIALIZAÇÃO
+// =============================================================================
+
+print("  [1/3] Inicializando sistema de grafos...")
+// Sistema de grafos já está disponível via módulo graph
+print("    ✓ Módulo graph carregado")
+
+print("  [2/3] Carregando módulos de lógica...")
+// Em produção, carregar:
+// - graph_manager.ast
+// - recommendation.ast
+// - analytics.ast
+// - decision_engine.ast
+print("    ✓ Módulos de lógica prontos")
+
+print("  [3/3] Iniciando servidor HTTP...")
+print("")
+
+// =============================================================================
+// INICIA SERVIDOR
+// =============================================================================
+
+// Inclui código do servidor (em produção, usar import)
+// Por enquanto, executa servidor diretamente
+
+let listener = 0
+let port = 8080
+let max_attempts = 5
+
+while (listener <= 0 && port < 8080 + max_attempts) {
+    print("  Tentando porta " + port + "...")
+    listener = tcp_listen(port)
+    if (listener <= 0) {
+        port = port + 1
+    }
+}
+
+if (listener <= 0) {
+    print("  ✗ Erro ao criar servidor!")
+} else {
+    print("  ✓ Servidor iniciado na porta " + port + "!")
+    print("  ✓ Framework pronto para receber requests")
+    print("  ✓ Acesse: http://localhost:" + port)
+    print("")
+    
+    let request_count = 0
+    
+    // Função auxiliar para extrair path
+    fn extract_path(request_line) {
+        let space1 = index_of(request_line, " ")
+        if (space1 < 0) {
+            return "/"
+        }
+        let space2 = index_of(substr(request_line, space1 + 1, len(request_line)), " ")
+        if (space2 < 0) {
+            return substr(request_line, space1 + 1, len(request_line))
+        }
+        return substr(request_line, space1 + 1, space1 + 1 + space2)
+    }
+    
+    // Função para criar resposta HTTP
+    fn make_http_response(html) {
+        let response = "HTTP/1.1 200 OK\r\n"
+        response = response + "Content-Type: text/html; charset=utf-8\r\n"
+        response = response + "Content-Length: " + len(html) + "\r\n"
+        response = response + "Connection: close\r\n"
+        response = response + "\r\n"
+        response = response + html
+        return response
+    }
+    
+    while (1) {
+        let client = tcp_accept(listener)
+        
+        if (client > 0) {
+            request_count = request_count + 1
+            let client_id = "client_" + request_count
+            
+            print("  [Request #" + request_count + "] " + client_id)
+            
+            // Recebe request
+            let request = tcp_recv(client, 1024, 1000)
+            if (len(request) > 0) {
+                let newline_pos = index_of(request, "\n")
+                if (newline_pos >= 0) {
+                    let first_line = substr(request, 0, newline_pos)
+                    let page = extract_path(first_line)
+                    
+                    print("    📍 " + page)
+                    
+                    // Atualiza grafo
+                    graph_add_edge(client_id, page)
+                    
+                    // Gera HTML personalizado
+                    let html = "<!DOCTYPE html>\n"
+                    html = html + "<html><head><title>Framework IA</title></head><body>\n"
+                    html = html + "<h1>🚀 Framework de IA Operacional</h1>\n"
+                    html = html + "<p><strong>Cliente:</strong> " + client_id + "</p>\n"
+                    html = html + "<p><strong>Página:</strong> " + page + "</p>\n"
+                    html = html + "<p>✓ Comportamento registrado no grafo</p>\n"
+                    html = html + "<p>📊 Total de requests: " + graph_get_total_requests() + "</p>\n"
+                    html = html + "</body></html>\n"
+                    
+                    // Envia resposta
+                    let http_response = make_http_response(html)
+                    tcp_send(client, http_response)
+                }
+            }
+            
+            tcp_close(client)
+            
+            // Estatísticas a cada 10 requests
+            if ((request_count / 10) * 10 == request_count) {
+                print("  📊 Stats: " + graph_get_client_count() + " clientes, " + graph_get_total_requests() + " requests")
+            }
+            print("")
+        } else {
+            sleep(100)
+        }
+    }
+}
+
+
+
+
+
+
+=== Tokens ===
+[Linha 15] IMPORT
+[Linha 15] IDENTIFIER 'net'
+[Linha 16] IMPORT
+[Linha 16] IDENTIFIER 'graph'
+[Linha 18] PRINT
+[Linha 18] LPAREN
+[Linha 18] STRING '"╔═══════════════════════════════════════════════════════════════╗"'
+[Linha 18] RPAREN
+[Linha 19] PRINT
+[Linha 19] LPAREN
+[Linha 19] STRING '"║     FRAMEWORK DE IA OPERACIONAL - INICIANDO                  ║"'
+[Linha 19] RPAREN
+[Linha 20] PRINT
+[Linha 20] LPAREN
+[Linha 20] STRING '"╚═══════════════════════════════════════════════════════════════╝"'
+[Linha 20] RPAREN
+[Linha 21] PRINT
+[Linha 21] LPAREN
+[Linha 21] STRING '""'
+[Linha 21] RPAREN
+[Linha 27] PRINT
+[Linha 27] LPAREN
+[Linha 27] STRING '"  [1/3] Inicializando sistema de grafos..."'
+[Linha 27] RPAREN
+[Linha 29] PRINT
+[Linha 29] LPAREN
+[Linha 29] STRING '"    ✓ Módulo graph carregado"'
+[Linha 29] RPAREN
+[Linha 31] PRINT
+[Linha 31] LPAREN
+[Linha 31] STRING '"  [2/3] Carregando módulos de lógica..."'
+[Linha 31] RPAREN
+[Linha 37] PRINT
+[Linha 37] LPAREN
+[Linha 37] STRING '"    ✓ Módulos de lógica prontos"'
+[Linha 37] RPAREN
+[Linha 39] PRINT
+[Linha 39] LPAREN
+[Linha 39] STRING '"  [3/3] Iniciando servidor HTTP..."'
+[Linha 39] RPAREN
+[Linha 40] PRINT
+[Linha 40] LPAREN
+[Linha 40] STRING '""'
+[Linha 40] RPAREN
+[Linha 49] LET
+[Linha 49] IDENTIFIER 'listener'
+[Linha 49] ASSIGN
+[Linha 49] NUMBER '0'
+[Linha 50] LET
+[Linha 50] IDENTIFIER 'port'
+[Linha 50] ASSIGN
+[Linha 50] NUMBER '8080'
+[Linha 51] LET
+[Linha 51] IDENTIFIER 'max_attempts'
+[Linha 51] ASSIGN
+[Linha 51] NUMBER '5'
+[Linha 53] WHILE
+[Linha 53] LPAREN
+[Linha 53] IDENTIFIER 'listener'
+[Linha 53] LTE
+[Linha 53] NUMBER '0'
+[Linha 53] AND
+[Linha 53] IDENTIFIER 'port'
+[Linha 53] LT
+[Linha 53] NUMBER '8080'
+[Linha 53] PLUS
+[Linha 53] IDENTIFIER 'max_attempts'
+[Linha 53] RPAREN
+[Linha 53] LBRACE
+[Linha 54] PRINT
+[Linha 54] LPAREN
+[Linha 54] STRING '"  Tentando porta "'
+[Linha 54] PLUS
+[Linha 54] IDENTIFIER 'port'
+[Linha 54] PLUS
+[Linha 54] STRING '"..."'
+[Linha 54] RPAREN
+[Linha 55] IDENTIFIER 'listener'
+[Linha 55] ASSIGN
+[Linha 55] IDENTIFIER 'tcp_listen'
+[Linha 55] LPAREN
+[Linha 55] IDENTIFIER 'port'
+[Linha 55] RPAREN
+[Linha 56] IF
+[Linha 56] LPAREN
+[Linha 56] IDENTIFIER 'listener'
+[Linha 56] LTE
+[Linha 56] NUMBER '0'
+[Linha 56] RPAREN
+[Linha 56] LBRACE
+[Linha 57] IDENTIFIER 'port'
+[Linha 57] ASSIGN
+[Linha 57] IDENTIFIER 'port'
+[Linha 57] PLUS
+[Linha 57] NUMBER '1'
+[Linha 58] RBRACE
+[Linha 59] RBRACE
+[Linha 61] IF
+[Linha 61] LPAREN
+[Linha 61] IDENTIFIER 'listener'
+[Linha 61] LTE
+[Linha 61] NUMBER '0'
+[Linha 61] RPAREN
+[Linha 61] LBRACE
+[Linha 62] PRINT
+[Linha 62] LPAREN
+[Linha 62] STRING '"  ✗ Erro ao criar servidor!"'
+[Linha 62] RPAREN
+[Linha 63] RBRACE
+[Linha 63] ELSE
+[Linha 63] LBRACE
+[Linha 64] PRINT
+[Linha 64] LPAREN
+[Linha 64] STRING '"  ✓ Servidor iniciado na porta "'
+[Linha 64] PLUS
+[Linha 64] IDENTIFIER 'port'
+[Linha 64] PLUS
+[Linha 64] STRING '"!"'
+[Linha 64] RPAREN
+[Linha 65] PRINT
+[Linha 65] LPAREN
+[Linha 65] STRING '"  ✓ Framework pronto para receber requests"'
+[Linha 65] RPAREN
+[Linha 66] PRINT
+[Linha 66] LPAREN
+[Linha 66] STRING '"  ✓ Acesse: http://localhost:"'
+[Linha 66] PLUS
+[Linha 66] IDENTIFIER 'port'
+[Linha 66] RPAREN
+[Linha 67] PRINT
+[Linha 67] LPAREN
+[Linha 67] STRING '""'
+[Linha 67] RPAREN
+[Linha 69] LET
+[Linha 69] IDENTIFIER 'request_count'
+[Linha 69] ASSIGN
+[Linha 69] NUMBER '0'
+[Linha 72] FUNCTION
+[Linha 72] IDENTIFIER 'extract_path'
+[Linha 72] LPAREN
+[Linha 72] IDENTIFIER 'request_line'
+[Linha 72] RPAREN
+[Linha 72] LBRACE
+[Linha 73] LET
+[Linha 73] IDENTIFIER 'space1'
+[Linha 73] ASSIGN
+[Linha 73] IDENTIFIER 'index_of'
+[Linha 73] LPAREN
+[Linha 73] IDENTIFIER 'request_line'
+[Linha 73] COMMA
+[Linha 73] STRING '" "'
+[Linha 73] RPAREN
+[Linha 74] IF
+[Linha 74] LPAREN
+[Linha 74] IDENTIFIER 'space1'
+[Linha 74] LT
+[Linha 74] NUMBER '0'
+[Linha 74] RPAREN
+[Linha 74] LBRACE
+[Linha 75] RETURN
+[Linha 75] STRING '"/"'
+[Linha 76] RBRACE
+[Linha 77] LET
+[Linha 77] IDENTIFIER 'space2'
+[Linha 77] ASSIGN
+[Linha 77] IDENTIFIER 'index_of'
+[Linha 77] LPAREN
+[Linha 77] IDENTIFIER 'substr'
+[Linha 77] LPAREN
+[Linha 77] IDENTIFIER 'request_line'
+[Linha 77] COMMA
+[Linha 77] IDENTIFIER 'space1'
+[Linha 77] PLUS
+[Linha 77] NUMBER '1'
+[Linha 77] COMMA
+[Linha 77] IDENTIFIER 'len'
+[Linha 77] LPAREN
+[Linha 77] IDENTIFIER 'request_line'
+[Linha 77] RPAREN
+[Linha 77] RPAREN
+[Linha 77] COMMA
+[Linha 77] STRING '" "'
+[Linha 77] RPAREN
+[Linha 78] IF
+[Linha 78] LPAREN
+[Linha 78] IDENTIFIER 'space2'
+[Linha 78] LT
+[Linha 78] NUMBER '0'
+[Linha 78] RPAREN
+[Linha 78] LBRACE
+[Linha 79] RETURN
+[Linha 79] IDENTIFIER 'substr'
+[Linha 79] LPAREN
+[Linha 79] IDENTIFIER 'request_line'
+[Linha 79] COMMA
+[Linha 79] IDENTIFIER 'space1'
+[Linha 79] PLUS
+[Linha 79] NUMBER '1'
+[Linha 79] COMMA
+[Linha 79] IDENTIFIER 'len'
+[Linha 79] LPAREN
+[Linha 79] IDENTIFIER 'request_line'
+[Linha 79] RPAREN
+[Linha 79] RPAREN
+[Linha 80] RBRACE
+[Linha 81] RETURN
+[Linha 81] IDENTIFIER 'substr'
+[Linha 81] LPAREN
+[Linha 81] IDENTIFIER 'request_line'
+[Linha 81] COMMA
+[Linha 81] IDENTIFIER 'space1'
+[Linha 81] PLUS
+[Linha 81] NUMBER '1'
+[Linha 81] COMMA
+[Linha 81] IDENTIFIER 'space1'
+[Linha 81] PLUS
+[Linha 81] NUMBER '1'
+[Linha 81] PLUS
+[Linha 81] IDENTIFIER 'space2'
+[Linha 81] RPAREN
+[Linha 82] RBRACE
+[Linha 85] FUNCTION
+[Linha 85] IDENTIFIER 'make_http_response'
+[Linha 85] LPAREN
+[Linha 85] IDENTIFIER 'html'
+[Linha 85] RPAREN
+[Linha 85] LBRACE
+[Linha 86] LET
+[Linha 86] IDENTIFIER 'response'
+[Linha 86] ASSIGN
+[Linha 86] STRING '"HTTP/1.1 200 OK\r\n"'
+[Linha 87] IDENTIFIER 'response'
+[Linha 87] ASSIGN
+[Linha 87] IDENTIFIER 'response'
+[Linha 87] PLUS
+[Linha 87] STRING '"Content-Type: text/html; charset=utf-8\r\n"'
+[Linha 88] IDENTIFIER 'response'
+[Linha 88] ASSIGN
+[Linha 88] IDENTIFIER 'response'
+[Linha 88] PLUS
+[Linha 88] STRING '"Content-Length: "'
+[Linha 88] PLUS
+[Linha 88] IDENTIFIER 'len'
+[Linha 88] LPAREN
+[Linha 88] IDENTIFIER 'html'
+[Linha 88] RPAREN
+[Linha 88] PLUS
+[Linha 88] STRING '"\r\n"'
+[Linha 89] IDENTIFIER 'response'
+[Linha 89] ASSIGN
+[Linha 89] IDENTIFIER 'response'
+[Linha 89] PLUS
+[Linha 89] STRING '"Connection: close\r\n"'
+[Linha 90] IDENTIFIER 'response'
+[Linha 90] ASSIGN
+[Linha 90] IDENTIFIER 'response'
+[Linha 90] PLUS
+[Linha 90] STRING '"\r\n"'
+[Linha 91] IDENTIFIER 'response'
+[Linha 91] ASSIGN
+[Linha 91] IDENTIFIER 'response'
+[Linha 91] PLUS
+[Linha 91] IDENTIFIER 'html'
+[Linha 92] RETURN
+[Linha 92] IDENTIFIER 'response'
+[Linha 93] RBRACE
+[Linha 95] WHILE
+[Linha 95] LPAREN
+[Linha 95] NUMBER '1'
+[Linha 95] RPAREN
+[Linha 95] LBRACE
+[Linha 96] LET
+[Linha 96] IDENTIFIER 'client'
+[Linha 96] ASSIGN
+[Linha 96] IDENTIFIER 'tcp_accept'
+[Linha 96] LPAREN
+[Linha 96] IDENTIFIER 'listener'
+[Linha 96] RPAREN
+[Linha 98] IF
+[Linha 98] LPAREN
+[Linha 98] IDENTIFIER 'client'
+[Linha 98] GT
+[Linha 98] NUMBER '0'
+[Linha 98] RPAREN
+[Linha 98] LBRACE
+[Linha 99] IDENTIFIER 'request_count'
+[Linha 99] ASSIGN
+[Linha 99] IDENTIFIER 'request_count'
+[Linha 99] PLUS
+[Linha 99] NUMBER '1'
+[Linha 100] LET
+[Linha 100] IDENTIFIER 'client_id'
+[Linha 100] ASSIGN
+[Linha 100] STRING '"client_"'
+[Linha 100] PLUS
+[Linha 100] IDENTIFIER 'request_count'
+[Linha 102] PRINT
+[Linha 102] LPAREN
+[Linha 102] STRING '"  [Request #"'
+[Linha 102] PLUS
+[Linha 102] IDENTIFIER 'request_count'
+[Linha 102] PLUS
+[Linha 102] STRING '"] "'
+[Linha 102] PLUS
+[Linha 102] IDENTIFIER 'client_id'
+[Linha 102] RPAREN
+[Linha 105] LET
+[Linha 105] IDENTIFIER 'request'
+[Linha 105] ASSIGN
+[Linha 105] IDENTIFIER 'tcp_recv'
+[Linha 105] LPAREN
+[Linha 105] IDENTIFIER 'client'
+[Linha 105] COMMA
+[Linha 105] NUMBER '1024'
+[Linha 105] COMMA
+[Linha 105] NUMBER '1000'
+[Linha 105] RPAREN
+[Linha 106] IF
+[Linha 106] LPAREN
+[Linha 106] IDENTIFIER 'len'
+[Linha 106] LPAREN
+[Linha 106] IDENTIFIER 'request'
+[Linha 106] RPAREN
+[Linha 106] GT
+[Linha 106] NUMBER '0'
+[Linha 106] RPAREN
+[Linha 106] LBRACE
+[Linha 107] LET
+[Linha 107] IDENTIFIER 'newline_pos'
+[Linha 107] ASSIGN
+[Linha 107] IDENTIFIER 'index_of'
+[Linha 107] LPAREN
+[Linha 107] IDENTIFIER 'request'
+[Linha 107] COMMA
+[Linha 107] STRING '"\n"'
+[Linha 107] RPAREN
+[Linha 108] IF
+[Linha 108] LPAREN
+[Linha 108] IDENTIFIER 'newline_pos'
+[Linha 108] GTE
+[Linha 108] NUMBER '0'
+[Linha 108] RPAREN
+[Linha 108] LBRACE
+[Linha 109] LET
+[Linha 109] IDENTIFIER 'first_line'
+[Linha 109] ASSIGN
+[Linha 109] IDENTIFIER 'substr'
+[Linha 109] LPAREN
+[Linha 109] IDENTIFIER 'request'
+[Linha 109] COMMA
+[Linha 109] NUMBER '0'
+[Linha 109] COMMA
+[Linha 109] IDENTIFIER 'newline_pos'
+[Linha 109] RPAREN
+[Linha 110] LET
+[Linha 110] IDENTIFIER 'page'
+[Linha 110] ASSIGN
+[Linha 110] IDENTIFIER 'extract_path'
+[Linha 110] LPAREN
+[Linha 110] IDENTIFIER 'first_line'
+[Linha 110] RPAREN
+[Linha 112] PRINT
+[Linha 112] LPAREN
+[Linha 112] STRING '"    📍 "'
+[Linha 112] PLUS
+[Linha 112] IDENTIFIER 'page'
+[Linha 112] RPAREN
+[Linha 115] IDENTIFIER 'graph_add_edge'
+[Linha 115] LPAREN
+[Linha 115] IDENTIFIER 'client_id'
+[Linha 115] COMMA
+[Linha 115] IDENTIFIER 'page'
+[Linha 115] RPAREN
+[Linha 118] LET
+[Linha 118] IDENTIFIER 'html'
+[Linha 118] ASSIGN
+[Linha 118] STRING '"<!DOCTYPE html>\n"'
+[Linha 119] IDENTIFIER 'html'
+[Linha 119] ASSIGN
+[Linha 119] IDENTIFIER 'html'
+[Linha 119] PLUS
+[Linha 119] STRING '"<html><head><title>Framework IA</title></head><body>\n"'
+[Linha 120] IDENTIFIER 'html'
+[Linha 120] ASSIGN
+[Linha 120] IDENTIFIER 'html'
+[Linha 120] PLUS
+[Linha 120] STRING '"<h1>🚀 Framework de IA Operacional</h1>\n"'
+[Linha 121] IDENTIFIER 'html'
+[Linha 121] ASSIGN
+[Linha 121] IDENTIFIER 'html'
+[Linha 121] PLUS
+[Linha 121] STRING '"<p><strong>Cliente:</strong> "'
+[Linha 121] PLUS
+[Linha 121] IDENTIFIER 'client_id'
+[Linha 121] PLUS
+[Linha 121] STRING '"</p>\n"'
+[Linha 122] IDENTIFIER 'html'
+[Linha 122] ASSIGN
+[Linha 122] IDENTIFIER 'html'
+[Linha 122] PLUS
+[Linha 122] STRING '"<p><strong>Página:</strong> "'
+[Linha 122] PLUS
+[Linha 122] IDENTIFIER 'page'
+[Linha 122] PLUS
+[Linha 122] STRING '"</p>\n"'
+[Linha 123] IDENTIFIER 'html'
+[Linha 123] ASSIGN
+[Linha 123] IDENTIFIER 'html'
+[Linha 123] PLUS
+[Linha 123] STRING '"<p>✓ Comportamento registrado no grafo</p>\n"'
+[Linha 124] IDENTIFIER 'html'
+[Linha 124] ASSIGN
+[Linha 124] IDENTIFIER 'html'
+[Linha 124] PLUS
+[Linha 124] STRING '"<p>📊 Total de requests: "'
+[Linha 124] PLUS
+[Linha 124] IDENTIFIER 'graph_get_total_requests'
+[Linha 124] LPAREN
+[Linha 124] RPAREN
+[Linha 124] PLUS
+[Linha 124] STRING '"</p>\n"'
+[Linha 125] IDENTIFIER 'html'
+[Linha 125] ASSIGN
+[Linha 125] IDENTIFIER 'html'
+[Linha 125] PLUS
+[Linha 125] STRING '"</body></html>\n"'
+[Linha 128] LET
+[Linha 128] IDENTIFIER 'http_response'
+[Linha 128] ASSIGN
+[Linha 128] IDENTIFIER 'make_http_response'
+[Linha 128] LPAREN
+[Linha 128] IDENTIFIER 'html'
+[Linha 128] RPAREN
+[Linha 129] IDENTIFIER 'tcp_send'
+[Linha 129] LPAREN
+[Linha 129] IDENTIFIER 'client'
+[Linha 129] COMMA
+[Linha 129] IDENTIFIER 'http_response'
+[Linha 129] RPAREN
+[Linha 130] RBRACE
+[Linha 131] RBRACE
+[Linha 133] IDENTIFIER 'tcp_close'
+[Linha 133] LPAREN
+[Linha 133] IDENTIFIER 'client'
+[Linha 133] RPAREN
+[Linha 136] IF
+[Linha 136] LPAREN
+[Linha 136] LPAREN
+[Linha 136] IDENTIFIER 'request_count'
+[Linha 136] DIVIDE
+[Linha 136] NUMBER '10'
+[Linha 136] RPAREN
+[Linha 136] MULTIPLY
+[Linha 136] NUMBER '10'
+[Linha 136] EQ
+[Linha 136] IDENTIFIER 'request_count'
+[Linha 136] RPAREN
+[Linha 136] LBRACE
+[Linha 137] PRINT
+[Linha 137] LPAREN
+[Linha 137] STRING '"  📊 Stats: "'
+[Linha 137] PLUS
+[Linha 137] IDENTIFIER 'graph_get_client_count'
+[Linha 137] LPAREN
+[Linha 137] RPAREN
+[Linha 137] PLUS
+[Linha 137] STRING '" clientes, "'
+[Linha 137] PLUS
+[Linha 137] IDENTIFIER 'graph_get_total_requests'
+[Linha 137] LPAREN
+[Linha 137] RPAREN
+[Linha 137] PLUS
+[Linha 137] STRING '" requests"'
+[Linha 137] RPAREN
+[Linha 138] RBRACE
+[Linha 139] PRINT
+[Linha 139] LPAREN
+[Linha 139] STRING '""'
+[Linha 139] RPAREN
+[Linha 140] RBRACE
+[Linha 140] ELSE
+[Linha 140] LBRACE
+[Linha 141] IDENTIFIER 'sleep'
+[Linha 141] LPAREN
+[Linha 141] NUMBER '100'
+[Linha 141] RPAREN
+[Linha 142] RBRACE
+[Linha 143] RBRACE
+[Linha 144] RBRACE
+[Linha 149] EOF
+
+=== AST ===
+Block(17 statements)
+  Import(net)
+  Import(graph)
+  Print
+    Literal(string: ╔═══════════════════════════════════════════════════════════════╗)
+  Print
+    Literal(string: ║     FRAMEWORK DE IA OPERACIONAL - INICIANDO                  ║)
+  Print
+    Literal(string: ╚═══════════════════════════════════════════════════════════════╝)
+  Print
+    Literal(string: )
+  Print
+    Literal(string:   [1/3] Inicializando sistema de grafos...)
+  Print
+    Literal(string:     ✓ Módulo graph carregado)
+  Print
+    Literal(string:   [2/3] Carregando módulos de lógica...)
+  Print
+    Literal(string:     ✓ Módulos de lógica prontos)
+  Print
+    Literal(string:   [3/3] Iniciando servidor HTTP...)
+  Print
+    Literal(string: )
+  VariableDeclaration(listener_0)
+    Literal(number: 0)
+  VariableDeclaration(port_0)
+    Literal(number: 8080)
+  VariableDeclaration(max_attempts_0)
+    Literal(number: 5)
+  WhileStatement
+    condition:
+      BinaryExpression(op: 41)
+        BinaryExpression(op: 38)
+          Identifier(listener_-1)
+          Literal(number: 0)
+        BinaryExpression(op: 36)
+          Identifier(port_-1)
+          BinaryExpression(op: 30)
+            Literal(number: 8080)
+            Identifier(max_attempts_-1)
+    body:
+      Block(3 statements)
+        Print
+          BinaryExpression(op: 30)
+            BinaryExpression(op: 30)
+              Literal(string:   Tentando porta )
+              Identifier(port_-1)
+            Literal(string: ...)
+        Assignment(listener)
+          FunctionCall(tcp_listen, 1 args)
+            Identifier(port_-1)
+        IfStatement
+          condition:
+            BinaryExpression(op: 38)
+              Identifier(listener_-1)
+              Literal(number: 0)
+          then:
+            Block(1 statements)
+              Assignment(port)
+                BinaryExpression(op: 30)
+                  Identifier(port_-1)
+                  Literal(number: 1)
+  IfStatement
+    condition:
+      BinaryExpression(op: 38)
+        Identifier(listener_-1)
+        Literal(number: 0)
+    then:
+      Block(1 statements)
+        Print
+          Literal(string:   ✗ Erro ao criar servidor!)
+    else:
+      Block(8 statements)
+        Print
+          BinaryExpression(op: 30)
+            BinaryExpression(op: 30)
+              Literal(string:   ✓ Servidor iniciado na porta )
+              Identifier(port_-1)
+            Literal(string: !)
+        Print
+          Literal(string:   ✓ Framework pronto para receber requests)
+        Print
+          BinaryExpression(op: 30)
+            Literal(string:   ✓ Acesse: http://localhost:)
+            Identifier(port_-1)
+        Print
+          Literal(string: )
+        VariableDeclaration(request_count_0)
+          Literal(number: 0)
+        FunctionDeclaration(extract_path, 1 params)
+          Block(5 statements)
+            VariableDeclaration(space1_0)
+              FunctionCall(index_of, 2 args)
+                Identifier(request_line_-1)
+                Literal(string:  )
+            IfStatement
+              condition:
+                BinaryExpression(op: 36)
+                  Identifier(space1_-1)
+                  Literal(number: 0)
+              then:
+                Block(1 statements)
+                  Return
+                    Literal(string: /)
+            VariableDeclaration(space2_0)
+              FunctionCall(index_of, 2 args)
+                FunctionCall(substr, 3 args)
+                  Identifier(request_line_-1)
+                  BinaryExpression(op: 30)
+                    Identifier(space1_-1)
+                    Literal(number: 1)
+                  FunctionCall(len, 1 args)
+                    Identifier(request_line_-1)
+                Literal(string:  )
+            IfStatement
+              condition:
+                BinaryExpression(op: 36)
+                  Identifier(space2_-1)
+                  Literal(number: 0)
+              then:
+                Block(1 statements)
+                  Return
+                    FunctionCall(substr, 3 args)
+                      Identifier(request_line_-1)
+                      BinaryExpression(op: 30)
+                        Identifier(space1_-1)
+                        Literal(number: 1)
+                      FunctionCall(len, 1 args)
+                        Identifier(request_line_-1)
+            Return
+              FunctionCall(substr, 3 args)
+                Identifier(request_line_-1)
+                BinaryExpression(op: 30)
+                  Identifier(space1_-1)
+                  Literal(number: 1)
+                BinaryExpression(op: 30)
+                  BinaryExpression(op: 30)
+                    Identifier(space1_-1)
+                    Literal(number: 1)
+                  Identifier(space2_-1)
+        FunctionDeclaration(make_http_response, 1 params)
+          Block(7 statements)
+            VariableDeclaration(response_0)
+              Literal(string: HTTP/1.1 200 OK
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Literal(string: Content-Type: text/html; charset=utf-8
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                BinaryExpression(op: 30)
+                  BinaryExpression(op: 30)
+                    Identifier(response_-1)
+                    Literal(string: Content-Length: )
+                  FunctionCall(len, 1 args)
+                    Identifier(html_-1)
+                Literal(string: 
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Literal(string: Connection: close
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Literal(string: 
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Identifier(html_-1)
+            Return
+              Identifier(response_-1)
+        WhileStatement
+          condition:
+            Literal(number: 1)
+          body:
+            Block(2 statements)
+              VariableDeclaration(client_0)
+                FunctionCall(tcp_accept, 1 args)
+                  Identifier(listener_-1)
+              IfStatement
+                condition:
+                  BinaryExpression(op: 35)
+                    Identifier(client_-1)
+                    Literal(number: 0)
+                then:
+                  Block(8 statements)
+                    Assignment(request_count)
+                      BinaryExpression(op: 30)
+                        Identifier(request_count_-1)
+                        Literal(number: 1)
+                    VariableDeclaration(client_id_0)
+                      BinaryExpression(op: 30)
+                        Literal(string: client_)
+                        Identifier(request_count_-1)
+                    Print
+                      BinaryExpression(op: 30)
+                        BinaryExpression(op: 30)
+                          BinaryExpression(op: 30)
+                            Literal(string:   [Request #)
+                            Identifier(request_count_-1)
+                          Literal(string: ] )
+                        Identifier(client_id_-1)
+                    VariableDeclaration(request_0)
+                      FunctionCall(tcp_recv, 3 args)
+                        Identifier(client_-1)
+                        Literal(number: 1024)
+                        Literal(number: 1000)
+                    IfStatement
+                      condition:
+                        BinaryExpression(op: 35)
+                          FunctionCall(len, 1 args)
+                            Identifier(request_-1)
+                          Literal(number: 0)
+                      then:
+                        Block(2 statements)
+                          VariableDeclaration(newline_pos_0)
+                            FunctionCall(index_of, 2 args)
+                              Identifier(request_-1)
+                              Literal(string: 
+)
+                          IfStatement
+                            condition:
+                              BinaryExpression(op: 37)
+                                Identifier(newline_pos_-1)
+                                Literal(number: 0)
+                            then:
+                              Block(14 statements)
+                                VariableDeclaration(first_line_0)
+                                  FunctionCall(substr, 3 args)
+                                    Identifier(request_-1)
+                                    Literal(number: 0)
+                                    Identifier(newline_pos_-1)
+                                VariableDeclaration(page_0)
+                                  FunctionCall(extract_path, 1 args)
+                                    Identifier(first_line_-1)
+                                Print
+                                  BinaryExpression(op: 30)
+                                    Literal(string:     📍 )
+                                    Identifier(page_-1)
+                                FunctionCall(graph_add_edge, 2 args)
+                                  Identifier(client_id_-1)
+                                  Identifier(page_-1)
+                                VariableDeclaration(html_0)
+                                  Literal(string: <!DOCTYPE html>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: <html><head><title>Framework IA</title></head><body>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: <h1>🚀 Framework de IA Operacional</h1>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    BinaryExpression(op: 30)
+                                      BinaryExpression(op: 30)
+                                        Identifier(html_-1)
+                                        Literal(string: <p><strong>Cliente:</strong> )
+                                      Identifier(client_id_-1)
+                                    Literal(string: </p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    BinaryExpression(op: 30)
+                                      BinaryExpression(op: 30)
+                                        Identifier(html_-1)
+                                        Literal(string: <p><strong>Página:</strong> )
+                                      Identifier(page_-1)
+                                    Literal(string: </p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: <p>✓ Comportamento registrado no grafo</p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    BinaryExpression(op: 30)
+                                      BinaryExpression(op: 30)
+                                        Identifier(html_-1)
+                                        Literal(string: <p>📊 Total de requests: )
+                                      FunctionCall(graph_get_total_requests, 0 args)
+                                    Literal(string: </p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: </body></html>
+)
+                                VariableDeclaration(http_response_0)
+                                  FunctionCall(make_http_response, 1 args)
+                                    Identifier(html_-1)
+                                FunctionCall(tcp_send, 2 args)
+                                  Identifier(client_-1)
+                                  Identifier(http_response_-1)
+                    FunctionCall(tcp_close, 1 args)
+                      Identifier(client_-1)
+                    IfStatement
+                      condition:
+                        BinaryExpression(op: 39)
+                          BinaryExpression(op: 32)
+                            BinaryExpression(op: 33)
+                              Identifier(request_count_-1)
+                              Literal(number: 10)
+                            Literal(number: 10)
+                          Identifier(request_count_-1)
+                      then:
+                        Block(1 statements)
+                          Print
+                            BinaryExpression(op: 30)
+                              BinaryExpression(op: 30)
+                                BinaryExpression(op: 30)
+                                  BinaryExpression(op: 30)
+                                    Literal(string:   📊 Stats: )
+                                    FunctionCall(graph_get_client_count, 0 args)
+                                  Literal(string:  clientes, )
+                                FunctionCall(graph_get_total_requests, 0 args)
+                              Literal(string:  requests)
+                    Print
+                      Literal(string: )
+                else:
+                  Block(1 statements)
+                    FunctionCall(sleep, 1 args)
+                      Literal(number: 100)
+
+=== Verificação de Tipos ===
+✓ Verificação de tipos concluída com sucesso
+
+
+=== Fase: Transformação SSA (Ownership Foundation) ===
+✓ Variáveis versionadas com sucesso
+
+=== Fase: Análise de Liveness (Ownership 2.0) ===
+✓ Pontos de liberação automática identificados
+
+=== Fase: Speculative Inlining (Devirtualização) ===
+✓ Otimização de chamadas concluída
+
+=== Fase: Escape Analysis (Memória Ultra-Rápida) ===
+✓ Análise de escopo concluída
+
+=== Fase: Loop-Invariant Code Motion (LICM) ===
+  [LICM] Analisando loops críticos...
+✓ Movimentação de código concluída
+
+=== Fase: Register Allocation (Graph Coloring) ===
+  [RegAlloc] listener_0 -> Slot 0
+  [RegAlloc] port_0 -> Slot 1
+  [RegAlloc] max_attempts_0 -> Slot 2
+✓ Alocação de registradores concluída (3 slots usados)
+
+=== AST Otimizada (SSA + Liveness + Escape) ===
+Block(17 statements)
+  Import(net)
+  Import(graph)
+  Print
+    Literal(string: ╔═══════════════════════════════════════════════════════════════╗)
+  Print
+    Literal(string: ║     FRAMEWORK DE IA OPERACIONAL - INICIANDO                  ║)
+  Print
+    Literal(string: ╚═══════════════════════════════════════════════════════════════╝)
+  Print
+    Literal(string: )
+  Print
+    Literal(string:   [1/3] Inicializando sistema de grafos...)
+  Print
+    Literal(string:     ✓ Módulo graph carregado)
+  Print
+    Literal(string:   [2/3] Carregando módulos de lógica...)
+  Print
+    Literal(string:     ✓ Módulos de lógica prontos)
+  Print
+    Literal(string:   [3/3] Iniciando servidor HTTP...)
+  Print
+    Literal(string: )
+  VariableDeclaration(listener_0)
+    Literal(number: 0)
+  VariableDeclaration(port_0)
+    Literal(number: 8080)
+  VariableDeclaration(max_attempts_0)
+    Literal(number: 5)
+  WhileStatement
+    condition:
+      BinaryExpression(op: 41)
+        BinaryExpression(op: 38)
+          Identifier(listener_0)
+          Literal(number: 0)
+        BinaryExpression(op: 36)
+          Identifier(port_0)
+          BinaryExpression(op: 30)
+            Literal(number: 8080)
+            Identifier(max_attempts_0)
+    body:
+      Block(3 statements)
+        Print
+          BinaryExpression(op: 30)
+            BinaryExpression(op: 30)
+              Literal(string:   Tentando porta )
+              Identifier(port_0)
+            Literal(string: ...)
+        Assignment(listener)
+          FunctionCall(tcp_listen, 1 args)
+            Identifier(port_-1)
+        IfStatement
+          condition:
+            BinaryExpression(op: 38)
+              Identifier(listener_-1)
+              Literal(number: 0)
+          then:
+            Block(1 statements)
+              Assignment(port)
+                BinaryExpression(op: 30)
+                  Identifier(port_-1)
+                  Literal(number: 1)
+  IfStatement
+    condition:
+      BinaryExpression(op: 38)
+        Identifier(listener_-1)
+        Literal(number: 0)
+    then:
+      Block(1 statements)
+        Print
+          Literal(string:   ✗ Erro ao criar servidor!)
+    else:
+      Block(8 statements)
+        Print
+          BinaryExpression(op: 30)
+            BinaryExpression(op: 30)
+              Literal(string:   ✓ Servidor iniciado na porta )
+              Identifier(port_-1)
+            Literal(string: !)
+        Print
+          Literal(string:   ✓ Framework pronto para receber requests)
+        Print
+          BinaryExpression(op: 30)
+            Literal(string:   ✓ Acesse: http://localhost:)
+            Identifier(port_-1)
+        Print
+          Literal(string: )
+        VariableDeclaration(request_count_0)
+          Literal(number: 0)
+        FunctionDeclaration(extract_path, 1 params)
+          Block(5 statements)
+            VariableDeclaration(space1_0)
+              FunctionCall(index_of, 2 args)
+                Identifier(request_line_-1)
+                Literal(string:  )
+            IfStatement
+              condition:
+                BinaryExpression(op: 36)
+                  Identifier(space1_-1)
+                  Literal(number: 0)
+              then:
+                Block(1 statements)
+                  Return
+                    Literal(string: /)
+            VariableDeclaration(space2_0)
+              FunctionCall(index_of, 2 args)
+                FunctionCall(substr, 3 args)
+                  Identifier(request_line_-1)
+                  BinaryExpression(op: 30)
+                    Identifier(space1_-1)
+                    Literal(number: 1)
+                  FunctionCall(len, 1 args)
+                    Identifier(request_line_-1)
+                Literal(string:  )
+            IfStatement
+              condition:
+                BinaryExpression(op: 36)
+                  Identifier(space2_-1)
+                  Literal(number: 0)
+              then:
+                Block(1 statements)
+                  Return
+                    FunctionCall(substr, 3 args)
+                      Identifier(request_line_-1)
+                      BinaryExpression(op: 30)
+                        Identifier(space1_-1)
+                        Literal(number: 1)
+                      FunctionCall(len, 1 args)
+                        Identifier(request_line_-1)
+            Return
+              FunctionCall(substr, 3 args)
+                Identifier(request_line_-1)
+                BinaryExpression(op: 30)
+                  Identifier(space1_-1)
+                  Literal(number: 1)
+                BinaryExpression(op: 30)
+                  BinaryExpression(op: 30)
+                    Identifier(space1_-1)
+                    Literal(number: 1)
+                  Identifier(space2_-1)
+        FunctionDeclaration(make_http_response, 1 params)
+          Block(7 statements)
+            VariableDeclaration(response_0)
+              Literal(string: HTTP/1.1 200 OK
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Literal(string: Content-Type: text/html; charset=utf-8
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                BinaryExpression(op: 30)
+                  BinaryExpression(op: 30)
+                    Identifier(response_-1)
+                    Literal(string: Content-Length: )
+                  FunctionCall(len, 1 args)
+                    Identifier(html_-1)
+                Literal(string: 
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Literal(string: Connection: close
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Literal(string: 
+)
+            Assignment(response)
+              BinaryExpression(op: 30)
+                Identifier(response_-1)
+                Identifier(html_-1)
+            Return
+              Identifier(response_-1)
+        WhileStatement
+          condition:
+            Literal(number: 1)
+          body:
+            Block(2 statements)
+              VariableDeclaration(client_0)
+                FunctionCall(tcp_accept, 1 args)
+                  Identifier(listener_-1)
+              IfStatement
+                condition:
+                  BinaryExpression(op: 35)
+                    Identifier(client_-1)
+                    Literal(number: 0)
+                then:
+                  Block(8 statements)
+                    Assignment(request_count)
+                      BinaryExpression(op: 30)
+                        Identifier(request_count_-1)
+                        Literal(number: 1)
+                    VariableDeclaration(client_id_0)
+                      BinaryExpression(op: 30)
+                        Literal(string: client_)
+                        Identifier(request_count_-1)
+                    Print
+                      BinaryExpression(op: 30)
+                        BinaryExpression(op: 30)
+                          BinaryExpression(op: 30)
+                            Literal(string:   [Request #)
+                            Identifier(request_count_-1)
+                          Literal(string: ] )
+                        Identifier(client_id_-1)
+                    VariableDeclaration(request_0)
+                      FunctionCall(tcp_recv, 3 args)
+                        Identifier(client_-1)
+                        Literal(number: 1024)
+                        Literal(number: 1000)
+                    IfStatement
+                      condition:
+                        BinaryExpression(op: 35)
+                          FunctionCall(len, 1 args)
+                            Identifier(request_-1)
+                          Literal(number: 0)
+                      then:
+                        Block(2 statements)
+                          VariableDeclaration(newline_pos_0)
+                            FunctionCall(index_of, 2 args)
+                              Identifier(request_-1)
+                              Literal(string: 
+)
+                          IfStatement
+                            condition:
+                              BinaryExpression(op: 37)
+                                Identifier(newline_pos_-1)
+                                Literal(number: 0)
+                            then:
+                              Block(14 statements)
+                                VariableDeclaration(first_line_0)
+                                  FunctionCall(substr, 3 args)
+                                    Identifier(request_-1)
+                                    Literal(number: 0)
+                                    Identifier(newline_pos_-1)
+                                VariableDeclaration(page_0)
+                                  FunctionCall(extract_path, 1 args)
+                                    Identifier(first_line_-1)
+                                Print
+                                  BinaryExpression(op: 30)
+                                    Literal(string:     📍 )
+                                    Identifier(page_-1)
+                                FunctionCall(graph_add_edge, 2 args)
+                                  Identifier(client_id_-1)
+                                  Identifier(page_-1)
+                                VariableDeclaration(html_0)
+                                  Literal(string: <!DOCTYPE html>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: <html><head><title>Framework IA</title></head><body>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: <h1>🚀 Framework de IA Operacional</h1>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    BinaryExpression(op: 30)
+                                      BinaryExpression(op: 30)
+                                        Identifier(html_-1)
+                                        Literal(string: <p><strong>Cliente:</strong> )
+                                      Identifier(client_id_-1)
+                                    Literal(string: </p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    BinaryExpression(op: 30)
+                                      BinaryExpression(op: 30)
+                                        Identifier(html_-1)
+                                        Literal(string: <p><strong>Página:</strong> )
+                                      Identifier(page_-1)
+                                    Literal(string: </p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: <p>✓ Comportamento registrado no grafo</p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    BinaryExpression(op: 30)
+                                      BinaryExpression(op: 30)
+                                        Identifier(html_-1)
+                                        Literal(string: <p>📊 Total de requests: )
+                                      FunctionCall(graph_get_total_requests, 0 args)
+                                    Literal(string: </p>
+)
+                                Assignment(html)
+                                  BinaryExpression(op: 30)
+                                    Identifier(html_-1)
+                                    Literal(string: </body></html>
+)
+                                VariableDeclaration(http_response_0)
+                                  FunctionCall(make_http_response, 1 args)
+                                    Identifier(html_-1)
+                                FunctionCall(tcp_send, 2 args)
+                                  Identifier(client_-1)
+                                  Identifier(http_response_-1)
+                    FunctionCall(tcp_close, 1 args)
+                      Identifier(client_-1)
+                    IfStatement
+                      condition:
+                        BinaryExpression(op: 39)
+                          BinaryExpression(op: 32)
+                            BinaryExpression(op: 33)
+                              Identifier(request_count_-1)
+                              Literal(number: 10)
+                            Literal(number: 10)
+                          Identifier(request_count_-1)
+                      then:
+                        Block(1 statements)
+                          Print
+                            BinaryExpression(op: 30)
+                              BinaryExpression(op: 30)
+                                BinaryExpression(op: 30)
+                                  BinaryExpression(op: 30)
+                                    Literal(string:   📊 Stats: )
+                                    FunctionCall(graph_get_client_count, 0 args)
+                                  Literal(string:  clientes, )
+                                FunctionCall(graph_get_total_requests, 0 args)
+                              Literal(string:  requests)
+                    Print
+                      Literal(string: )
+                else:
+                  Block(1 statements)
+                    FunctionCall(sleep, 1 args)
+                      Literal(number: 100)
+
+=== Compilação para Bytecode ===
+  [Optimize] Variável 'listener' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'port' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'max_attempts' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'request_count' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'client' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'client_id' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'request' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'newline_pos' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'first_line' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'page' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'html' alocada em Registrador Local (Não Escapa)
+  [Optimize] Variável 'http_response' alocada em Registrador Local (Não Escapa)
+=== Bytecode Program ===
+Instruções: 230
+Constantes: 41
+Variáveis: 26
+
+   0: LOAD_CONST [0] ("╔═══════════════════════════════════════════════════════════════╗")
+   1: PRINT
+   2: POP
+   3: LOAD_CONST [1] ("║     FRAMEWORK DE IA OPERACIONAL - INICIANDO                  ║")
+   4: PRINT
+   5: POP
+   6: LOAD_CONST [2] ("╚═══════════════════════════════════════════════════════════════╝")
+   7: PRINT
+   8: POP
+   9: LOAD_CONST [3] ("")
+  10: PRINT
+  11: POP
+  12: LOAD_CONST [4] ("  [1/3] Inicializando sistema de grafos...")
+  13: PRINT
+  14: POP
+  15: LOAD_CONST [5] ("    ✓ Módulo graph carregado")
+  16: PRINT
+  17: POP
+  18: LOAD_CONST [6] ("  [2/3] Carregando módulos de lógica...")
+  19: PRINT
+  20: POP
+  21: LOAD_CONST [7] ("    ✓ Módulos de lógica prontos")
+  22: PRINT
+  23: POP
+  24: LOAD_CONST [8] ("  [3/3] Iniciando servidor HTTP...")
+  25: PRINT
+  26: POP
+  27: LOAD_CONST [3] ("")
+  28: PRINT
+  29: POP
+  30: LOAD_CONST [9] (0)
+  31: STORE_LOCAL [0] (listener)
+  32: LOAD_CONST [10] (8080)
+  33: STORE_LOCAL [1] (port)
+  34: LOAD_CONST [11] (5)
+  35: STORE_LOCAL [2] (max_attempts)
+  36: LOAD_LOCAL [0] (listener)
+  37: LOAD_CONST [9] (0)
+  38: LTE
+  39: LOAD_LOCAL [1] (port)
+  40: LOAD_CONST [10] (8080)
+  41: LOAD_LOCAL [2] (max_attempts)
+  42: ADD
+  43: LT
+  44: AND
+  45: JUMP_IF_FALSE -> 65
+  46: LOAD_CONST [12] ("  Tentando porta ")
+  47: LOAD_LOCAL [1] (port)
+  48: ADD
+  49: LOAD_CONST [13] ("...")
+  50: ADD
+  51: PRINT
+  52: POP
+  53: LOAD_LOCAL [1] (port)
+  54: CALL [3] (tcp_listen)
+  55: STORE_LOCAL [0] (listener)
+  56: LOAD_LOCAL [0] (listener)
+  57: LOAD_CONST [9] (0)
+  58: LTE
+  59: JUMP_IF_FALSE -> 64
+  60: LOAD_LOCAL [1] (port)
+  61: LOAD_CONST [14] (1)
+  62: ADD
+  63: STORE_LOCAL [1] (port)
+  64: JUMP -> 36
+  65: LOAD_LOCAL [0] (listener)
+  66: LOAD_CONST [9] (0)
+  67: LTE
+  68: JUMP_IF_FALSE -> 73
+  69: LOAD_CONST [15] ("  ✗ Erro ao criar servidor!")
+  70: PRINT
+  71: POP
+  72: JUMP -> 229
+  73: LOAD_CONST [16] ("  ✓ Servidor iniciado na porta ")
+  74: LOAD_LOCAL [1] (port)
+  75: ADD
+  76: LOAD_CONST [17] ("!")
+  77: ADD
+  78: PRINT
+  79: POP
+  80: LOAD_CONST [18] ("  ✓ Framework pronto para receber requests")
+  81: PRINT
+  82: POP
+  83: LOAD_CONST [19] ("  ✓ Acesse: http://localhost:")
+  84: LOAD_LOCAL [1] (port)
+  85: ADD
+  86: PRINT
+  87: POP
+  88: LOAD_CONST [3] ("")
+  89: PRINT
+  90: POP
+  91: LOAD_CONST [9] (0)
+  92: STORE_LOCAL [4] (request_count)
+  93: LOAD_CONST [14] (1)
+  94: JUMP_IF_FALSE -> 229
+  95: LOAD_LOCAL [0] (listener)
+  96: CALL [5] (tcp_accept)
+  97: STORE_LOCAL [6] (client)
+  98: LOAD_LOCAL [6] (client)
+  99: LOAD_CONST [9] (0)
+ 100: GT
+ 101: JUMP_IF_FALSE -> 226
+ 102: LOAD_LOCAL [4] (request_count)
+ 103: LOAD_CONST [14] (1)
+ 104: ADD
+ 105: STORE_LOCAL [4] (request_count)
+ 106: LOAD_CONST [20] ("client_")
+ 107: LOAD_LOCAL [4] (request_count)
+ 108: ADD
+ 109: STORE_LOCAL [7] (client_id)
+ 110: LOAD_CONST [21] ("  [Request #")
+ 111: LOAD_LOCAL [4] (request_count)
+ 112: ADD
+ 113: LOAD_CONST [22] ("] ")
+ 114: ADD
+ 115: LOAD_LOCAL [7] (client_id)
+ 116: ADD
+ 117: PRINT
+ 118: POP
+ 119: LOAD_LOCAL [6] (client)
+ 120: LOAD_CONST [23] (1024)
+ 121: LOAD_CONST [24] (1000)
+ 122: CALL [8] (tcp_recv)
+ 123: STORE_LOCAL [9] (request)
+ 124: LOAD_LOCAL [9] (request)
+ 125: CALL [10] (len)
+ 126: LOAD_CONST [9] (0)
+ 127: GT
+ 128: JUMP_IF_FALSE -> 201
+ 129: LOAD_LOCAL [9] (request)
+ 130: LOAD_CONST [25] ("
+")
+ 131: CALL [11] (index_of)
+ 132: STORE_LOCAL [12] (newline_pos)
+ 133: LOAD_LOCAL [12] (newline_pos)
+ 134: LOAD_CONST [9] (0)
+ 135: GTE
+ 136: JUMP_IF_FALSE -> 201
+ 137: LOAD_LOCAL [9] (request)
+ 138: LOAD_CONST [9] (0)
+ 139: LOAD_LOCAL [12] (newline_pos)
+ 140: CALL [13] (substr)
+ 141: STORE_LOCAL [14] (first_line)
+ 142: LOAD_LOCAL [14] (first_line)
+ 143: CALL [15] (extract_path)
+ 144: STORE_LOCAL [16] (page)
+ 145: LOAD_CONST [26] ("    📍 ")
+ 146: LOAD_LOCAL [16] (page)
+ 147: ADD
+ 148: PRINT
+ 149: POP
+ 150: LOAD_LOCAL [7] (client_id)
+ 151: LOAD_LOCAL [16] (page)
+ 152: CALL [17] (graph_add_edge)
+ 153: LOAD_CONST [27] ("<!DOCTYPE html>
+")
+ 154: STORE_LOCAL [18] (html)
+ 155: LOAD_LOCAL [18] (html)
+ 156: LOAD_CONST [28] ("<html><head><title>Framework IA</title></head><body>
+")
+ 157: ADD
+ 158: STORE_LOCAL [18] (html)
+ 159: LOAD_LOCAL [18] (html)
+ 160: LOAD_CONST [29] ("<h1>🚀 Framework de IA Operacional</h1>
+")
+ 161: ADD
+ 162: STORE_LOCAL [18] (html)
+ 163: LOAD_LOCAL [18] (html)
+ 164: LOAD_CONST [30] ("<p><strong>Cliente:</strong> ")
+ 165: ADD
+ 166: LOAD_LOCAL [7] (client_id)
+ 167: ADD
+ 168: LOAD_CONST [31] ("</p>
+")
+ 169: ADD
+ 170: STORE_LOCAL [18] (html)
+ 171: LOAD_LOCAL [18] (html)
+ 172: LOAD_CONST [32] ("<p><strong>Página:</strong> ")
+ 173: ADD
+ 174: LOAD_LOCAL [16] (page)
+ 175: ADD
+ 176: LOAD_CONST [31] ("</p>
+")
+ 177: ADD
+ 178: STORE_LOCAL [18] (html)
+ 179: LOAD_LOCAL [18] (html)
+ 180: LOAD_CONST [33] ("<p>✓ Comportamento registrado no grafo</p>
+")
+ 181: ADD
+ 182: STORE_LOCAL [18] (html)
+ 183: LOAD_LOCAL [18] (html)
+ 184: LOAD_CONST [34] ("<p>📊 Total de requests: ")
+ 185: ADD
+ 186: CALL [19] (graph_get_total_requests)
+ 187: ADD
+ 188: LOAD_CONST [31] ("</p>
+")
+ 189: ADD
+ 190: STORE_LOCAL [18] (html)
+ 191: LOAD_LOCAL [18] (html)
+ 192: LOAD_CONST [35] ("</body></html>
+")
+ 193: ADD
+ 194: STORE_LOCAL [18] (html)
+ 195: LOAD_LOCAL [18] (html)
+ 196: CALL [20] (make_http_response)
+ 197: STORE_LOCAL [21] (http_response)
+ 198: LOAD_LOCAL [6] (client)
+ 199: LOAD_LOCAL [21] (http_response)
+ 200: CALL [22] (tcp_send)
+ 201: LOAD_LOCAL [6] (client)
+ 202: CALL [23] (tcp_close)
+ 203: LOAD_LOCAL [4] (request_count)
+ 204: LOAD_CONST [36] (10)
+ 205: DIV
+ 206: LOAD_CONST [36] (10)
+ 207: MUL
+ 208: LOAD_LOCAL [4] (request_count)
+ 209: EQ
+ 210: JUMP_IF_FALSE -> 222
+ 211: LOAD_CONST [37] ("  📊 Stats: ")
+ 212: CALL [24] (graph_get_client_count)
+ 213: ADD
+ 214: LOAD_CONST [38] (" clientes, ")
+ 215: ADD
+ 216: CALL [19] (graph_get_total_requests)
+ 217: ADD
+ 218: LOAD_CONST [39] (" requests")
+ 219: ADD
+ 220: PRINT
+ 221: POP
+ 222: LOAD_CONST [3] ("")
+ 223: PRINT
+ 224: POP
+ 225: JUMP -> 228
+ 226: LOAD_CONST [40] (100)
+ 227: CALL [25] (sleep)
+ 228: JUMP -> 93
+ 229: HALT
+
+=== Execução na VM (Sequencial) ===

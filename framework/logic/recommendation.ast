@@ -1,0 +1,260 @@
+// =============================================================================
+// RECOMMENDATION ENGINE - Sistema de Recomendação
+// =============================================================================
+// 
+// Implementa algoritmos de recomendação baseados em:
+// - Collaborative Filtering (clientes similares)
+// - Content-Based Filtering (baseado em histórico)
+// - Popularidade
+//
+// NOTA: Este módulo depende de funções do graph_manager.ast
+// Em produção, usar sistema de imports do Asteron
+// Por enquanto, copiar funções necessárias ou incluir código
+//
+// =============================================================================
+
+import graph
+
+// Funções auxiliares (devem estar disponíveis via graph_manager)
+// Por enquanto, implementações simplificadas inline
+
+// =============================================================================
+// COLLABORATIVE FILTERING
+// =============================================================================
+
+// Recomenda produtos baseado em clientes similares
+fn recommend_by_similarity(client_id) {
+    // Encontra clientes similares
+    let similar_clients = find_similar_clients(client_id)
+    let recommendations = ""
+    
+    if (len(similar_clients) == 0) {
+        return ""
+    }
+    
+    // Para cada cliente similar, pega produtos que ele comprou
+    let pos = 0
+    while (pos < len(similar_clients)) {
+        let comma_pos = index_of(substr(similar_clients, pos, len(similar_clients)), ",")
+        let entry_end = pos
+        if (comma_pos >= 0) {
+            entry_end = pos + comma_pos
+        } else {
+            entry_end = len(similar_clients)
+        }
+        
+        let entry = substr(similar_clients, pos, entry_end)
+        let colon_pos = index_of(entry, ":")
+        if (colon_pos >= 0) {
+            let similar_client = substr(entry, 0, colon_pos)
+            let products = get_neighbors_by_type(similar_client, "purchased")
+            
+            // Adiciona produtos à lista de recomendações
+            if (len(products) > 0) {
+                let prod_pos = 0
+                while (prod_pos < len(products)) {
+                    let prod_comma = index_of(substr(products, prod_pos, len(products)), ",")
+                    let prod_end = prod_pos
+                    if (prod_comma >= 0) {
+                        prod_end = prod_pos + prod_comma
+                    } else {
+                        prod_end = len(products)
+                    }
+                    
+                    let product = substr(products, prod_pos, prod_end)
+                    // Verifica se cliente já tem este produto
+                    let client_products = get_neighbors_by_type(client_id, "purchased")
+                    if (index_of(client_products, product) < 0) {
+                        // Verifica se já está na lista de recomendações
+                        if (index_of(recommendations, product) < 0) {
+                            if (len(recommendations) > 0) {
+                                recommendations = recommendations + ","
+                            }
+                            recommendations = recommendations + product
+                        }
+                    }
+                    
+                    if (prod_comma < 0) {
+                        break
+                    }
+                    prod_pos = prod_end + 1
+                }
+            }
+        }
+        
+        if (comma_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return recommendations
+}
+
+// =============================================================================
+// CONTENT-BASED FILTERING
+// =============================================================================
+
+// Recomenda produtos baseado no histórico do próprio cliente
+fn recommend_by_history(client_id) {
+    // Pega páginas que o cliente visitou
+    let visited_pages = get_neighbors_by_type(client_id, "visited")
+    let recommendations = ""
+    
+    if (len(visited_pages) == 0) {
+        return ""
+    }
+    
+    // Para cada página visitada, encontra produtos relacionados
+    let pos = 0
+    while (pos < len(visited_pages)) {
+        let comma_pos = index_of(substr(visited_pages, pos, len(visited_pages)), ",")
+        let page_end = pos
+        if (comma_pos >= 0) {
+            page_end = pos + comma_pos
+        } else {
+            page_end = len(visited_pages)
+        }
+        
+        let page = substr(visited_pages, pos, page_end)
+        // Busca produtos conectados a esta página
+        let related_products = get_neighbors_by_type(page, "recommended")
+        
+        if (len(related_products) > 0) {
+            let prod_pos = 0
+            while (prod_pos < len(related_products)) {
+                let prod_comma = index_of(substr(related_products, prod_pos, len(related_products)), ",")
+                let prod_end = prod_pos
+                if (prod_comma >= 0) {
+                    prod_end = prod_pos + prod_comma
+                } else {
+                    prod_end = len(related_products)
+                }
+                
+                let product = substr(related_products, prod_pos, prod_end)
+                if (index_of(recommendations, product) < 0) {
+                    if (len(recommendations) > 0) {
+                        recommendations = recommendations + ","
+                    }
+                    recommendations = recommendations + product
+                }
+                
+                if (prod_comma < 0) {
+                    break
+                }
+                prod_pos = prod_end + 1
+            }
+        }
+        
+        if (comma_pos < 0) {
+            break
+        }
+        pos = page_end + 1
+    }
+    
+    return recommendations
+}
+
+// =============================================================================
+// RECOMENDAÇÃO HÍBRIDA
+// =============================================================================
+
+// Combina collaborative filtering e content-based
+fn recommend_hybrid(client_id) {
+    let collaborative = recommend_by_similarity(client_id)
+    let content_based = recommend_by_history(client_id)
+    
+    // Combina ambas as listas
+    let combined = collaborative
+    if (len(combined) > 0 && len(content_based) > 0) {
+        combined = combined + ","
+    }
+    combined = combined + content_based
+    
+    // Remove duplicatas
+    return remove_duplicates(combined)
+}
+
+// Remove duplicatas de uma lista separada por vírgulas
+fn remove_duplicates(list) {
+    let result = ""
+    let seen = ""
+    let pos = 0
+    
+    while (pos < len(list)) {
+        let comma_pos = index_of(substr(list, pos, len(list)), ",")
+        let item_end = pos
+        if (comma_pos >= 0) {
+            item_end = pos + comma_pos
+        } else {
+            item_end = len(list)
+        }
+        
+        let item = substr(list, pos, item_end)
+        if (index_of(seen, "|" + item + "|") < 0) {
+            if (len(seen) > 0) {
+                seen = seen + "|"
+            }
+            seen = seen + item + "|"
+            
+            if (len(result) > 0) {
+                result = result + ","
+            }
+            result = result + item
+        }
+        
+        if (comma_pos < 0) {
+            break
+        }
+        pos = item_end + 1
+    }
+    
+    return result
+}
+
+// =============================================================================
+// RECOMENDAÇÃO POR POPULARIDADE
+// =============================================================================
+
+// Recomenda produtos mais populares
+fn recommend_popular(limit) {
+    // Busca produtos mais acessados
+    // Implementação simplificada: retorna produtos mais visitados
+    let all_edges = graph_get_client_pages("edges")
+    let product_counts = ""
+    
+    // Conta acessos por produto
+    let pos = 0
+    while (pos < len(all_edges)) {
+        let pipe_pos = index_of(substr(all_edges, pos, len(all_edges)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(all_edges)
+        }
+        
+        let entry = substr(all_edges, pos, entry_end)
+        if (index_of(entry, ":visited") >= 0 || index_of(entry, ":purchased") >= 0) {
+            let arrow_pos = index_of(entry, "->")
+            if (arrow_pos >= 0) {
+                let rest = substr(entry, arrow_pos + 2, len(entry))
+                let colon_pos = index_of(rest, ":")
+                if (colon_pos >= 0) {
+                    let product = substr(rest, 0, colon_pos)
+                    // Incrementa contador (implementação simplificada)
+                    // Em produção, usar estrutura de dados adequada
+                }
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    // Retorna top N produtos (implementação simplificada)
+    return ""
+}
+

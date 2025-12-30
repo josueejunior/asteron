@@ -1,0 +1,25 @@
+// Teste do sistema de import
+
+// Importa módulo inteiro
+import math
+
+// Testa funções matemáticas
+let pi = 3.14159
+let x = 2.0
+
+// Funções trigonométricas
+print(sin(pi))
+print(cos(0))
+
+// Funções de potência
+print(sqrt(16))
+print(pow(2, 8))
+
+// Funções de arredondamento
+print(floor(3.7))
+print(ceil(3.2))
+print(round(3.5))
+
+// Teste de constantes
+// print(PI)  // PI constante do módulo math
+

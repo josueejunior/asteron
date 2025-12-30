@@ -1,0 +1,356 @@
+// =============================================================================
+// GRAPH MANAGER - Gerenciador de Grafos para Framework de IA
+// =============================================================================
+// 
+// Fornece funções avançadas para gerenciar o grafo de dados:
+// - Criação e inserção de nós/arestas
+// - Busca e consultas
+// - Atualização de dados
+// - Persistência (JSON simples)
+//
+// =============================================================================
+
+import graph
+
+// =============================================================================
+// ESTRUTURA DE DADOS DO GRAFO
+// =============================================================================
+
+// Tipos de nós suportados
+let NODE_TYPE_CLIENT = "client"
+let NODE_TYPE_PAGE = "page"
+let NODE_TYPE_PRODUCT = "product"
+let NODE_TYPE_ACTION = "action"
+
+// Tipos de arestas suportados
+let EDGE_TYPE_VISITED = "visited"
+let EDGE_TYPE_PURCHASED = "purchased"
+let EDGE_TYPE_RECOMMENDED = "recommended"
+let EDGE_TYPE_SIMILAR = "similar"
+
+// =============================================================================
+// FUNÇÕES DE NÓS
+// =============================================================================
+
+// Adiciona um nó ao grafo
+// node_id: identificador único do nó
+// node_type: tipo do nó (client, page, product, action)
+// metadata: string JSON com metadados opcionais
+fn add_node(node_id, node_type, metadata) {
+    // Usa o módulo graph para armazenar
+    // Formato: "node_id:type|metadata"
+    let node_data = node_id + ":" + node_type
+    if (len(metadata) > 0) {
+        node_data = node_data + "|" + metadata
+    }
+    graph_add_edge("nodes", node_data)
+}
+
+// Obtém tipo de um nó
+fn get_node_type(node_id) {
+    // Busca no grafo de nós
+    let nodes = graph_get_client_pages("nodes")
+    let node_key = node_id + ":"
+    let pos = index_of(nodes, node_key)
+    if (pos >= 0) {
+        let entry = substr(nodes, pos, len(nodes))
+        let colon_pos = index_of(entry, ":")
+        let pipe_pos = index_of(entry, "|")
+        if (colon_pos >= 0) {
+            let end_pos = len(entry)
+            if (pipe_pos >= 0 && pipe_pos < len(entry)) {
+                end_pos = pipe_pos
+            }
+            return substr(entry, colon_pos + 1, end_pos)
+        }
+    }
+    return ""
+}
+
+// Verifica se um nó existe
+fn node_exists(node_id) {
+    return len(get_node_type(node_id)) > 0
+}
+
+// =============================================================================
+// FUNÇÕES DE ARESTAS
+// =============================================================================
+
+// Adiciona uma aresta entre dois nós
+// from_node: nó origem
+// to_node: nó destino
+// edge_type: tipo da aresta (visited, purchased, etc)
+// weight: peso opcional (número como string)
+fn add_edge(from_node, to_node, edge_type, weight) {
+    // Formato: "from_node->to_node:edge_type|weight"
+    let edge_data = from_node + "->" + to_node + ":" + edge_type
+    if (len(weight) > 0) {
+        edge_data = edge_data + "|" + weight
+    }
+    graph_add_edge("edges", edge_data)
+}
+
+// Adiciona aresta simples (sem peso)
+fn add_edge_simple(from_node, to_node, edge_type) {
+    add_edge(from_node, to_node, edge_type, "")
+}
+
+// Obtém todas as arestas saindo de um nó
+fn get_outgoing_edges(node_id) {
+    let edges = graph_get_client_pages("edges")
+    let result = ""
+    let pos = 0
+    
+    while (pos < len(edges)) {
+        let pipe_pos = index_of(substr(edges, pos, len(edges)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(edges)
+        }
+        
+        let entry = substr(edges, pos, entry_end)
+        let arrow_pos = index_of(entry, "->")
+        if (arrow_pos >= 0) {
+            let from_node = substr(entry, 0, arrow_pos)
+            if (from_node == node_id) {
+                if (len(result) > 0) {
+                    result = result + ","
+                }
+                result = result + entry
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return result
+}
+
+// Obtém todos os vizinhos de um nó (nós conectados)
+fn get_neighbors(node_id) {
+    let edges = get_outgoing_edges(node_id)
+    let neighbors = ""
+    let pos = 0
+    
+    while (pos < len(edges)) {
+        let comma_pos = index_of(substr(edges, pos, len(edges)), ",")
+        let entry_end = pos
+        if (comma_pos >= 0) {
+            entry_end = pos + comma_pos
+        } else {
+            entry_end = len(edges)
+        }
+        
+        let entry = substr(edges, pos, entry_end)
+        let arrow_pos = index_of(entry, "->")
+        if (arrow_pos >= 0) {
+            let rest = substr(entry, arrow_pos + 2, len(entry))
+            let colon_pos = index_of(rest, ":")
+            if (colon_pos >= 0) {
+                let neighbor = substr(rest, 0, colon_pos)
+                if (index_of(neighbors, neighbor) < 0) {
+                    if (len(neighbors) > 0) {
+                        neighbors = neighbors + ","
+                    }
+                    neighbors = neighbors + neighbor
+                }
+            }
+        }
+        
+        if (comma_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return neighbors
+}
+
+// =============================================================================
+// FUNÇÕES DE CONTEXTO
+// =============================================================================
+
+// Obtém contexto completo de um cliente (histórico relevante)
+fn get_context(client_id) {
+    let context = "Cliente: " + client_id + "\n"
+    
+    // Páginas visitadas
+    let pages = get_neighbors_by_type(client_id, EDGE_TYPE_VISITED)
+    if (len(pages) > 0) {
+        context = context + "Páginas visitadas: " + pages + "\n"
+    }
+    
+    // Produtos comprados
+    let products = get_neighbors_by_type(client_id, EDGE_TYPE_PURCHASED)
+    if (len(products) > 0) {
+        context = context + "Produtos comprados: " + products + "\n"
+    }
+    
+    // Ações realizadas
+    let actions = get_neighbors_by_type(client_id, EDGE_TYPE_ACTION)
+    if (len(actions) > 0) {
+        context = context + "Ações: " + actions + "\n"
+    }
+    
+    return context
+}
+
+// Obtém vizinhos de um nó filtrados por tipo de aresta
+fn get_neighbors_by_type(node_id, edge_type) {
+    let edges = get_outgoing_edges(node_id)
+    let neighbors = ""
+    let pos = 0
+    
+    while (pos < len(edges)) {
+        let comma_pos = index_of(substr(edges, pos, len(edges)), ",")
+        let entry_end = pos
+        if (comma_pos >= 0) {
+            entry_end = pos + comma_pos
+        } else {
+            entry_end = len(edges)
+        }
+        
+        let entry = substr(edges, pos, entry_end)
+        let type_key = ":" + edge_type
+        if (index_of(entry, type_key) >= 0) {
+            let arrow_pos = index_of(entry, "->")
+            if (arrow_pos >= 0) {
+                let rest = substr(entry, arrow_pos + 2, len(entry))
+                let colon_pos = index_of(rest, ":")
+                if (colon_pos >= 0) {
+                    let neighbor = substr(rest, 0, colon_pos)
+                    if (index_of(neighbors, neighbor) < 0) {
+                        if (len(neighbors) > 0) {
+                            neighbors = neighbors + ","
+                        }
+                        neighbors = neighbors + neighbor
+                    }
+                }
+            }
+        }
+        
+        if (comma_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return neighbors
+}
+
+// =============================================================================
+// FUNÇÕES DE BUSCA E ANÁLISE
+// =============================================================================
+
+// Encontra clientes similares baseado em páginas visitadas
+fn find_similar_clients(client_id) {
+    let client_pages = get_neighbors_by_type(client_id, EDGE_TYPE_VISITED)
+    let similar = ""
+    
+    // Busca todos os clientes
+    let all_clients = graph_get_client_pages("nodes")
+    let pos = 0
+    
+    while (pos < len(all_clients)) {
+        let pipe_pos = index_of(substr(all_clients, pos, len(all_clients)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(all_clients)
+        }
+        
+        let entry = substr(all_clients, pos, entry_end)
+        let colon_pos = index_of(entry, ":")
+        if (colon_pos >= 0) {
+            let node_id = substr(entry, 0, colon_pos)
+            let node_type = substr(entry, colon_pos + 1, len(entry))
+            
+            if (node_type == NODE_TYPE_CLIENT && node_id != client_id) {
+                let other_pages = get_neighbors_by_type(node_id, EDGE_TYPE_VISITED)
+                // Calcula similaridade simples (páginas em comum)
+                let similarity = calculate_similarity(client_pages, other_pages)
+                if (similarity > 0) {
+                    if (len(similar) > 0) {
+                        similar = similar + ","
+                    }
+                    similar = similar + node_id + ":" + similarity
+                }
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return similar
+}
+
+// Calcula similaridade entre duas listas de páginas
+fn calculate_similarity(pages1, pages2) {
+    if (len(pages1) == 0 || len(pages2) == 0) {
+        return 0
+    }
+    
+    let common = 0
+    let total = 0
+    
+    // Conta páginas em comum
+    let pos1 = 0
+    while (pos1 < len(pages1)) {
+        let comma_pos = index_of(substr(pages1, pos1, len(pages1)), ",")
+        let page_end = pos1
+        if (comma_pos >= 0) {
+            page_end = pos1 + comma_pos
+        } else {
+            page_end = len(pages1)
+        }
+        
+        let page = substr(pages1, pos1, page_end)
+        total = total + 1
+        
+        if (index_of(pages2, page) >= 0) {
+            common = common + 1
+        }
+        
+        if (comma_pos < 0) {
+            break
+        }
+        pos1 = page_end + 1
+    }
+    
+    if (total == 0) {
+        return 0
+    }
+    
+    // Retorna porcentagem de similaridade
+    return (common * 100) / total
+}
+
+// =============================================================================
+// FUNÇÕES DE ESTATÍSTICAS
+// =============================================================================
+
+// Obtém estatísticas do grafo
+fn get_graph_stats() {
+    let stats = "=== Estatísticas do Grafo ===\n"
+    stats = stats + "Total de clientes: " + graph_get_client_count() + "\n"
+    stats = stats + "Total de requests: " + graph_get_total_requests() + "\n"
+    return stats
+}
+
+// Exporta grafo completo
+fn export_graph() {
+    return graph_export()
+}
+
+
+
+

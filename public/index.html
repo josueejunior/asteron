@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteron - Compilador Interativo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            border-right: 2px solid #333;
+        }
+
+        .graph-panel {
+            flex: 1;
+            background: #f5f5f5;
+            position: relative;
+        }
+
+        .header {
+            background: #252526;
+            color: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            resize: none;
+            outline: none;
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #graph-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .loading {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .error {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ff4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .compile-btn {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .compile-btn:hover {
+            background: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Painel do Editor -->
+        <div class="editor-panel">
+            <div class="header">
+                <h1>📝 Editor Asteron</h1>
+                <div>
+                    <span class="status" id="status">Pronto</span>
+                    <button class="compile-btn" onclick="compileCode()">Compilar</button>
+                </div>
+            </div>
+            <div class="editor-container">
+                <textarea id="editor" placeholder="Digite seu código Asteron aqui...">function main() {
+    let x = 10
+    let y = 20
+    return x + y
+}</textarea>
+            </div>
+        </div>
+
+        <!-- Painel do Grafo -->
+        <div class="graph-panel">
+            <div class="header">
+                <h1>🕸️ Grafo Unificado</h1>
+            </div>
+            <div class="graph-container">
+                <div class="loading" id="loading">Compilando...</div>
+                <div class="error" id="error"></div>
+                <canvas id="graph-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let wasmModule = null;
+        let isInitialized = false;
+
+        // Utilitários (definidos primeiro)
+        function updateStatus(text) {
+            document.getElementById('status').textContent = text;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Inicializa Wasm (tenta carregar, mas não bloqueia)
+        async function initWasm() {
+            if (isInitialized) return;
+
+            try {
+                // Tenta importar módulo Wasm
+                const AsteronWasm = await import('./asteron.js').catch(() => null);
+                
+                if (!AsteronWasm || !AsteronWasm.default) {
+                    console.warn('[Wasm] Módulo não encontrado, usando modo simulado');
+                    updateStatus('Modo simulado (Wasm não disponível)');
+                    return;
+                }
+
+                wasmModule = await AsteronWasm.default({
+                    locateFile: (path) => {
+                        if (path.endsWith('.wasm')) {
+                            return '/asteron.wasm';
+                        }
+                        return path;
+                    }
+                });
+                isInitialized = true;
+                updateStatus('Wasm carregado');
+                console.log('[Wasm] Inicializado');
+            } catch (error) {
+                console.warn('[Wasm] Erro ao carregar:', error);
+                updateStatus('Modo simulado');
+                // Não mostra erro, apenas usa modo simulado
+            }
+        }
+
+        // Compila código (função global)
+        window.compileCode = async function() {
+            const code = document.getElementById('editor').value;
+            if (!code.trim()) {
+                showError('Digite algum código primeiro');
+                return;
+            }
+
+            updateStatus('Compilando...');
+            showLoading(true);
+            hideError();
+
+            try {
+                await initWasm();
+
+                // Se Wasm está disponível, usa ele
+                if (wasmModule && wasmModule.cwrap) {
+                    try {
+                        const compileFn = wasmModule.cwrap('asteron_compile_to_ast_json', 'string', ['string']);
+                        const jsonStr = compileFn(code);
+                        const graphData = JSON.parse(jsonStr);
+
+                        updateStatus('Compilado com sucesso');
+                        renderGraph(graphData);
+                    } catch (wasmError) {
+                        console.warn('[Wasm] Erro na compilação, usando modo simulado:', wasmError);
+                        compileCodeSimulated(code);
+                    }
+                } else {
+                    // Modo simulado (sem Wasm)
+                    compileCodeSimulated(code);
+                }
+            } catch (error) {
+                console.error('[Compile] Erro:', error);
+                showError('Erro ao compilar: ' + error.message);
+                updateStatus('Erro na compilação');
+            } finally {
+                showLoading(false);
+            }
+        };
+
+        // Compilação simulada (quando Wasm não está disponível)
+        function compileCodeSimulated(code) {
+            // Simula análise do código
+            const lines = code.split('\n');
+            const nodes = [];
+            const edges = [];
+
+            // Extrai funções
+            lines.forEach((line, index) => {
+                const funcMatch = line.match(/function\s+(\w+)/);
+                if (funcMatch) {
+                    nodes.push({
+                        id: `node_${index}`,
+                        data: {
+                            label: funcMatch[1] + '()',
+                            isHot: false,
+                            executionCount: 0
+                        }
+                    });
+                }
+            });
+
+            // Se não encontrou funções, cria um nó genérico
+            if (nodes.length === 0) {
+                nodes.push({
+                    id: 'node_main',
+                    data: {
+                        label: 'main',
+                        isHot: false,
+                        executionCount: 0
+                    }
+                });
+            }
+
+            updateStatus('Compilado (modo simulado)');
+            renderGraph({ nodes, edges });
+        }
+
+        // Renderiza grafo (simplificado - em produção, usar React Flow)
+        function renderGraph(data) {
+            if (!data) {
+                showError('Dados do grafo inválidos');
+                return;
+            }
+            const canvas = document.getElementById('graph-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!data.nodes || data.nodes.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Nenhum nó encontrado', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            // Layout simples (em produção, usar algoritmo de layout)
+            const nodePositions = {};
+            const spacing = 150;
+            let x = 100;
+            let y = 100;
+
+            data.nodes.forEach((node, index) => {
+                nodePositions[node.id] = { x, y };
+                
+                // Cores baseadas em "calor"
+                let color = '#4CAF50'; // Verde
+                if (node.data.isHot) {
+                    color = '#ff4444'; // Vermelho
+                } else if (node.data.executionCount > 10) {
+                    color = '#ffaa00'; // Laranja
+                }
+
+                // Desenha nó
+                ctx.fillStyle = color;
+                ctx.fillRect(x - 50, y - 20, 100, 40);
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(node.data.label, x, y + 5);
+
+                x += spacing;
+                if (x > canvas.width - 100) {
+                    x = 100;
+                    y += spacing;
+                }
+            });
+
+            // Desenha arestas
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 2;
+            data.edges.forEach(edge => {
+                const from = nodePositions[edge.source];
+                const to = nodePositions[edge.target];
+                
+                if (from && to) {
+                    ctx.beginPath();
+                    ctx.moveTo(from.x, from.y);
+                    ctx.lineTo(to.x, to.y);
+                    ctx.stroke();
+                }
+            });
+        }
+
+        // Auto-compila quando código muda (debounce) - desabilitado por enquanto
+        // let compileTimeout;
+        // document.getElementById('editor').addEventListener('input', () => {
+        //     clearTimeout(compileTimeout);
+        //     compileTimeout = setTimeout(() => {
+        //         if (document.getElementById('editor').value.trim()) {
+        //             compileCode();
+        //         }
+        //     }, 1000);
+        // });
+
+        // Inicializa ao carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            initWasm();
+            updateStatus('Pronto');
+        });
+    </script>
+</body>
+</html>
+

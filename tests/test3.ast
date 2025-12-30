@@ -1,0 +1,7 @@
+let nome = "Asteron"
+let idade = 5
+let mensagem = "A linguagem tem " + idade + " anos"
+print(mensagem)
+
+
+

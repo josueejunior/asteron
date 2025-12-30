@@ -1,0 +1,148 @@
+// =============================================================================
+// MAIN - Ponto de Entrada do Framework
+// =============================================================================
+// 
+// Une todos os componentes:
+// - Servidor HTTP
+// - Sistema de Grafos
+// - Módulos de IA (Recomendação, Analytics, Decision Engine)
+//
+// =============================================================================
+
+// NOTA: Em produção, usar sistema de imports do Asteron
+// Por enquanto, incluir código diretamente ou usar funções do módulo graph
+
+import net
+import graph
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║     FRAMEWORK DE IA OPERACIONAL - INICIANDO                  ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+print("")
+
+// =============================================================================
+// INICIALIZAÇÃO
+// =============================================================================
+
+print("  [1/3] Inicializando sistema de grafos...")
+// Sistema de grafos já está disponível via módulo graph
+print("    ✓ Módulo graph carregado")
+
+print("  [2/3] Carregando módulos de lógica...")
+// Em produção, carregar:
+// - graph_manager.ast
+// - recommendation.ast
+// - analytics.ast
+// - decision_engine.ast
+print("    ✓ Módulos de lógica prontos")
+
+print("  [3/3] Iniciando servidor HTTP...")
+print("")
+
+// =============================================================================
+// INICIA SERVIDOR
+// =============================================================================
+
+// Inclui código do servidor (em produção, usar import)
+// Por enquanto, executa servidor diretamente
+
+let listener = 0
+let port = 8080
+let max_attempts = 5
+
+while (listener <= 0 && port < 8080 + max_attempts) {
+    print("  Tentando porta " + port + "...")
+    listener = tcp_listen(port)
+    if (listener <= 0) {
+        port = port + 1
+    }
+}
+
+if (listener <= 0) {
+    print("  ✗ Erro ao criar servidor!")
+} else {
+    print("  ✓ Servidor iniciado na porta " + port + "!")
+    print("  ✓ Framework pronto para receber requests")
+    print("  ✓ Acesse: http://localhost:" + port)
+    print("")
+    
+    let request_count = 0
+    
+    // Função auxiliar para extrair path
+    fn extract_path(request_line) {
+        let space1 = index_of(request_line, " ")
+        if (space1 < 0) {
+            return "/"
+        }
+        let space2 = index_of(substr(request_line, space1 + 1, len(request_line)), " ")
+        if (space2 < 0) {
+            return substr(request_line, space1 + 1, len(request_line))
+        }
+        return substr(request_line, space1 + 1, space1 + 1 + space2)
+    }
+    
+    // Função para criar resposta HTTP
+    fn make_http_response(html) {
+        let response = "HTTP/1.1 200 OK\r\n"
+        response = response + "Content-Type: text/html; charset=utf-8\r\n"
+        response = response + "Content-Length: " + len(html) + "\r\n"
+        response = response + "Connection: close\r\n"
+        response = response + "\r\n"
+        response = response + html
+        return response
+    }
+    
+    while (1) {
+        let client = tcp_accept(listener)
+        
+        if (client > 0) {
+            request_count = request_count + 1
+            let client_id = "client_" + request_count
+            
+            print("  [Request #" + request_count + "] " + client_id)
+            
+            // Recebe request
+            let request = tcp_recv(client, 1024, 1000)
+            if (len(request) > 0) {
+                let newline_pos = index_of(request, "\n")
+                if (newline_pos >= 0) {
+                    let first_line = substr(request, 0, newline_pos)
+                    let page = extract_path(first_line)
+                    
+                    print("    📍 " + page)
+                    
+                    // Atualiza grafo
+                    graph_add_edge(client_id, page)
+                    
+                    // Gera HTML personalizado
+                    let html = "<!DOCTYPE html>\n"
+                    html = html + "<html><head><title>Framework IA</title></head><body>\n"
+                    html = html + "<h1>🚀 Framework de IA Operacional</h1>\n"
+                    html = html + "<p><strong>Cliente:</strong> " + client_id + "</p>\n"
+                    html = html + "<p><strong>Página:</strong> " + page + "</p>\n"
+                    html = html + "<p>✓ Comportamento registrado no grafo</p>\n"
+                    html = html + "<p>📊 Total de requests: " + graph_get_total_requests() + "</p>\n"
+                    html = html + "</body></html>\n"
+                    
+                    // Envia resposta
+                    let http_response = make_http_response(html)
+                    tcp_send(client, http_response)
+                }
+            }
+            
+            tcp_close(client)
+            
+            // Estatísticas a cada 10 requests
+            if ((request_count / 10) * 10 == request_count) {
+                print("  📊 Stats: " + graph_get_client_count() + " clientes, " + graph_get_total_requests() + " requests")
+            }
+            print("")
+        } else {
+            sleep(100)
+        }
+    }
+}
+
+
+
+

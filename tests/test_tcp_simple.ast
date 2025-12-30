@@ -1,0 +1,47 @@
+// Teste simples de TCP
+
+print("=== Teste TCP Simples ===")
+print("")
+
+// 1. DNS
+print("1. hostname():")
+let host = hostname()
+print(host)
+
+print("")
+print("2. resolve(google.com):")
+let ip = resolve("google.com")
+print(ip)
+
+// 2. Conectar
+print("")
+print("3. tcp_connect:")
+let sock = tcp_connect("example.com", 80)
+print("   Handle: ")
+print(sock)
+
+// 3. Enviar (testando se sock ainda é válido)
+print("")
+print("4. tcp_send:")
+let req = "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n"
+let sent = tcp_send(sock, req)
+print("   Bytes enviados: ")
+print(sent)
+
+// 4. Receber
+print("")
+print("5. tcp_recv:")
+let resp = tcp_recv(sock, 512, 5000)
+print("   Resposta:")
+print(resp)
+
+// 5. Fechar
+print("")
+print("6. tcp_close:")
+let closed = tcp_close(sock)
+print("   Fechado: ")
+print(closed)
+
+print("")
+print("=== FIM ===")
+

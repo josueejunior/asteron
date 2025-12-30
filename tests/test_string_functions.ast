@@ -1,0 +1,48 @@
+// Teste das novas funções de manipulação de strings
+
+print("=== Teste de Funções de String ===")
+print("")
+
+// Teste 1: char_at
+print("1. char_at:")
+let str = "Hello"
+print("   str = " + str)
+print("   char_at(str, 0) = " + char_at(str, 0))
+print("   char_at(str, 1) = " + char_at(str, 1))
+print("   char_at(str, 4) = " + char_at(str, 4))
+print("")
+
+// Teste 2: substr
+print("2. substr:")
+let text = "Hello World"
+print("   text = " + text)
+print("   substr(text, 0, 5) = " + substr(text, 0, 5))
+print("   substr(text, 6) = " + substr(text, 6))
+print("   substr(text, 0, 3) = " + substr(text, 0, 3))
+print("")
+
+// Teste 3: index_of
+print("3. index_of:")
+let search_text = "Hello World"
+print("   search_text = " + search_text)
+print("   index_of(search_text, 'World') = " + index_of(search_text, "World"))
+print("   index_of(search_text, 'Hello') = " + index_of(search_text, "Hello"))
+print("   index_of(search_text, 'xyz') = " + index_of(search_text, "xyz"))
+print("")
+
+// Teste 4: Uso prático - extrair primeira linha
+print("4. Uso prático - extrair primeira linha:")
+let http_request = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"
+print("   http_request = " + http_request)
+let newline_pos = index_of(http_request, "\n")
+if (newline_pos >= 0) {
+    let first_line = substr(http_request, 0, newline_pos)
+    print("   Primeira linha: " + first_line)
+}
+print("")
+
+print("=== Teste concluído! ===")
+
+
+
+

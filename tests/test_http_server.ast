@@ -1,0 +1,228 @@
+// =============================================================================
+// SERVIDOR HTTP SIMPLES QUE RETORNA HTML
+// =============================================================================
+// 
+// Este exemplo mostra como criar um servidor HTTP básico usando o módulo net
+// que aceita conexões e retorna HTML.
+//
+// Execute: ./asteron tests/test_http_server.ast
+// Acesse: http://localhost:8080
+//
+// =============================================================================
+
+import net
+import graph
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║         SERVIDOR HTTP SIMPLES - RETORNANDO HTML              ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+print("")
+
+// HTML de exemplo
+let html_content = "<!DOCTYPE html>
+<html>
+<head>
+    <title>Asteron HTTP Server</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f0f0f0; }
+        h1 { color: #333; }
+        p { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Servidor HTTP Asteron</h1>
+    <p>Este servidor foi criado usando o módulo <code>net</code> do Asteron!</p>
+    <p>Funciona perfeitamente! ✅</p>
+</body>
+</html>"
+
+// Cria resposta HTTP completa
+fn make_http_response(html) {
+    let response = "HTTP/1.1 200 OK\r\n"
+    response = response + "Content-Type: text/html; charset=utf-8\r\n"
+    response = response + "Content-Length: " + len(html) + "\r\n"
+    response = response + "Connection: close\r\n"
+    response = response + "\r\n"
+    response = response + html
+    return response
+}
+
+// =============================================================================
+// SISTEMA AVANÇADO DE GRAFOS PARA RASTREAMENTO E ANÁLISE
+// =============================================================================
+// As funções de grafo agora são nativas e importadas do módulo 'graph'
+
+// Extrai path do request HTTP
+fn extract_path(request_line) {
+    let space1 = index_of(request_line, " ")
+    if (space1 < 0) {
+        return "/"
+    }
+    let space2 = index_of(substr(request_line, space1 + 1, len(request_line)), " ")
+    if (space2 < 0) {
+        return substr(request_line, space1 + 1, len(request_line))
+    }
+    return substr(request_line, space1 + 1, space1 + 1 + space2)
+}
+
+// Função auxiliar para imprimir estatísticas avançadas do grafo
+fn graph_print_advanced_stats() {
+    print("  📊 Estatísticas Avançadas do Grafo:")
+    
+    let client_count = graph_get_client_count()
+    let total_requests = graph_get_total_requests()
+    
+    if (client_count == 0) {
+        print("    (Nenhum dado ainda)")
+        return
+    }
+    
+    print("    Clientes únicos: " + client_count)
+    print("    Total de requests: " + total_requests)
+    
+    // Média de páginas por cliente
+    if (client_count > 0) {
+        let avg_pages = total_requests / client_count
+        print("    Média de páginas por cliente: " + avg_pages)
+    }
+}
+
+// Inicia servidor - tenta portas 8080, 8081, 8082...
+print("  Iniciando servidor HTTP...")
+print("  Sistema de grafos: Módulo nativo 'graph' importado")
+print("  Funções disponíveis: graph_add_edge, graph_get_client_pages, etc.")
+
+let listener = 0
+let port = 8080
+let max_attempts = 5
+
+while (listener <= 0 && port < 8080 + max_attempts) {
+    print("  Tentando porta " + port + "...")
+    listener = tcp_listen(port)
+    if (listener <= 0) {
+        port = port + 1
+    }
+}
+
+if (listener <= 0) {
+    print("  ✗ Erro ao criar servidor!")
+    print("  ✗ Não foi possível iniciar o servidor em nenhuma porta")
+    print("  ✗ Verifique se você tem permissão para criar sockets")
+    print("")
+    // Para o programa se não conseguir iniciar o servidor
+    // Como não temos exit(), vamos apenas não entrar no loop
+} else {
+    print("  ✓ Servidor iniciado na porta " + port + "!")
+    print("  ✓ Acesse: http://localhost:" + port)
+    print("  ✓ Pressione Ctrl+C para parar")
+    print("")
+    
+    // Loop principal do servidor (só executa se listener for válido)
+    let request_count = 0
+    while (1) {
+        // Aceita conexão (bloqueia até receber uma)
+        let client = tcp_accept(listener)
+        
+        if (client > 0) {
+            request_count = request_count + 1
+            let client_id = "client_" + request_count
+            print("  [Request #" + request_count + "] Nova conexão aceita!")
+            
+            // Recebe request
+            let request = tcp_recv(client, 1024, 1000)
+            if (len(request) > 0) {
+                // Extrai primeira linha do request
+                let newline_pos = index_of(request, "\n")
+                if (newline_pos >= 0) {
+                    let first_line = substr(request, 0, newline_pos)
+                    print("    → " + first_line)
+                    
+                    // Extrai path do request e adiciona ao grafo (com proteção)
+                    let page = extract_path(first_line)
+                    if (len(page) > 0) {
+                        // Adiciona ao grafo - função definida em Asteron
+                        graph_add_edge(client_id, page)
+                        print("    📍 Página acessada: " + page)
+                        
+                        // Mostra histórico do cliente (se houver)
+                        let history = graph_get_client_pages(client_id)
+                        if (len(history) > 0 && len(history) < 500) {
+                            print("    📚 Histórico: " + history)
+                        }
+                        
+                        // Análise avançada: mostra quantos clientes acessaram esta página
+                        // Apenas se o grafo não for muito grande (evita lentidão)
+                        let client_count = graph_get_client_count()
+                        if (client_count < 100) {
+                            let page_clients = graph_find_clients_by_page(page)
+                            if (len(page_clients) > 0 && len(page_clients) < 200) {
+                                let comma_count = 0
+                                let temp = page_clients
+                                let comma_pos = index_of(temp, ",")
+                                while (comma_pos >= 0) {
+                                    comma_count = comma_count + 1
+                                    temp = substr(temp, comma_pos + 1, len(temp))
+                                    comma_pos = index_of(temp, ",")
+                                }
+                                let total_clients = comma_count + 1
+                                print("    👥 " + total_clients + " cliente(s) acessaram esta página")
+                            }
+                        }
+                    }
+                } else {
+                    print("    → Request recebido (" + len(request) + " bytes)")
+                }
+            }
+            
+            // Cria e envia resposta HTTP com HTML (sempre tenta enviar, mesmo se houver erro no grafo)
+            let http_response = make_http_response(html_content)
+            let bytes_sent = tcp_send(client, http_response)
+            if (bytes_sent > 0) {
+                print("    ✓ Resposta enviada (" + bytes_sent + " bytes)")
+            } else {
+                print("    ⚠ Aviso: Resposta pode não ter sido enviada completamente")
+            }
+            
+            // Fecha conexão
+            tcp_close(client)
+            print("    ✓ Conexão fechada")
+            
+            // Mostra estatísticas avançadas do grafo a cada 5 requests
+            let stats_interval = 5
+            let should_show_stats = (request_count / stats_interval) * stats_interval == request_count
+            if (should_show_stats) {
+                let client_count = graph_get_client_count()
+                if (client_count < 50) {
+                    print("")
+                    graph_print_advanced_stats()
+                    print("")
+                    print("  📋 Export do Grafo:")
+                    print(graph_export())
+                } else {
+                    print("")
+                    print("  📊 Estatísticas do Grafo (resumidas):")
+                    print("    Clientes únicos: " + client_count)
+                    print("    Total de requests: " + graph_get_total_requests())
+                }
+            }
+            print("")
+        } else {
+            // Erro ao aceitar conexão - continua tentando
+            // Verifica se o listener ainda é válido
+            if (listener <= 0) {
+                print("  ✗ ERRO CRÍTICO: Listener foi fechado! Servidor parando.")
+                break
+            }
+            print("  ⚠ Aguardando conexão...")
+            sleep(100)  // Espera um pouco antes de tentar novamente
+        }
+    }
+    
+    // Fecha listener (só chega aqui se houver erro crítico)
+    if (listener > 0) {
+        print("  Fechando listener...")
+        tcp_close(listener)
+    }
+    print("  Servidor encerrado.")
+}
+

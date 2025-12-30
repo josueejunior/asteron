@@ -1,0 +1,42 @@
+// Teste do módulo net
+import net
+
+// Teste 1: Obter hostname local
+print("=== Teste Net Module ===")
+print("")
+
+print("1. Hostname local:")
+let host = hostname()
+print(host)
+print("")
+
+// Teste 2: Resolver DNS
+print("2. Resolver DNS (google.com):")
+let ip = resolve("google.com")
+print(ip)
+print("")
+
+// Teste 3: Conexão TCP simples
+print("3. Conectar a servidor HTTP:")
+print("   Conectando a example.com:80...")
+
+let sock = tcp_connect("example.com", 80)
+print("   Conectado!")
+
+// Envia request HTTP
+let request = "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n"
+tcp_send(sock, request)
+print("   Request enviado!")
+
+// Recebe resposta
+let response = tcp_recv(sock, 512)
+print("   Resposta recebida:")
+print(response)
+
+// Fecha conexão
+tcp_close(sock)
+print("   Conexão fechada!")
+
+print("")
+print("=== Teste concluído! ===")
+

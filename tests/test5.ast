@@ -1,0 +1,13 @@
+let x = 10
+let y = 5
+
+if (x == 10 && y > 0) {
+    print("x é 10 e y é positivo")
+}
+
+if (x != y) {
+    print("x é diferente de y")
+}
+
+
+

@@ -1,0 +1,40 @@
+// Teste básico para o sistema de bytecode
+
+let x = 10;
+let y = 5;
+
+// Teste de operações aritméticas
+let soma = x + y;
+print(soma);
+
+let subtracao = x - y;
+print(subtracao);
+
+let multiplicacao = x * y;
+print(multiplicacao);
+
+let divisao = x / y;
+print(divisao);
+
+// Teste de comparações
+let maior = x > y;
+print(maior);
+
+let menor = x < y;
+print(menor);
+
+let igual = x == y;
+print(igual);
+
+// Teste de if
+if (x > y) {
+    print("x é maior que y");
+}
+
+// Teste de while
+let i = 0;
+while (i < 3) {
+    print(i);
+    let i = i + 1;
+}
+

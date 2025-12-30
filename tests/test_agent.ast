@@ -1,0 +1,182 @@
+// =============================================================================
+// TESTE DO MÓDULO MULTI-AGENTE
+// =============================================================================
+// 
+// Este teste demonstra:
+// - Criação de ambiente
+// - Spawn de agentes
+// - Publicação/subscrição de mensagens
+// - Compartilhamento de memória
+// - Exportação/importação de contexto
+//
+// =============================================================================
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║        ASTERON AGENT MODULE - TESTE MULTI-AGENTE            ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+print("")
+
+// -----------------------------------------------------------------------------
+// 1. CRIAÇÃO DE AMBIENTE
+// -----------------------------------------------------------------------------
+print("═══ 1. CRIANDO AMBIENTE ═══")
+print("")
+
+print("  Criando ambiente 'sistema_multi_agente'...")
+let env = agent_env_create("sistema_multi_agente")
+print("  Ambiente criado!")
+print("")
+
+// -----------------------------------------------------------------------------
+// 2. SPAWN DE AGENTES
+// -----------------------------------------------------------------------------
+print("═══ 2. SPAWN DE AGENTES ═══")
+print("")
+
+print("  Criando Agente A...")
+let agente_a = agent_spawn(env, "AgenteA")
+print("  Agente A criado: ")
+print(agente_a)
+print("")
+
+print("  Criando Agente B...")
+let agente_b = agent_spawn(env, "AgenteB")
+print("  Agente B criado: ")
+print(agente_b)
+print("")
+
+print("  Criando Agente C (Coordenador)...")
+let agente_c = agent_spawn(env, "AgenteCoordenador")
+print("  Agente C criado: ")
+print(agente_c)
+print("")
+
+// -----------------------------------------------------------------------------
+// 3. MESSAGE BUS (PUB/SUB)
+// -----------------------------------------------------------------------------
+print("═══ 3. MESSAGE BUS (PUB/SUB) ═══")
+print("")
+
+print("  Agente A publica hipótese...")
+agent_publish(env, "hypothesis", "Acredito que x > 10")
+print("  ✓ Mensagem publicada no tópico 'hypothesis'")
+print("")
+
+print("  Agente B se inscreve em 'hypothesis'...")
+agent_subscribe(env, "hypothesis")
+print("  ✓ Agente B inscrito")
+print("")
+
+print("  Agente C se inscreve em 'hypothesis'...")
+agent_subscribe(env, "hypothesis")
+print("  ✓ Agente C inscrito")
+print("")
+
+print("  Agente B publica observação...")
+agent_publish(env, "observation", "Observado: x = 15")
+print("  ✓ Mensagem publicada no tópico 'observation'")
+print("")
+
+// -----------------------------------------------------------------------------
+// 4. SHARED SPACE (MEMÓRIA COMPARTILHADA)
+// -----------------------------------------------------------------------------
+print("═══ 4. SHARED SPACE (MEMÓRIA COMPARTILHADA) ═══")
+print("")
+
+print("  Agente A compartilha resultado de cálculo...")
+let resultado = 42
+agent_shared_set(env, "resultado_calculo", resultado)
+print("  ✓ Resultado compartilhado: ")
+print(resultado)
+print("")
+
+print("  Agente B lê resultado compartilhado...")
+let resultado_lido = agent_shared_get(env, "resultado_calculo")
+print("  ✓ Resultado lido: ")
+print(resultado_lido)
+print("")
+
+print("  Agente C compartilha estado do sistema...")
+agent_shared_set(env, "sistema_status", "operacional")
+print("  ✓ Status compartilhado")
+print("")
+
+print("  Agente A lê status do sistema...")
+let status = agent_shared_get(env, "sistema_status")
+print("  ✓ Status lido: ")
+print(status)
+print("")
+
+// -----------------------------------------------------------------------------
+// 5. EXPORTAÇÃO/IMPORTAÇÃO DE CONTEXTO
+// -----------------------------------------------------------------------------
+print("═══ 5. EXPORTAÇÃO/IMPORTAÇÃO DE CONTEXTO ═══")
+print("")
+
+print("  Agente A exporta seu contexto...")
+let ctx_a = agent_context_export(agente_a)
+print("  ✓ Contexto do Agente A exportado")
+print("")
+
+print("  Agente B importa contexto do Agente A (merge)...")
+agent_context_import(agente_b, ctx_a, "merge")
+print("  ✓ Contexto importado com estratégia 'merge'")
+print("")
+
+print("  Agente C importa contexto do Agente A (overlay)...")
+agent_context_import(agente_c, ctx_a, "overlay")
+print("  ✓ Contexto importado com estratégia 'overlay'")
+print("")
+
+// -----------------------------------------------------------------------------
+// 6. CENÁRIO DE COLABORAÇÃO
+// -----------------------------------------------------------------------------
+print("═══ 6. CENÁRIO DE COLABORAÇÃO ═══")
+print("")
+
+print("  Simulando colaboração entre agentes...")
+print("")
+
+print("  [Agente A] Calculando soma de 1 a 10...")
+let soma = 0
+// Em um cenário real, isso seria feito pelo agente
+// Por enquanto, simulamos
+soma = 55
+agent_shared_set(env, "soma_1_10", soma)
+print("  ✓ Soma calculada e compartilhada: ")
+print(soma)
+print("")
+
+print("  [Agente B] Verificando se soma está correta...")
+let soma_verificada = agent_shared_get(env, "soma_1_10")
+if (soma_verificada == 55) {
+    print("  ✓ Soma verificada: CORRETA")
+    agent_publish(env, "validation", "Soma validada com sucesso")
+} else {
+    print("  ✗ Soma verificada: INCORRETA")
+    agent_publish(env, "validation", "Soma inválida")
+}
+print("")
+
+print("  [Agente C] Coordenando processo...")
+agent_subscribe(env, "validation")
+print("  ✓ Coordenador inscrito em validações")
+print("")
+
+// -----------------------------------------------------------------------------
+// 7. RESULTADO FINAL
+// -----------------------------------------------------------------------------
+print("═══ 7. RESULTADO FINAL ═══")
+print("")
+
+print("  Ambiente criado com sucesso!")
+print("  Agentes ativos: 3")
+print("  Mensagens trocadas: múltiplas")
+print("  Memória compartilhada: ativa")
+print("  Contextos exportados/importados: 2")
+print("")
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║              ✓ TESTE MULTI-AGENTE CONCLUÍDO!                 ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+

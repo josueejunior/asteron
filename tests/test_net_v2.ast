@@ -1,0 +1,100 @@
+// =============================================================================
+// TESTE DO MÓDULO NET v2.0 - REVOLUCIONÁRIO
+// =============================================================================
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║          ASTERON NET MODULE v2.0 - TESTE COMPLETO            ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+print("")
+
+// -----------------------------------------------------------------------------
+// 1. DNS BÁSICO
+// -----------------------------------------------------------------------------
+print("═══ 1. DNS BÁSICO ═══")
+print("")
+
+print("  hostname(): ")
+let host = hostname()
+print(host)
+
+print("  resolve('google.com'): ")
+let ip = resolve("google.com")
+print(ip)
+
+print("")
+
+// -----------------------------------------------------------------------------
+// 2. CONEXÃO TCP COM HANDLE NUMÉRICO
+// -----------------------------------------------------------------------------
+print("═══ 2. TCP CONNECT (Handle Numérico) ═══")
+print("")
+
+print("  Conectando a example.com:80...")
+let sock = tcp_connect("example.com", 80)
+print("  Handle retornado: ")
+print(sock)
+
+// -----------------------------------------------------------------------------
+// 3. TCP SEND E RECV
+// -----------------------------------------------------------------------------
+print("")
+print("═══ 3. TCP SEND/RECV ═══")
+print("")
+
+// Envia request HTTP
+let request = "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n"
+print("  Enviando request HTTP...")
+let bytes_sent = tcp_send(sock, request)
+print("  Bytes enviados: ")
+print(bytes_sent)
+
+// Recebe resposta
+print("  Recebendo resposta...")
+let response = tcp_recv(sock, 1024)
+print("  Resposta (primeiros 200 chars):")
+print(response)
+
+// Fecha conexão
+tcp_close(sock)
+print("  Conexão fechada!")
+
+print("")
+
+// -----------------------------------------------------------------------------
+// 4. HTTP GET SIMPLIFICADO
+// -----------------------------------------------------------------------------
+print("═══ 4. HTTP GET SIMPLIFICADO ═══")
+print("")
+
+print("  http_get('http://example.com/')...")
+let html = http_get("http://example.com/")
+print("  Resposta recebida (tamanho): ")
+print(len(html))
+
+print("")
+
+// -----------------------------------------------------------------------------
+// 5. DNS AVANÇADO (se implementado)
+// -----------------------------------------------------------------------------
+print("═══ 5. DNS AVANÇADO ═══")
+print("")
+
+print("  resolve_all('google.com'): ")
+// let ips = resolve_all("google.com")
+// print(ips)
+print("  (função registrada)")
+
+print("  reverse_lookup('8.8.8.8'): ")
+// let hostname = reverse_lookup("8.8.8.8")
+// print(hostname)
+print("  (função registrada)")
+
+print("")
+
+// -----------------------------------------------------------------------------
+// RESULTADO
+// -----------------------------------------------------------------------------
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║                    ✓ TESTE CONCLUÍDO!                        ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+

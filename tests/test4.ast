@@ -1,0 +1,9 @@
+let x = 10
+let y = 5
+let soma = x + y
+let produto = x * y
+print(soma)
+print(produto)
+
+
+

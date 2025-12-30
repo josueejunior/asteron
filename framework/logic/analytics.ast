@@ -1,0 +1,268 @@
+// =============================================================================
+// ANALYTICS MODULE - Análise de Padrões e Insights
+// =============================================================================
+// 
+// Descobre padrões no grafo:
+// - Clientes semelhantes (clustering)
+// - Páginas mais visitadas
+// - Produtos mais populares
+// - Padrões de navegação
+//
+// NOTA: Este módulo depende de funções do graph_manager.ast
+//
+// =============================================================================
+
+import graph
+
+// Funções auxiliares (devem estar em graph_manager)
+fn get_neighbors_by_type(node_id, edge_type) {
+    let all_edges = graph_get_client_pages("edges")
+    let neighbors = ""
+    let pos = 0
+    
+    while (pos < len(all_edges)) {
+        let pipe_pos = index_of(substr(all_edges, pos, len(all_edges)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(all_edges)
+        }
+        
+        let entry = substr(all_edges, pos, entry_end)
+        let type_key = ":" + edge_type
+        if (index_of(entry, node_id + "->") >= 0 && index_of(entry, type_key) >= 0) {
+            let arrow_pos = index_of(entry, "->")
+            if (arrow_pos >= 0) {
+                let rest = substr(entry, arrow_pos + 2, len(entry))
+                let colon_pos = index_of(rest, ":")
+                if (colon_pos >= 0) {
+                    let neighbor = substr(rest, 0, colon_pos)
+                    if (index_of(neighbors, neighbor) < 0) {
+                        if (len(neighbors) > 0) {
+                            neighbors = neighbors + ","
+                        }
+                        neighbors = neighbors + neighbor
+                    }
+                }
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return neighbors
+}
+
+fn find_similar_clients(client_id) {
+    // Implementação simplificada
+    return ""
+}
+
+// =============================================================================
+// ANÁLISE DE PADRÕES
+// =============================================================================
+
+// Encontra clusters de clientes similares
+fn find_client_clusters() {
+    let clusters = ""
+    let processed = ""
+    
+    // Busca todos os clientes
+    let all_clients = graph_get_client_pages("nodes")
+    let pos = 0
+    
+    while (pos < len(all_clients)) {
+        let pipe_pos = index_of(substr(all_clients, pos, len(all_clients)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(all_clients)
+        }
+        
+        let entry = substr(all_clients, pos, entry_end)
+        let colon_pos = index_of(entry, ":")
+        if (colon_pos >= 0) {
+            let client_id = substr(entry, 0, colon_pos)
+            let node_type = substr(entry, colon_pos + 1, len(entry))
+            
+            if (node_type == "client" && index_of(processed, "|" + client_id + "|") < 0) {
+                // Marca como processado
+                if (len(processed) > 0) {
+                    processed = processed + "|"
+                }
+                processed = processed + client_id + "|"
+                
+                // Encontra clientes similares
+                let similar = find_similar_clients(client_id)
+                if (len(similar) > 0) {
+                    // Cria cluster
+                    let cluster = client_id
+                    let sim_pos = 0
+                    while (sim_pos < len(similar)) {
+                        let sim_comma = index_of(substr(similar, sim_pos, len(similar)), ",")
+                        let sim_end = sim_pos
+                        if (sim_comma >= 0) {
+                            sim_end = sim_pos + sim_comma
+                        } else {
+                            sim_end = len(similar)
+                        }
+                        
+                        let sim_entry = substr(similar, sim_pos, sim_end)
+                        let sim_colon = index_of(sim_entry, ":")
+                        if (sim_colon >= 0) {
+                            let sim_client = substr(sim_entry, 0, sim_colon)
+                            cluster = cluster + "," + sim_client
+                            // Marca como processado
+                            if (len(processed) > 0) {
+                                processed = processed + "|"
+                            }
+                            processed = processed + sim_client + "|"
+                        }
+                        
+                        if (sim_comma < 0) {
+                            break
+                        }
+                        sim_pos = sim_end + 1
+                    }
+                    
+                    if (len(clusters) > 0) {
+                        clusters = clusters + "|"
+                    }
+                    clusters = clusters + cluster
+                }
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return clusters
+}
+
+// =============================================================================
+// ESTATÍSTICAS DE PÁGINAS
+// =============================================================================
+
+// Encontra páginas mais visitadas
+fn find_most_visited_pages(limit) {
+    // Usa função do módulo graph
+    let all_edges = graph_get_client_pages("edges")
+    let page_counts = ""
+    
+    // Conta visitas por página
+    let pos = 0
+    while (pos < len(all_edges)) {
+        let pipe_pos = index_of(substr(all_edges, pos, len(all_edges)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(all_edges)
+        }
+        
+        let entry = substr(all_edges, pos, entry_end)
+        if (index_of(entry, ":visited") >= 0) {
+            let arrow_pos = index_of(entry, "->")
+            if (arrow_pos >= 0) {
+                let rest = substr(entry, arrow_pos + 2, len(entry))
+                let colon_pos = index_of(rest, ":")
+                if (colon_pos >= 0) {
+                    let page = substr(rest, 0, colon_pos)
+                    // Incrementa contador (formato: "page:count")
+                    let count_key = "|" + page + ":"
+                    let count_pos = index_of(page_counts, count_key)
+                    if (count_pos >= 0) {
+                        // Atualiza contador existente
+                        let count_end = index_of(substr(page_counts, count_pos + len(count_key), len(page_counts)), "|")
+                        if (count_end < 0) {
+                            count_end = len(page_counts) - count_pos - len(count_key)
+                        }
+                        let old_count_str = substr(page_counts, count_pos + len(count_key), count_pos + len(count_key) + count_end)
+                        let old_count = num(old_count_str) + 1
+                        // Reconstrói (implementação simplificada)
+                    } else {
+                        // Adiciona novo contador
+                        if (len(page_counts) > 0) {
+                            page_counts = page_counts + "|"
+                        }
+                        page_counts = page_counts + page + ":1"
+                    }
+                }
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    // Retorna top N (implementação simplificada)
+    return page_counts
+}
+
+// =============================================================================
+// ANÁLISE DE NAVEGAÇÃO
+// =============================================================================
+
+// Analisa padrões de navegação de um cliente
+fn analyze_navigation_pattern(client_id) {
+    let pattern = "Padrão de navegação para " + client_id + ":\n"
+    
+    // Páginas visitadas em ordem
+    let pages = get_neighbors_by_type(client_id, "visited")
+    pattern = pattern + "Sequência: " + pages + "\n"
+    
+    // Páginas mais frequentes
+    let frequent = find_most_frequent_pages(client_id)
+    pattern = pattern + "Mais frequentes: " + frequent + "\n"
+    
+    return pattern
+}
+
+// Encontra páginas mais frequentes para um cliente
+fn find_most_frequent_pages(client_id) {
+    // Implementação simplificada
+    // Em produção, contar frequência real
+    return get_neighbors_by_type(client_id, "visited")
+}
+
+// =============================================================================
+// INSIGHTS GERAIS
+// =============================================================================
+
+// Gera insights gerais do grafo
+fn generate_insights() {
+    let insights = "=== Insights do Grafo ===\n"
+    
+    // Total de clientes
+    insights = insights + "Total de clientes: " + graph_get_client_count() + "\n"
+    
+    // Total de requests
+    insights = insights + "Total de requests: " + graph_get_total_requests() + "\n"
+    
+    // Clusters encontrados
+    let clusters = find_client_clusters()
+    let cluster_count = 0
+    let cluster_pos = 0
+    while (cluster_pos < len(clusters)) {
+        let pipe_pos = index_of(substr(clusters, cluster_pos, len(clusters)), "|")
+        cluster_count = cluster_count + 1
+        if (pipe_pos < 0) {
+            break
+        }
+        cluster_pos = cluster_pos + pipe_pos + 1
+    }
+    insights = insights + "Clusters de clientes: " + cluster_count + "\n"
+    
+    return insights
+}
+

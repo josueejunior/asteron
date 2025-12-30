@@ -1,0 +1,204 @@
+// =============================================================================
+// ASTERON - TESTE COMPLETO DE TODAS AS FEATURES
+// =============================================================================
+
+print "╔═══════════════════════════════════════════════════════════════╗"
+print "║          ASTERON - TESTE DE TODAS AS FEATURES                 ║"
+print "╚═══════════════════════════════════════════════════════════════╝"
+print ""
+
+// =============================================================================
+// 1. ESCAPE SEQUENCES (CORRIGIDO!)
+// =============================================================================
+print "═══ 1. ESCAPE SEQUENCES ═══"
+print ""
+
+// Agora \r\n funciona corretamente!
+let http_request = "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n"
+print "  HTTP Request criado com \\r\\n corretamente"
+
+// Outras escape sequences
+let tab_string = "Col1\tCol2\tCol3"
+print "  String com tabs:"
+print tab_string
+
+let quote_string = "Ele disse: \"Olá mundo!\""
+print "  String com aspas escapadas:"
+print quote_string
+
+print ""
+
+// =============================================================================
+// 2. NETWORKING BÁSICO
+// =============================================================================
+print "═══ 2. NETWORKING ═══"
+print ""
+
+print "  hostname():"
+let host = hostname()
+print host
+
+print "  resolve('google.com'):"
+let ip = resolve("google.com")
+print ip
+
+print ""
+
+// =============================================================================
+// 3. TCP COM HTTP
+// =============================================================================
+print "═══ 3. TCP COM ESCAPE SEQUENCES ═══"
+print ""
+
+print "  Conectando a example.com:80..."
+let sock = tcp_connect("example.com", 80)
+print "  Handle:"
+print sock
+
+// O HTTP request agora tem \r\n corretos!
+let request = "GET / HTTP/1.1\r\nHost: example.com\r\nConnection: close\r\n\r\n"
+print "  Enviando request HTTP (com \\r\\n corretos)..."
+let bytes_sent = tcp_send(sock, request)
+print "  Bytes enviados:"
+print bytes_sent
+
+print "  Recebendo resposta..."
+let response = tcp_recv(sock, 512)
+print "  Primeiros bytes da resposta:"
+print response
+
+tcp_close(sock)
+print "  Conexão fechada!"
+
+print ""
+
+// =============================================================================
+// 4. TLS/HTTPS (NOVO!)
+// =============================================================================
+print "═══ 4. TLS/HTTPS ═══"
+print ""
+
+print "  tls_available():"
+let has_tls = tls_available()
+print has_tls
+
+print "  tls_version():"
+let tls_ver = tls_version()
+print tls_ver
+
+print ""
+
+// =============================================================================
+// 5. ANOTAÇÕES DECLARATIVAS (NOVO!)
+// =============================================================================
+print "═══ 5. ANOTAÇÕES DECLARATIVAS ═══"
+print ""
+
+// Anotações de otimização
+@pure
+let pure_calc = 10 + 20 + 30
+
+@parallel
+let parallel_var = 100 * 2
+
+@memoize
+let cached_result = 3.14159 * 2
+
+@hot
+let hot_path = 999
+
+print "  @pure result:"
+print pure_calc
+
+print "  @parallel result:"
+print parallel_var
+
+print "  @memoize result:"
+print cached_result
+
+print "  @hot result:"
+print hot_path
+
+print ""
+
+// =============================================================================
+// 6. MATEMÁTICA
+// =============================================================================
+print "═══ 6. FUNÇÕES MATEMÁTICAS ═══"
+print ""
+
+print "  sin(1.0):"
+print sin(1.0)
+
+print "  sqrt(16.0):"
+print sqrt(16.0)
+
+print "  pow(2.0, 10.0):"
+print pow(2.0, 10.0)
+
+print "  random():"
+print random()
+
+print ""
+
+// =============================================================================
+// 7. SISTEMA DE ARQUIVOS
+// =============================================================================
+print "═══ 7. SISTEMA DE ARQUIVOS ═══"
+print ""
+
+print "  cwd():"
+print cwd()
+
+print "  exists('tests/test_all_features.ast'):"
+print exists("tests/test_all_features.ast")
+
+print ""
+
+// =============================================================================
+// 8. TIME
+// =============================================================================
+print "═══ 8. TIME ═══"
+print ""
+
+print "  now():"
+print now()
+
+print "  year():"
+print year()
+
+print "  month():"
+print month()
+
+print "  day():"
+print day()
+
+print ""
+
+// =============================================================================
+// 9. OS
+// =============================================================================
+print "═══ 9. INFORMAÇÕES DO SISTEMA ═══"
+print ""
+
+print "  platform():"
+print platform()
+
+print "  arch():"
+print arch()
+
+print "  cpus():"
+print cpus()
+
+print "  memory_total():"
+print memory_total()
+
+print ""
+
+// =============================================================================
+// CONCLUSÃO
+// =============================================================================
+print "╔═══════════════════════════════════════════════════════════════╗"
+print "║              ✓ TODOS OS TESTES CONCLUÍDOS!                    ║"
+print "╚═══════════════════════════════════════════════════════════════╝"
+

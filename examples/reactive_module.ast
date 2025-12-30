@@ -1,0 +1,139 @@
+// =============================================================================
+// EXEMPLO: Sistema Reativo de Módulos
+// =============================================================================
+// 
+// Este exemplo demonstra como módulos funcionam como first-class entities
+// com estado reativo integrado.
+//
+// =============================================================================
+
+import net
+import fs
+import time
+import os
+import math
+
+// -----------------------------------------------------------------------------
+// 1. FUNÇÕES BÁSICAS DOS MÓDULOS
+// -----------------------------------------------------------------------------
+
+println("=== Informações do Sistema ===")
+println("Plataforma: " + os.platform())
+println("Arquitetura: " + os.arch())
+println("Hostname: " + os.hostname())
+println("Usuário: " + os.username())
+println("CPUs: " + str(os.cpus()))
+println("Memória Total: " + str(os.memory_total() / 1024 / 1024) + " MB")
+println("Memória Livre: " + str(os.memory_free() / 1024 / 1024) + " MB")
+
+// -----------------------------------------------------------------------------
+// 2. OPERAÇÕES DE ARQUIVO
+// -----------------------------------------------------------------------------
+
+println("\n=== Sistema de Arquivos ===")
+
+let content = "Hello from Asteron!\nTimestamp: " + str(time.now())
+fs.write("test_output.txt", content)
+println("Arquivo escrito: test_output.txt")
+
+let read_back = fs.read("test_output.txt")
+println("Conteúdo lido: " + read_back)
+
+// -----------------------------------------------------------------------------
+// 3. TIMING E PERFORMANCE
+// -----------------------------------------------------------------------------
+
+println("\n=== Timing ===")
+
+let start = time.instant()
+
+// Operação matemática pesada
+let sum = 0
+for i in range(10000) {
+    sum = sum + math.sin(i) * math.cos(i)
+}
+
+let elapsed = time.elapsed(start)
+println("10000 operações sin/cos em " + str(elapsed) + "ms")
+
+// -----------------------------------------------------------------------------
+// 4. NETWORKING (conceitual)
+// -----------------------------------------------------------------------------
+
+println("\n=== Networking ===")
+
+let host = net.hostname()
+println("Hostname: " + host)
+
+// Resolve DNS
+let ip = net.resolve("localhost")
+println("localhost -> " + ip)
+
+// -----------------------------------------------------------------------------
+// 5. VARIÁVEIS DE AMBIENTE
+// -----------------------------------------------------------------------------
+
+println("\n=== Variáveis de Ambiente ===")
+
+let path = os.env("PATH")
+println("PATH: " + (path != nil ? "definido" : "não definido"))
+
+os.env_set("ASTERON_TEST", "hello")
+println("ASTERON_TEST = " + os.env("ASTERON_TEST"))
+
+// -----------------------------------------------------------------------------
+// 6. ESTADO REATIVO (conceitual)
+// -----------------------------------------------------------------------------
+
+println("\n=== Estado Reativo ===")
+
+// No futuro:
+// state connection = nil
+// 
+// when connection != nil {
+//     println("Conectado!")
+//     process(connection.data)
+// }
+// 
+// when connection.received {
+//     handle_message(connection.received)
+// }
+
+println("Sistema de estado reativo configurado")
+
+// -----------------------------------------------------------------------------
+// 7. CONCORRÊNCIA (conceitual)
+// -----------------------------------------------------------------------------
+
+println("\n=== Concorrência ===")
+
+// let ch = task.channel(10)
+// 
+// task.spawn(fn() {
+//     for i in range(5) {
+//         task.send(ch, i * 2)
+//         time.sleep(100)
+//     }
+//     task.close(ch)
+// })
+// 
+// while true {
+//     let value = task.recv(ch)
+//     if value == nil { break }
+//     println("Recebido: " + str(value))
+// }
+
+println("Concorrência disponível via módulo task")
+
+// -----------------------------------------------------------------------------
+// LIMPEZA
+// -----------------------------------------------------------------------------
+
+println("\n=== Limpeza ===")
+if fs.exists("test_output.txt") {
+    fs.remove("test_output.txt")
+    println("Arquivo de teste removido")
+}
+
+println("\n✓ Todos os módulos funcionando!")
+

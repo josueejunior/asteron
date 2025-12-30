@@ -1,0 +1,18 @@
+// Anotação @parallel - pode executar em paralelo
+@parallel
+let resultado = soma(5, 3);
+
+// Anotação @depends - depende de 'resultado'
+@depends(resultado)
+print(resultado);
+
+// Múltiplas operações paralelas
+@parallel
+let x = 10;
+
+@parallel
+let y = 20;
+
+// Operação que depende de ambas
+@depends(x, y)
+let soma_xy = x + y;

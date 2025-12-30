@@ -1,0 +1,13 @@
+// Teste de Calor Real (Mutação + HotSpot)
+// i = i + 1 agora é uma mutação real, não shadowing.
+
+let i = 0;
+while (i < 10) {
+    @parallel
+    let soma = 1 + i;
+    
+    i = i + 1; // Mutação real
+}
+
+print("Fim do loop de calor");
+

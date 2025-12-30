@@ -1,0 +1,254 @@
+// =============================================================================
+// DECISION ENGINE - Motor de Decisão Automática
+// =============================================================================
+// 
+// Decide qual conteúdo, produto ou mensagem mostrar baseado em:
+// - Histórico do cliente (grafo)
+// - Regras de negócio
+// - Recomendações do sistema
+// - Analytics
+//
+// NOTA: Este módulo depende de funções do graph_manager.ast e recommendation.ast
+//
+// =============================================================================
+
+import graph
+
+// Funções auxiliares simplificadas (devem estar em graph_manager)
+fn get_neighbors_by_type(node_id, edge_type) {
+    let all_edges = graph_get_client_pages("edges")
+    let neighbors = ""
+    let pos = 0
+    
+    while (pos < len(all_edges)) {
+        let pipe_pos = index_of(substr(all_edges, pos, len(all_edges)), "|")
+        let entry_end = pos
+        if (pipe_pos >= 0) {
+            entry_end = pos + pipe_pos
+        } else {
+            entry_end = len(all_edges)
+        }
+        
+        let entry = substr(all_edges, pos, entry_end)
+        let type_key = ":" + edge_type
+        if (index_of(entry, node_id + "->") >= 0 && index_of(entry, type_key) >= 0) {
+            let arrow_pos = index_of(entry, "->")
+            if (arrow_pos >= 0) {
+                let rest = substr(entry, arrow_pos + 2, len(entry))
+                let colon_pos = index_of(rest, ":")
+                if (colon_pos >= 0) {
+                    let neighbor = substr(rest, 0, colon_pos)
+                    if (index_of(neighbors, neighbor) < 0) {
+                        if (len(neighbors) > 0) {
+                            neighbors = neighbors + ","
+                        }
+                        neighbors = neighbors + neighbor
+                    }
+                }
+            }
+        }
+        
+        if (pipe_pos < 0) {
+            break
+        }
+        pos = entry_end + 1
+    }
+    
+    return neighbors
+}
+
+fn get_context(client_id) {
+    return "Cliente: " + client_id + " (contexto simplificado)"
+}
+
+fn recommend_hybrid(client_id) {
+    // Implementação simplificada
+    return ""
+}
+
+// =============================================================================
+// REGRAS DE DECISÃO
+// =============================================================================
+
+// Gera resposta HTML personalizada para um cliente
+fn generate_personalized_response(client_id, page_requested) {
+    // Obtém contexto do cliente
+    let context = get_context(client_id)
+    
+    // Obtém recomendações
+    let recommendations = recommend_hybrid(client_id)
+    
+    // Decide conteúdo baseado em regras
+    let content = decide_content(client_id, page_requested, recommendations)
+    
+    // Gera HTML personalizado
+    let html = generate_html(content, recommendations, context)
+    
+    return html
+}
+
+// Decide qual conteúdo mostrar
+fn decide_content(client_id, page, recommendations) {
+    let content = ""
+    
+    // Regra 1: Se cliente visitou muitas páginas, mostrar recomendações
+    let visited_pages = get_neighbors_by_type(client_id, "visited")
+    let page_count = count_items(visited_pages)
+    
+    if (page_count > 3) {
+        content = content + "recomendations:"
+        if (len(recommendations) > 0) {
+            content = content + recommendations
+        } else {
+            content = content + "popular"
+        }
+        content = content + "|"
+    }
+    
+    // Regra 2: Se página específica, mostrar conteúdo relacionado
+    if (page == "/products") {
+        content = content + "show_products:true|"
+    }
+    
+    // Regra 3: Se cliente novo, mostrar conteúdo de boas-vindas
+    if (page_count <= 1) {
+        content = content + "welcome:true|"
+    }
+    
+    return content
+}
+
+// Conta itens em uma lista separada por vírgulas
+fn count_items(list) {
+    if (len(list) == 0) {
+        return 0
+    }
+    
+    let count = 1
+    let pos = 0
+    while (pos < len(list)) {
+        let comma_pos = index_of(substr(list, pos, len(list)), ",")
+        if (comma_pos >= 0) {
+            count = count + 1
+            pos = pos + comma_pos + 1
+        } else {
+            break
+        }
+    }
+    
+    return count
+}
+
+// =============================================================================
+// GERAÇÃO DE HTML
+// =============================================================================
+
+// Gera HTML personalizado
+fn generate_html(content_rules, recommendations, context) {
+    let html = "<!DOCTYPE html>\n"
+    html = html + "<html>\n"
+    html = html + "<head>\n"
+    html = html + "    <title>Página Personalizada</title>\n"
+    html = html + "    <style>\n"
+    html = html + "        body { font-family: Arial, sans-serif; margin: 40px; background: #f0f0f0; }\n"
+    html = html + "        .recommendation { background: white; padding: 20px; margin: 10px 0; border-radius: 5px; }\n"
+    html = html + "        .welcome { background: #4CAF50; color: white; padding: 20px; margin: 10px 0; border-radius: 5px; }\n"
+    html = html + "    </style>\n"
+    html = html + "</head>\n"
+    html = html + "<body>\n"
+    html = html + "    <h1>🚀 Página Personalizada</h1>\n"
+    
+    // Adiciona conteúdo baseado em regras
+    if (index_of(content_rules, "welcome:true") >= 0) {
+        html = html + "    <div class=\"welcome\">\n"
+        html = html + "        <h2>Bem-vindo!</h2>\n"
+        html = html + "        <p>Esta é sua primeira visita. Explore nossos produtos!</p>\n"
+        html = html + "    </div>\n"
+    }
+    
+    if (index_of(content_rules, "recomendations:") >= 0) {
+        html = html + "    <div class=\"recommendation\">\n"
+        html = html + "        <h2>Recomendações para você</h2>\n"
+        
+        if (len(recommendations) > 0) {
+            html = html + "        <ul>\n"
+            let pos = 0
+            while (pos < len(recommendations)) {
+                let comma_pos = index_of(substr(recommendations, pos, len(recommendations)), ",")
+                let item_end = pos
+                if (comma_pos >= 0) {
+                    item_end = pos + comma_pos
+                } else {
+                    item_end = len(recommendations)
+                }
+                
+                let item = substr(recommendations, pos, item_end)
+                html = html + "            <li>" + item + "</li>\n"
+                
+                if (comma_pos < 0) {
+                    break
+                }
+                pos = item_end + 1
+            }
+            html = html + "        </ul>\n"
+        } else {
+            html = html + "        <p>Produtos populares em destaque!</p>\n"
+        }
+        
+        html = html + "    </div>\n"
+    }
+    
+    if (index_of(content_rules, "show_products:true") >= 0) {
+        html = html + "    <div class=\"recommendation\">\n"
+        html = html + "        <h2>Nossos Produtos</h2>\n"
+        html = html + "        <p>Explore nossa seleção especial!</p>\n"
+        html = html + "    </div>\n"
+    }
+    
+    // Adiciona contexto (debug)
+    html = html + "    <div style=\"margin-top: 20px; padding: 10px; background: #e0e0e0; font-size: 12px;\">\n"
+    html = html + "        <strong>Contexto:</strong><br>\n"
+    html = html + "        <pre>" + context + "</pre>\n"
+    html = html + "    </div>\n"
+    
+    html = html + "</body>\n"
+    html = html + "</html>\n"
+    
+    return html
+}
+
+// =============================================================================
+// DECISÕES AUTOMÁTICAS
+// =============================================================================
+
+// Decide se deve mostrar oferta especial
+fn should_show_offer(client_id) {
+    let visited_pages = get_neighbors_by_type(client_id, "visited")
+    let page_count = count_items(visited_pages)
+    
+    // Mostra oferta se visitou mais de 5 páginas mas não comprou nada
+    if (page_count > 5) {
+        let purchased = get_neighbors_by_type(client_id, "purchased")
+        if (len(purchased) == 0) {
+            return true
+        }
+    }
+    
+    return false
+}
+
+// Decide qual produto destacar
+fn decide_featured_product(client_id) {
+    let recommendations = recommend_hybrid(client_id)
+    if (len(recommendations) > 0) {
+        // Retorna primeiro produto recomendado
+        let comma_pos = index_of(recommendations, ",")
+        if (comma_pos >= 0) {
+            return substr(recommendations, 0, comma_pos)
+        }
+        return recommendations
+    }
+    
+    return "produto_popular_1"
+}
+

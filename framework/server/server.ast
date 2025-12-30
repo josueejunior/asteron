@@ -1,0 +1,198 @@
+// =============================================================================
+// HTTP SERVER - Servidor HTTP Integrado com Grafo e IA
+// =============================================================================
+// 
+// Servidor HTTP que:
+// - Recebe requests HTTP
+// - Identifica cliente/usuário
+// - Atualiza grafo com comportamento
+// - Usa módulos de lógica para gerar resposta personalizada
+// - Retorna HTML adaptado
+//
+// =============================================================================
+
+import net
+import graph
+
+// =============================================================================
+// FUNÇÕES AUXILIARES
+// =============================================================================
+
+// Extrai path do request HTTP
+fn extract_path(request_line) {
+    let space1 = index_of(request_line, " ")
+    if (space1 < 0) {
+        return "/"
+    }
+    let space2 = index_of(substr(request_line, space1 + 1, len(request_line)), " ")
+    if (space2 < 0) {
+        return substr(request_line, space1 + 1, len(request_line))
+    }
+    return substr(request_line, space1 + 1, space1 + 1 + space2)
+}
+
+// Extrai client_id do request (simplificado: usa IP ou session)
+fn extract_client_id(request, request_count) {
+    // Em produção, extrair de cookies, headers, etc.
+    // Por enquanto, usa número sequencial
+    return "client_" + request_count
+}
+
+// Cria resposta HTTP completa
+fn make_http_response(html) {
+    let response = "HTTP/1.1 200 OK\r\n"
+    response = response + "Content-Type: text/html; charset=utf-8\r\n"
+    response = response + "Content-Length: " + len(html) + "\r\n"
+    response = response + "Connection: close\r\n"
+    response = response + "\r\n"
+    response = response + html
+    return response
+}
+
+// =============================================================================
+// INTEGRAÇÃO COM GRAFO E LÓGICA
+// =============================================================================
+
+// Funções auxiliares simplificadas
+fn node_exists(node_id) {
+    let nodes = graph_get_client_pages("nodes")
+    return index_of(nodes, node_id + ":") >= 0
+}
+
+fn add_node(node_id, node_type, metadata) {
+    let node_data = node_id + ":" + node_type
+    graph_add_edge("nodes", node_data)
+}
+
+fn add_edge_simple(from_node, to_node, edge_type) {
+    let edge_data = from_node + "->" + to_node + ":" + edge_type
+    graph_add_edge("edges", edge_data)
+}
+
+// Processa request e atualiza grafo
+fn process_request(client_id, page) {
+    // Garante que cliente existe como nó
+    if (!node_exists(client_id)) {
+        add_node(client_id, "client", "")
+    }
+    
+    // Garante que página existe como nó
+    if (!node_exists(page)) {
+        add_node(page, "page", "")
+    }
+    
+    // Adiciona aresta: cliente visitou página
+    add_edge_simple(client_id, page, "visited")
+    
+    // Registra no módulo graph também (para estatísticas)
+    graph_add_edge(client_id, page)
+}
+
+// =============================================================================
+// SERVIDOR PRINCIPAL
+// =============================================================================
+
+print("╔═══════════════════════════════════════════════════════════════╗")
+print("║     FRAMEWORK DE IA OPERACIONAL - SERVIDOR HTTP               ║")
+print("╚═══════════════════════════════════════════════════════════════╝")
+print("")
+
+print("  Iniciando servidor HTTP...")
+print("  Sistema de grafos: Ativo")
+print("  Módulos de IA: Ativos")
+print("")
+
+let listener = 0
+let port = 8080
+let max_attempts = 5
+
+while (listener <= 0 && port < 8080 + max_attempts) {
+    print("  Tentando porta " + port + "...")
+    listener = tcp_listen(port)
+    if (listener <= 0) {
+        port = port + 1
+    }
+}
+
+if (listener <= 0) {
+    print("  ✗ Erro ao criar servidor!")
+    print("  ✗ Não foi possível iniciar o servidor em nenhuma porta")
+} else {
+    print("  ✓ Servidor iniciado na porta " + port + "!")
+    print("  ✓ Acesse: http://localhost:" + port)
+    print("  ✓ Pressione Ctrl+C para parar")
+    print("")
+    
+    let request_count = 0
+    
+    while (1) {
+        let client = tcp_accept(listener)
+        
+        if (client > 0) {
+            request_count = request_count + 1
+            let client_id = extract_client_id("", request_count)
+            
+            print("  [Request #" + request_count + "] Nova conexão de " + client_id)
+            
+            // Recebe request
+            let request = tcp_recv(client, 1024, 1000)
+            if (len(request) > 0) {
+                // Extrai primeira linha do request
+                let newline_pos = index_of(request, "\n")
+                if (newline_pos >= 0) {
+                    let first_line = substr(request, 0, newline_pos)
+                    print("    → " + first_line)
+                    
+                    // Extrai path
+                    let page = extract_path(first_line)
+                    print("    📍 Página: " + page)
+                    
+                    // Processa request e atualiza grafo
+                    process_request(client_id, page)
+                    
+                    // Gera resposta personalizada usando decision engine
+                    // NOTA: Em produção, carregar decision_engine.ast e recommendation.ast
+                    // Por enquanto, resposta simples
+                    let html_content = "<!DOCTYPE html>\n"
+                    html_content = html_content + "<html>\n"
+                    html_content = html_content + "<head><title>Framework IA</title></head>\n"
+                    html_content = html_content + "<body>\n"
+                    html_content = html_content + "    <h1>🚀 Framework de IA Operacional</h1>\n"
+                    html_content = html_content + "    <p>Cliente: " + client_id + "</p>\n"
+                    html_content = html_content + "    <p>Página: " + page + "</p>\n"
+                    html_content = html_content + "    <p>✓ Grafo atualizado com seu comportamento</p>\n"
+                    html_content = html_content + "</body>\n"
+                    html_content = html_content + "</html>\n"
+                    
+                    // Envia resposta
+                    let http_response = make_http_response(html_content)
+                    let bytes_sent = tcp_send(client, http_response)
+                    if (bytes_sent > 0) {
+                        print("    ✓ Resposta enviada (" + bytes_sent + " bytes)")
+                    }
+                }
+            }
+            
+            // Fecha conexão
+            tcp_close(client)
+            print("    ✓ Conexão fechada")
+            print("")
+            
+            // Mostra estatísticas a cada 10 requests
+            if ((request_count / 10) * 10 == request_count) {
+                print("  📊 Estatísticas:")
+                print("    Clientes únicos: " + graph_get_client_count())
+                print("    Total de requests: " + graph_get_total_requests())
+                print("")
+            }
+        } else {
+            sleep(100)
+        }
+    }
+    
+    if (listener > 0) {
+        tcp_close(listener)
+    }
+    print("  Servidor encerrado.")
+}
+

@@ -1,0 +1,44 @@
+// Teste do sistema de módulos Asteron
+// Demonstra import, export, e uso de módulos
+
+// Declaração do módulo (opcional para arquivo principal)
+// module main
+
+// Importa módulo matemático
+import math
+
+// Define função local (não exportada)
+function square(x) {
+    return x * x
+}
+
+// Define função exportada
+// export function circleArea(radius) {
+function circleArea(radius) {
+    // Usa PI do módulo math
+    let pi = 3.14159
+    return pi * square(radius)
+}
+
+// Testa funções matemáticas importadas
+let angle = 0.5
+print(sin(angle))
+print(cos(angle))
+
+// Testa função local
+let side = 5
+print(square(side))
+
+// Testa função que usa módulo
+let radius = 3
+print(circleArea(radius))
+
+// Funções de arredondamento
+print(floor(3.7))
+print(ceil(3.2))
+print(round(3.5))
+
+// Exponenciais
+print(sqrt(16))
+print(pow(2, 10))
+

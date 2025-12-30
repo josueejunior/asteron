@@ -1,0 +1,18 @@
+// Teste de Deotimização (DEOPT)
+// O JIT vai especializar para números, mas o loop mudará o tipo.
+
+let i = 0;
+while (i < 10) {
+    @parallel
+    let soma = 1 + i;
+    
+    i = i + 1;
+}
+
+print("Fim do loop estável.");
+
+// Mudança de tipo para forçar DEOPT
+let i = "texto";
+@parallel
+let falha = 1 + i; // Aqui o JIT Numeric deve falhar e dar Rollback
+

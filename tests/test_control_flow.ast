@@ -1,0 +1,42 @@
+// Teste completo de estruturas de controle
+
+// Teste 1: If/Else
+let x = 10;
+if (x > 5) {
+    print("x é maior que 5");
+} else {
+    print("x é menor ou igual a 5");
+}
+
+// Teste 2: While loop
+let i = 0;
+while (i < 5) {
+    print(i);
+    let i = i + 1;
+}
+
+// Teste 3: For loop
+for (let j = 0; j < 3; let j = j + 1) {
+    print(j);
+}
+
+// Teste 4: If aninhado
+let y = 15;
+if (y > 10) {
+    if (y < 20) {
+        print("y está entre 10 e 20");
+    }
+}
+
+// Teste 5: While com break implícito (condição falsa)
+let count = 0;
+while (count < 3) {
+    print(count);
+    let count = count + 1;
+}
+
+// Teste 6: For com todas as partes
+for (let k = 0; k < 2; let k = k + 1) {
+    print(k);
+}
+
