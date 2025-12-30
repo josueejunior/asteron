@@ -9,6 +9,10 @@ wasm_server
 *.dylib
 *.dll
 
+# Arquivos específicos do projeto
+saida.txt
+debug.log
+
 # Diretórios de build
 obj/
 build/
@@ -22,8 +26,7 @@ public/asteron.wasm
 
 # Logs
 *.log
-debug.log
-saida.txt
+*.out.log
 
 # Arquivos temporários
 *.tmp
