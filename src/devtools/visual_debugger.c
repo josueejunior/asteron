@@ -419,3 +419,4 @@ void visual_debugger_print_timeline(VisualDebugger* debugger) {
     printf("==========================\n");
 }
 
+

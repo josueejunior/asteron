@@ -138,3 +138,4 @@ const char* get_version(void);
 
 #endif // ASTERON_WASM_H
 
+

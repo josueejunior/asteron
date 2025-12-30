@@ -211,3 +211,4 @@ void visual_debugger_print_timeline(VisualDebugger* debugger);
 
 #endif // VISUAL_DEBUGGER_H
 
+
