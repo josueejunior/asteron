@@ -44,3 +44,4 @@ echo "⚠️  Test runner precisa de mais objetos para linkar completamente"
 echo "   Por enquanto, os testes podem ser executados manualmente"
 echo ""
 
+

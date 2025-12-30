@@ -47,3 +47,4 @@ Para questões sobre licenciamento ou contribuições, abra uma issue no reposit
 
 **Texto completo da licença:** Veja o arquivo [LICENSE](LICENSE) na raiz do projeto.
 
+
