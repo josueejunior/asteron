@@ -1,0 +1,79 @@
+# Binários
+asteron
+wasm_server
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Diretórios de build
+obj/
+build/
+dist/
+bin/
+
+# WebAssembly
+public/asteron.js
+public/asteron.wasm
+*.wasm
+
+# Logs
+*.log
+debug.log
+saida.txt
+
+# Arquivos temporários
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.project
+.classpath
+.settings/
+
+# Emscripten
+emsdk/
+.cache/
+
+# Testes
+test_output/
+*.test
+
+# Documentação gerada
+docs/_build/
+site/
+
+# Arquivos de configuração local
+.env
+.env.local
+config.local.*
+
+# Backup
+*.bak
+*.backup
+*_backup
+
+# Coverage
+coverage/
+*.gcda
+*.gcno
+*.gcov
+
+# Valgrind
+vgcore.*
+
+# Core dumps
+core
+core.*
+
