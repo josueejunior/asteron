@@ -112,7 +112,7 @@ static void build_execution_plan(Scheduler* scheduler) {
                     GraphNode* dep_node = dep_graph->nodes[j];
                     if (dep_node == NULL) continue;
                     
-                    // Verifica se há aresta de dependência
+                    // Check if there's a dependency edge
                     for (size_t k = 0; k < dep_node->edge_count; k++) {
                         GraphEdge* edge = dep_node->edges[k];
                         if (edge != NULL && edge->to != NULL) {

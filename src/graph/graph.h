@@ -4,7 +4,7 @@
 #include "../core/ast/ast.h"
 #include <stddef.h>
 
-// Tipos de nós no grafo
+// Node types in the graph
 typedef enum {
     NODE_VARIABLE,
     NODE_FUNCTION,
@@ -13,15 +13,15 @@ typedef enum {
     NODE_CALL
 } GraphNodeType;
 
-// Estrutura de um nó no grafo
+// Node structure in the graph
 typedef struct GraphNode {
-    char* name;                    // Nome/identificador do nó
-    GraphNodeType type;            // Tipo do nó
+    char* name;                    // Node name/identifier
+    GraphNodeType type;            // Node type
     void* data;                    // Dados adicionais (pode ser ASTNode*)
-    struct GraphEdge** edges;      // Lista de arestas saindo deste nó
-    size_t edge_count;             // Número de arestas
-    size_t edge_capacity;          // Capacidade do array de arestas
-    int visited;                   // Flag para algoritmos de grafo
+    struct GraphEdge** edges;      // List of edges leaving this node
+    size_t edge_count;             // Number of edges
+    size_t edge_capacity;          // Capacity of edges array
+    int visited;                   // Flag for graph algorithms
     
     // Métricas para análise de decisão
     int in_degree;                 // Número de dependências recebidas
@@ -32,76 +32,76 @@ typedef struct GraphNode {
     int can_parallelize;           // Flag: 1 = pode executar em paralelo
 } GraphNode;
 
-// Estrutura de uma aresta no grafo
+// Edge structure in the graph
 typedef struct GraphEdge {
-    struct GraphNode* from;        // Nó origem
-    struct GraphNode* to;          // Nó destino
-    char* label;                   // Rótulo da aresta (opcional)
-    int weight;                    // Peso da aresta (opcional)
+    struct GraphNode* from;        // Source node
+    struct GraphNode* to;          // Destination node
+    char* label;                   // Edge label (optional)
+    int weight;                    // Edge weight (optional)
 } GraphEdge;
 
-// Estrutura do grafo completo
+// Complete graph structure
 typedef struct Graph {
-    GraphNode** nodes;             // Lista de nós
-    size_t node_count;             // Número de nós
-    size_t node_capacity;          // Capacidade do array de nós
-    GraphEdge** edges;              // Lista de todas as arestas
-    size_t edge_count;              // Número de arestas
-    size_t edge_capacity;           // Capacidade do array de arestas
+    GraphNode** nodes;             // List of nodes
+    size_t node_count;             // Number of nodes
+    size_t node_capacity;          // Capacity of nodes array
+    GraphEdge** edges;              // List of all edges
+    size_t edge_count;              // Number of edges
+    size_t edge_capacity;           // Capacity of edges array
     int destroyed;                  // Flag: 1 se já foi destruído (para evitar double free)
 } Graph;
 
-// Tipos de grafos que podemos gerar
+// Graph types we can generate
 typedef enum {
-    GRAPH_DEPENDENCIES,            // Grafo de dependências de variáveis
-    GRAPH_CALLS,                   // Grafo de chamadas de funções
-    GRAPH_CONTROL_FLOW             // Grafo de fluxo de controle (CFG)
+    GRAPH_DEPENDENCIES,            // Variable dependency graph
+    GRAPH_CALLS,                   // Function call graph
+    GRAPH_CONTROL_FLOW             // Control flow graph (CFG)
 } GraphType;
 
 // ==================== Funções do Grafo ====================
 
-// Cria um novo grafo vazio
+// Create a new empty graph
 Graph* graph_create(void);
 
-// Destrói um grafo e libera toda a memória
+// Destroy a graph and free all memory
 void graph_destroy(Graph* graph);
 
-// Adiciona um nó ao grafo
+// Add a node to the graph
 GraphNode* graph_add_node(Graph* graph, const char* name, GraphNodeType type, void* data);
 
-// Busca um nó pelo nome
+// Find a node by name
 GraphNode* graph_find_node(Graph* graph, const char* name);
 
-// Adiciona uma aresta entre dois nós
+// Add an edge between two nodes
 GraphEdge* graph_add_edge(Graph* graph, GraphNode* from, GraphNode* to, const char* label);
 
 // ==================== Análise da AST ====================
 
-// Constrói grafo de dependências de variáveis a partir da AST
+// Build variable dependency graph from AST
 Graph* graph_build_dependencies(ASTNode* ast);
 
-// Constrói grafo de chamadas de funções a partir da AST
+// Build function call graph from AST
 Graph* graph_build_call_graph(ASTNode* ast);
 
-// Constrói grafo de fluxo de controle (CFG) a partir da AST
+// Build control flow graph (CFG) from AST
 Graph* graph_build_control_flow(ASTNode* ast);
 
 // ==================== Exportação ====================
 
-// Exporta grafo para formato DOT (Graphviz)
+// Export graph to DOT format (Graphviz)
 void graph_export_dot(Graph* graph, const char* filename, GraphType type);
 
-// Exporta grafo para formato JSON
+// Export graph to JSON format
 void graph_export_json(Graph* graph, const char* filename);
 
-// Imprime grafo em formato texto simples
+// Print graph in simple text format
 void graph_print(Graph* graph);
 
 // ==================== Sistema de Decisão e Otimização ====================
 
 // Estrutura para decisões de otimização
 typedef struct OptimizationDecision {
-    char* target_name;             // Nome do nó/variável/função
+    char* target_name;             // Node/variable/function name
     int decision_type;             // Tipo de decisão (ver abaixo)
     void* data;                     // Dados específicos da decisão
     int priority;                   // Prioridade da otimização
@@ -124,7 +124,7 @@ typedef struct OptimizationPlan {
     size_t decision_capacity;
 } OptimizationPlan;
 
-// Analisa grafos e gera plano de otimização
+// Analyze graphs and generate optimization plan
 OptimizationPlan* graph_analyze_and_optimize(Graph* dep_graph, Graph* call_graph, Graph* cfg);
 
 // Aplica análise de dead code elimination
@@ -139,7 +139,7 @@ void graph_analyze_parallelism(Graph* cfg);
 // Identifica loops críticos
 void graph_analyze_critical_loops(Graph* cfg);
 
-// Calcula métricas dos nós (in_degree, out_degree)
+// Calculate node metrics (in_degree, out_degree)
 void graph_calculate_metrics(Graph* graph);
 
 // Libera plano de otimização

@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <limits.h>
 
-// ==================== Funções do Grafo ====================
+// ==================== Graph Functions ====================
 
 Graph* graph_create(void) {
     Graph* graph = (Graph*)malloc(sizeof(Graph));
@@ -57,15 +57,15 @@ void graph_destroy(Graph* graph) {
     GraphEdge** edges = graph->edges;
     GraphNode** nodes = graph->nodes;
     
-    // Limpa ponteiros do grafo ANTES de destruir (para evitar acesso acidental)
+    // Clear graph pointers BEFORE destroying (to avoid accidental access)
     graph->nodes = NULL;
     graph->edges = NULL;
     graph->node_count = 0;
     graph->edge_count = 0;
     
-    // Destrói todas as arestas
-    // IMPORTANTE: As arestas são compartilhadas entre graph->edges e node->edges
-    // (são os mesmos ponteiros), então destruímos apenas uma vez através de graph->edges
+    // Destroy all edges
+    // IMPORTANT: Edges are shared between graph->edges and node->edges
+    // (they are the same pointers), so we destroy only once through graph->edges
     if (edges != NULL) {
         for (size_t i = 0; i < edge_count; i++) {
             if (edges[i] != NULL) {
@@ -74,7 +74,7 @@ void graph_destroy(Graph* graph) {
                     free(edges[i]->label);
                     edges[i]->label = NULL;
                 }
-                // Limpa ponteiros da aresta antes de destruir
+                // Clear edge pointers before destroying
                 edges[i]->from = NULL;
                 edges[i]->to = NULL;
                 free(edges[i]);
@@ -84,9 +84,9 @@ void graph_destroy(Graph* graph) {
         free(edges);
     }
     
-    // Destrói todos os nós
-    // IMPORTANTE: node->edges contém apenas ponteiros para arestas já destruídas acima
-    // Não devemos tentar destruir as arestas novamente
+    // Destroy all nodes
+    // IMPORTANT: node->edges contains only pointers to edges already destroyed above
+    // We should not try to destroy the edges again
     if (nodes != NULL) {
         for (size_t i = 0; i < node_count; i++) {
             if (nodes[i] != NULL) {
@@ -95,7 +95,7 @@ void graph_destroy(Graph* graph) {
                     free(nodes[i]->name);
                     nodes[i]->name = NULL;
                 }
-                // Limpa array de ponteiros de arestas (não as arestas em si, já foram destruídas)
+                // Clear array of edge pointers (not the edges themselves, already destroyed)
                 if (nodes[i]->edges != NULL) {
                     free(nodes[i]->edges);
                     nodes[i]->edges = NULL;
@@ -115,7 +115,7 @@ GraphNode* graph_add_node(Graph* graph, const char* name, GraphNodeType type, vo
         return NULL;
     }
     
-    // Verifica se o nó já existe
+    // Check if node already exists
     GraphNode* existing = graph_find_node(graph, name);
     if (existing != NULL) {
         return existing;
@@ -132,7 +132,7 @@ GraphNode* graph_add_node(Graph* graph, const char* name, GraphNodeType type, vo
         graph->nodes = new_nodes;
     }
     
-    // Cria novo nó
+    // Create new node
     GraphNode* node = (GraphNode*)malloc(sizeof(GraphNode));
     if (node == NULL) {
         return NULL;
@@ -182,7 +182,7 @@ GraphEdge* graph_add_edge(Graph* graph, GraphNode* from, GraphNode* to, const ch
         return NULL;
     }
     
-    // Verifica capacidade de arestas do grafo
+    // Check graph edge capacity
     if (graph->edge_count >= graph->edge_capacity) {
         graph->edge_capacity *= 2;
         GraphEdge** new_edges = (GraphEdge**)realloc(graph->edges,
@@ -193,7 +193,7 @@ GraphEdge* graph_add_edge(Graph* graph, GraphNode* from, GraphNode* to, const ch
         graph->edges = new_edges;
     }
     
-    // Cria nova aresta
+    // Create new edge
     GraphEdge* edge = (GraphEdge*)malloc(sizeof(GraphEdge));
     if (edge == NULL) {
         return NULL;
@@ -269,16 +269,16 @@ static void collect_identifiers(ASTNode* expr, Graph* graph, GraphNode* dependen
     }
 }
 
-// Constrói grafo de dependências de variáveis
+// Build dependency graph of variables
 Graph* graph_build_dependencies(ASTNode* ast) {
     if (ast == NULL) {
-        fprintf(stderr, "Aviso: AST nula ao construir grafo de dependências\n");
+        fprintf(stderr, "Warning: Null AST when building dependency graph\n");
         return NULL;
     }
     
     Graph* graph = graph_create();
     if (graph == NULL) {
-        fprintf(stderr, "Erro: Não foi possível criar grafo de dependências\n");
+        fprintf(stderr, "Error: Could not create dependency graph\n");
         return NULL;
     }
     
@@ -289,13 +289,13 @@ Graph* graph_build_dependencies(ASTNode* ast) {
         switch (node->type) {
             case AST_VARIABLE_DECLARATION: {
                 if (node->as.variable_decl.name == NULL) {
-                    fprintf(stderr, "Aviso: Variável sem nome ignorada\n");
+                    fprintf(stderr, "Warning: Variable without name ignored\n");
                     break;
                 }
                 char* var_name = node->as.variable_decl.name;
                 GraphNode* var_node = graph_add_node(graph, var_name, NODE_VARIABLE, node);
                 if (var_node == NULL) {
-                    fprintf(stderr, "Erro: Não foi possível criar nó para variável '%s'\n", var_name);
+                    fprintf(stderr, "Error: Could not create node for variable '%s'\n", var_name);
                     break;
                 }
                 
@@ -328,7 +328,7 @@ Graph* graph_build_dependencies(ASTNode* ast) {
                 char* func_name = node->as.function_decl.name;
                 GraphNode* func_node = graph_add_node(graph, func_name, NODE_FUNCTION, node);
                 if (func_node == NULL) {
-                    fprintf(stderr, "Erro: Não foi possível criar nó para função '%s'\n", func_name);
+                    fprintf(stderr, "Error: Could not create node for function '%s'\n", func_name);
                     break;
                 }
                 
@@ -340,7 +340,7 @@ Graph* graph_build_dependencies(ASTNode* ast) {
                     if (param_node == NULL) {
                         param_node = graph_add_node(graph, param_name, NODE_VARIABLE, NULL);
                     }
-                    // Cria aresta da função para o parâmetro (indica uso)
+                    // Create edge from function to parameter (indicates use)
                     if (param_node != NULL) {
                         graph_add_edge(graph, func_node, param_node, "uses");
                     }
@@ -436,16 +436,16 @@ Graph* graph_build_dependencies(ASTNode* ast) {
     return graph;
 }
 
-// Constrói grafo de chamadas de funções
+// Build function call graph
 Graph* graph_build_call_graph(ASTNode* ast) {
     if (ast == NULL) {
-        fprintf(stderr, "Aviso: AST nula ao construir grafo de chamadas\n");
+        fprintf(stderr, "Warning: Null AST when building call graph\n");
         return NULL;
     }
     
     Graph* graph = graph_create();
     if (graph == NULL) {
-        fprintf(stderr, "Erro: Não foi possível criar grafo de chamadas\n");
+        fprintf(stderr, "Error: Could not create call graph\n");
         return NULL;
     }
     
@@ -462,7 +462,7 @@ Graph* graph_build_call_graph(ASTNode* ast) {
                 char* func_name = node->as.function_decl.name;
                 GraphNode* func_node = graph_add_node(graph, func_name, NODE_FUNCTION, node);
                 if (func_node == NULL) {
-                    fprintf(stderr, "Erro: Não foi possível criar nó para função '%s'\n", func_name);
+                    fprintf(stderr, "Error: Could not create node for function '%s'\n", func_name);
                     break;
                 }
                 
@@ -480,11 +480,11 @@ Graph* graph_build_call_graph(ASTNode* ast) {
                 char* callee_name = node->as.function_call.name;
                 GraphNode* caller_node = NULL;
                 
-                // Se há um caller, busca o nó; senão, cria/usa nó "global"
+                // If there's a caller, find the node; otherwise, create/use "global" node
                 if (caller != NULL) {
                     caller_node = graph_find_node(graph, caller);
                 } else {
-                    // Chamada no nível global - cria nó "global" se não existir
+                    // Call at global level - create "global" node if it doesn't exist
                     caller_node = graph_find_node(graph, "global");
                     if (caller_node == NULL) {
                         caller_node = graph_add_node(graph, "global", NODE_FUNCTION, NULL);
@@ -495,12 +495,12 @@ Graph* graph_build_call_graph(ASTNode* ast) {
                 if (callee_node == NULL) {
                     callee_node = graph_add_node(graph, callee_name, NODE_FUNCTION, NULL);
                     if (callee_node == NULL) {
-                        fprintf(stderr, "Erro: Não foi possível criar nó para função chamada '%s'\n", callee_name);
+                        fprintf(stderr, "Error: Could not create node for called function '%s'\n", callee_name);
                         break;
                     }
                 }
                 
-                // Cria aresta de chamada
+                // Create call edge
                 if (caller_node != NULL) {
                     graph_add_edge(graph, caller_node, callee_node, "calls");
                 }
@@ -559,9 +559,9 @@ Graph* graph_build_call_graph(ASTNode* ast) {
     }
     
     // Processa a AST com tratamento de erros
-    // IMPORTANTE: Cria nó "global" primeiro para chamadas no nível global
+    // IMPORTANT: Create "global" node first for calls at global level
     GraphNode* global_node = graph_add_node(graph, "global", NODE_FUNCTION, NULL);
-    (void)global_node; // Garante que o nó global existe; process_calls também o cria se necessário
+    (void)global_node; // Ensures global node exists; process_calls also creates it if necessary
     
     // Processa chamadas no nível global (sem caller explícito, mas usa "global")
     if (ast->type == AST_BLOCK) {
@@ -578,20 +578,20 @@ Graph* graph_build_call_graph(ASTNode* ast) {
     return graph;
 }
 
-// Constrói grafo de fluxo de controle (CFG) - versão completa
+// Build control flow graph (CFG) - complete version
 Graph* graph_build_control_flow(ASTNode* ast) {
     if (ast == NULL) return NULL;
     
     Graph* graph = graph_create();
     if (graph == NULL) return NULL;
     
-    // Estrutura para rastrear nós de entrada e saída
+    // Structure to track entry and exit nodes
     typedef struct {
-        GraphNode* entry;  // Nó de entrada do bloco
-        GraphNode* exit;  // Nó de saída do bloco
+        GraphNode* entry;  // Block entry node
+        GraphNode* exit;  // Block exit node
     } BlockNodes;
     
-    // Função recursiva que retorna nós de entrada e saída
+    // Recursive function that returns entry and exit nodes
     BlockNodes process_cfg(ASTNode* node, GraphNode* prev_node) {
         BlockNodes result = {NULL, NULL};
         if (node == NULL) {
@@ -637,7 +637,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                 break;
             }
             case AST_IF_STATEMENT: {
-                // Nó de condição
+                // Condition node
                 snprintf(node_name, sizeof(node_name), "if_cond_%d", node_counter++);
                 GraphNode* cond_node = graph_add_node(graph, node_name, NODE_STATEMENT, node);
                 if (prev_node != NULL) {
@@ -664,7 +664,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                     }
                 }
                 
-                // Nó de merge (após if/else)
+                // Merge node (after if/else)
                 snprintf(node_name, sizeof(node_name), "merge_%d", node_counter++);
                 GraphNode* merge_node = graph_add_node(graph, node_name, NODE_STATEMENT, NULL);
                 
@@ -686,14 +686,14 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                 break;
             }
             case AST_WHILE_STATEMENT: {
-                // Nó de entrada do loop
+                // Loop entry node
                 snprintf(node_name, sizeof(node_name), "while_entry_%d", node_counter++);
                 GraphNode* loop_entry = graph_add_node(graph, node_name, NODE_STATEMENT, NULL);
                 if (prev_node != NULL) {
                     graph_add_edge(graph, prev_node, loop_entry, "next");
                 }
                 
-                // Nó de condição
+                // Condition node
                 snprintf(node_name, sizeof(node_name), "while_cond_%d", node_counter++);
                 GraphNode* cond_node = graph_add_node(graph, node_name, NODE_STATEMENT, node);
                 graph_add_edge(graph, loop_entry, cond_node, "next");
@@ -715,7 +715,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                     }
                 }
                 
-                // Nó de saída (quando condição é falsa)
+                // Exit node (when condition is false)
                 snprintf(node_name, sizeof(node_name), "while_exit_%d", node_counter++);
                 GraphNode* loop_exit = graph_add_node(graph, node_name, NODE_STATEMENT, NULL);
                 graph_add_edge(graph, cond_node, loop_exit, "false");
@@ -736,7 +736,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                     result.entry = prev_node;
                 }
                 
-                // Nó de entrada do loop
+                // Loop entry node
                 snprintf(node_name, sizeof(node_name), "for_entry_%d", node_counter++);
                 GraphNode* loop_entry = graph_add_node(graph, node_name, NODE_STATEMENT, NULL);
                 if (init_nodes.exit != NULL) {
@@ -745,7 +745,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                     graph_add_edge(graph, result.entry, loop_entry, "next");
                 }
                 
-                // Nó de condição
+                // Condition node
                 snprintf(node_name, sizeof(node_name), "for_cond_%d", node_counter++);
                 GraphNode* cond_node = graph_add_node(graph, node_name, NODE_STATEMENT, node);
                 graph_add_edge(graph, loop_entry, cond_node, "next");
@@ -774,7 +774,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                                       (body_nodes.exit != NULL ? body_nodes.exit : cond_node);
                 graph_add_edge(graph, loop_back, cond_node, "loop");
                 
-                // Nó de saída (quando condição é falsa)
+                // Exit node (when condition is false)
                 snprintf(node_name, sizeof(node_name), "for_exit_%d", node_counter++);
                 GraphNode* loop_exit = graph_add_node(graph, node_name, NODE_STATEMENT, NULL);
                 graph_add_edge(graph, cond_node, loop_exit, "false");
@@ -797,7 +797,7 @@ Graph* graph_build_control_flow(ASTNode* ast) {
                 break;
             }
             case AST_FUNCTION_DECLARATION: {
-                // Nó da função
+                // Function node
                 snprintf(node_name, sizeof(node_name), "func_%s", node->as.function_decl.name);
                 GraphNode* func_node = graph_add_node(graph, node_name, NODE_FUNCTION, node);
                 if (prev_node != NULL) {
@@ -862,7 +862,7 @@ void graph_export_dot(Graph* graph, const char* filename, GraphType type) {
     fprintf(file, "  rankdir=LR;\n");
     fprintf(file, "  node [shape=box];\n\n");
     
-    // Escreve nós
+    // Write nodes
     for (size_t i = 0; i < graph->node_count; i++) {
         GraphNode* node = graph->nodes[i];
         if (node == NULL) continue;
@@ -892,7 +892,7 @@ void graph_export_dot(Graph* graph, const char* filename, GraphType type) {
     
     fprintf(file, "\n");
     
-    // Escreve arestas
+    // Write edges
     for (size_t i = 0; i < graph->edge_count; i++) {
         GraphEdge* edge = graph->edges[i];
         if (edge == NULL || edge->from == NULL || edge->to == NULL) continue;
@@ -905,13 +905,13 @@ void graph_export_dot(Graph* graph, const char* filename, GraphType type) {
     fprintf(file, "}\n");
     fclose(file);
     
-    printf("Grafo exportado para '%s'\n", filename);
+    printf("Graph exported to '%s'\n", filename);
     printf("Visualize com: dot -Tpng %s -o %s.png\n", filename, filename);
 }
 
 void graph_export_json(Graph* graph, const char* filename) {
     if (graph == NULL) {
-        fprintf(stderr, "Erro: Grafo nulo ao exportar JSON\n");
+        fprintf(stderr, "Error: Null graph when exporting JSON\n");
         return;
     }
     
@@ -963,22 +963,22 @@ void graph_export_json(Graph* graph, const char* filename) {
     fprintf(file, "}\n");
     
     fclose(file);
-    printf("Grafo exportado para JSON: '%s' (%zu nós, %zu arestas)\n", 
+    printf("Graph exported to JSON: '%s' (%zu nodes, %zu edges)\n", 
            filename, node_written, edge_written);
 }
 
 void graph_print(Graph* graph) {
     if (graph == NULL) {
-        printf("Grafo: NULL\n");
+        printf("Graph: NULL\n");
         return;
     }
     
-    printf("=== Grafo ===\n");
-    printf("Nós: %zu\n", graph->node_count);
-    printf("Arestas: %zu\n\n", graph->edge_count);
+    printf("=== Graph ===\n");
+    printf("Nodes: %zu\n", graph->node_count);
+    printf("Edges: %zu\n\n", graph->edge_count);
     
     if (graph->node_count == 0) {
-        printf("(Grafo vazio)\n");
+        printf("(Empty graph)\n");
         return;
     }
     
@@ -997,7 +997,7 @@ void graph_print(Graph* graph) {
             case NODE_CALL: type_str = "Call"; break;
         }
         
-        printf("Nó: %s (tipo: %s, arestas: %zu)\n", 
+        printf("Node: %s (type: %s, edges: %zu)\n", 
                node->name, type_str, node->edge_count);
         
         if (node->edge_count > 0) {
@@ -1012,18 +1012,18 @@ void graph_print(Graph* graph) {
                 }
             }
         } else {
-            printf("  (sem arestas)\n");
+            printf("  (no edges)\n");
         }
     }
     
     if (valid_nodes == 0) {
-        printf("(Nenhum nó válido encontrado)\n");
+        printf("(No valid nodes found)\n");
     }
 }
 
 // ==================== Sistema de Decisão e Otimização ====================
 
-// Calcula métricas dos nós (in_degree, out_degree)
+// Calculate node metrics (in_degree, out_degree)
 void graph_calculate_metrics(Graph* graph) {
     if (graph == NULL) return;
     if (graph->nodes == NULL || graph->edges == NULL) return;
@@ -1038,11 +1038,11 @@ void graph_calculate_metrics(Graph* graph) {
         }
     }
     
-    // Calcula in_degree: conta quantas arestas apontam para cada nó
+    // Calculate in_degree: count how many edges point to each node
     for (size_t i = 0; i < graph->edge_count; i++) {
         GraphEdge* edge = graph->edges[i];
         if (edge != NULL && edge->to != NULL) {
-            // Verifica se o nó destino ainda está no array de nós válido
+            // Check if destination node is still in valid nodes array
             // (proteção contra ponteiros órfãos)
             int node_found = 0;
             for (size_t j = 0; j < graph->node_count; j++) {
@@ -1078,18 +1078,18 @@ void graph_analyze_dead_code(Graph* dep_graph, Graph* call_graph) {
             
             // Variável nunca usada (exceto se for parâmetro de função)
             if (node->type == NODE_VARIABLE && node->out_degree == 0) {
-                // Verifica se é um parâmetro de função (tem aresta "uses" de uma função)
+                // Check if it's a function parameter (has "uses" edge from a function)
                 int is_param = 0;
                 
                 // Verifica se a variável é usada dentro do corpo de alguma função
                 for (size_t j = 0; j < dep_graph->node_count; j++) {
                     GraphNode* other = dep_graph->nodes[j];
                     if (other != NULL && other->type == NODE_FUNCTION) {
-                        // Verifica se há arestas da função para esta variável (uso ou parâmetro)
+                        // Check if there are edges from function to this variable (use or parameter)
                         for (size_t k = 0; k < other->edge_count; k++) {
                             if (other->edges[k] != NULL && 
                                 other->edges[k]->to == node) {
-                                // Se há aresta da função para a variável, é usada/parâmetro
+                                // If there's an edge from function to variable, it's used/parameter
                                 is_param = 1;
                                 break;
                             }
@@ -1100,7 +1100,7 @@ void graph_analyze_dead_code(Graph* dep_graph, Graph* call_graph) {
                 
                 // Também verifica se tem in_degree > 0 (pode ser parâmetro)
                 if (!is_param && node->in_degree > 0) {
-                    // Verifica se as arestas de entrada vêm de funções
+                    // Check if incoming edges come from functions
                     for (size_t j = 0; j < dep_graph->edge_count; j++) {
                         GraphEdge* edge = dep_graph->edges[j];
                         if (edge != NULL && edge->to == node && 
@@ -1228,7 +1228,7 @@ void graph_analyze_critical_loops(Graph* cfg) {
     
     graph_calculate_metrics(cfg);
     
-    // Identifica loops (arestas com label "loop")
+    // Identify loops (edges with label "loop")
     for (size_t i = 0; i < cfg->edge_count; i++) {
         GraphEdge* edge = cfg->edges[i];
         if (edge == NULL || edge->label == NULL) continue;
@@ -1277,7 +1277,7 @@ OptimizationPlan* graph_analyze_and_optimize(Graph* dep_graph, Graph* call_graph
         graph_analyze_critical_loops(cfg);
     }
     
-    // Coleta decisões dos grafos
+    // Collect decisions from graphs
     if (dep_graph != NULL) {
         for (size_t i = 0; i < dep_graph->node_count; i++) {
             GraphNode* node = dep_graph->nodes[i];
@@ -1361,7 +1361,7 @@ void optimization_plan_destroy(OptimizationPlan* plan) {
         }
     }
     
-    // Não libera target_name pois são ponteiros para nomes dos nós (que pertencem aos grafos)
+    // Don't free target_name as they are pointers to node names (which belong to graphs)
     // Não libera data pois pode ser ponteiro para AST ou string da AST
     if (plan->decisions != NULL) {
         free(plan->decisions);
@@ -1573,7 +1573,7 @@ void adaptive_identify_hot_functions(AdaptiveProfile* profile, Graph* call_graph
     
     profile->hot_count = 0;
     
-    // Percorre todas as funções no grafo de chamadas
+    // Traverse all functions in call graph
     for (size_t i = 0; i < call_graph->node_count; i++) {
         GraphNode* node = call_graph->nodes[i];
         if (node == NULL || node->name == NULL) continue;

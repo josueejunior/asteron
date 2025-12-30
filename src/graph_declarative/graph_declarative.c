@@ -182,7 +182,7 @@ static void build_execution_graph(DeclarativeGraph* graph) {
         return;
     }
     
-    // Cria arestas de dependência
+    // Create dependency edges
     for (size_t i = 0; i < graph->node_count; i++) {
         DeclarativeNode* dnode = &graph->nodes[i];
         
@@ -198,7 +198,7 @@ static void build_execution_graph(DeclarativeGraph* graph) {
         }
         GraphNode* from_node = graph_find_node(graph->execution_graph, from_name);
         
-        // Cria arestas para dependências
+        // Create edges for dependencies
         for (size_t j = 0; j < dnode->dep_count; j++) {
             size_t dep_id = dnode->dependencies[j];
             if (dep_id >= graph->node_count) continue;
