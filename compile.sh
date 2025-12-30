@@ -6,7 +6,7 @@
 echo "Compilando Asteron..."
 
 # Cria diretório de objetos se não existir
-mkdir -p obj/lexer obj/parser obj/ast obj/utils obj/typechecker obj/optimizer obj/interpreter obj/vm obj/jit obj/core/jit obj/core/runtime obj/core/scheduling obj/server obj/scheduler obj/graph_declarative obj/graph obj/loader obj/modules obj/modules/native obj/memory obj/core/memory obj/sys obj/reactive obj/debug obj/core/lazy obj/core/sandbox obj/core/hotreload obj/core/analytics
+mkdir -p obj/lexer obj/parser obj/ast obj/utils obj/typechecker obj/optimizer obj/interpreter obj/vm obj/jit obj/core/jit obj/core/runtime obj/core/scheduling obj/core/brain obj/devtools obj/server obj/scheduler obj/graph_declarative obj/graph obj/loader obj/modules obj/modules/native obj/memory obj/core/memory obj/sys obj/reactive obj/debug obj/core/lazy obj/core/sandbox obj/core/hotreload obj/core/analytics
 
 # Flags de compilação
 CFLAGS="-Wall -Wextra -std=c11 -g -I src -I src/core -I src/graph -I src/core/vm -I src/core/lazy -I src/core/sandbox -I src/core/hotreload -I src/core/analytics"
@@ -128,6 +128,18 @@ gcc $CFLAGS -c src/core/runtime/self_healing.c -o obj/core/runtime/self_healing.
 echo "Compilando intent_based..."
 gcc $CFLAGS -c src/core/scheduling/intent_based.c -o obj/core/scheduling/intent_based.o
 
+echo "Compilando context_brain..."
+gcc $CFLAGS -c src/core/brain/context_brain.c -o obj/core/brain/context_brain.o
+
+echo "Compilando intent_engine..."
+gcc $CFLAGS -c src/core/brain/intent_engine.c -o obj/core/brain/intent_engine.o
+
+echo "Compilando self_tuning..."
+gcc $CFLAGS -c src/core/brain/self_tuning.c -o obj/core/brain/self_tuning.o
+
+echo "Compilando visual_debugger..."
+gcc $CFLAGS -c src/devtools/visual_debugger.c -o obj/devtools/visual_debugger.o
+
 echo "Compilando runtime..."
 gcc $CFLAGS -c src/sys/runtime.c -o obj/sys/runtime.o
 
@@ -222,6 +234,10 @@ gcc $CFLAGS -pthread -o asteron \
     obj/core/memory/holographic.o \
     obj/core/runtime/self_healing.o \
     obj/core/scheduling/intent_based.o \
+    obj/core/brain/context_brain.o \
+    obj/core/brain/intent_engine.o \
+    obj/core/brain/self_tuning.o \
+    obj/devtools/visual_debugger.o \
     obj/sys/runtime.o \
     obj/sys/cli.o \
     obj/reactive/reactive.o \
