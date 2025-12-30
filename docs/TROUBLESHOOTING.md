@@ -1,14 +1,14 @@
 # 🔧 Troubleshooting
 
-Guia para resolver problemas comuns no Asteron.
+Guide to resolve common problems with Asteron.
 
-## Problemas de Compilação
+## Compilation Problems
 
-### Erro: "gcc: command not found"
+### Error: "gcc: command not found"
 
-**Causa**: GCC não está instalado.
+**Cause**: GCC is not installed.
 
-**Solução**:
+**Solution**:
 ```bash
 # Ubuntu/Debian
 sudo apt-get install build-essential
@@ -20,22 +20,22 @@ sudo dnf install gcc make
 xcode-select --install
 ```
 
-### Erro: "undefined reference"
+### Error: "undefined reference"
 
-**Causa**: Arquivos não foram compilados ou linkados corretamente.
+**Cause**: Files were not compiled or linked correctly.
 
-**Solução**:
+**Solution**:
 ```bash
-# Limpe e recompile
+# Clean and recompile
 rm -rf obj/
 bash compile.sh
 ```
 
-### Erro: "Permission denied"
+### Error: "Permission denied"
 
-**Causa**: Arquivos não têm permissão de execução.
+**Cause**: Files don't have execution permission.
 
-**Solução**:
+**Solution**:
 ```bash
 chmod +x compile.sh
 chmod +x asteron
@@ -43,210 +43,210 @@ chmod +x run_wasm_server.sh
 chmod +x build_wasm.sh
 ```
 
-### Erro: "No such file or directory" (obj/)
+### Error: "No such file or directory" (obj/)
 
-**Causa**: Diretórios de objeto não foram criados.
+**Cause**: Object directories were not created.
 
-**Solução**:
+**Solution**:
 ```bash
-# Crie manualmente ou recompile
+# Create manually or recompile
 mkdir -p obj/core/jit obj/core/memory obj/core/runtime obj/core/scheduling obj/server
 bash compile.sh
 ```
 
-## Problemas de Execução
+## Execution Problems
 
-### Erro: "Erro durante execução na VM"
+### Error: "Error during VM execution"
 
-**Causa**: Erro em tempo de execução (ex: função não encontrada, tipo incorreto).
+**Cause**: Runtime error (e.g., function not found, incorrect type).
 
-**Solução**:
-1. Verifique se a função existe
-2. Verifique os tipos dos argumentos
-3. Verifique se a função foi registrada corretamente
-4. Use `--debug` para mais informações:
+**Solution**:
+1. Check if the function exists
+2. Check argument types
+3. Check if the function was registered correctly
+4. Use `--debug` for more information:
    ```bash
-   ./asteron --debug seu_arquivo.ast
+   ./asteron --debug your_file.ast
    ```
 
-### Erro: "Variável não definida"
+### Error: "Variable not defined"
 
-**Causa**: Variável usada antes de ser definida.
+**Cause**: Variable used before being defined.
 
-**Solução**:
+**Solution**:
 ```asteron
-// Ruim
-print(x)  // x não definido
+// Bad
+print(x)  // x not defined
 let x = 10
 
-// Bom
+// Good
 let x = 10
 print(x)
 ```
 
-### Erro: "Função não encontrada"
+### Error: "Function not found"
 
-**Causa**: Função não foi registrada ou não existe.
+**Cause**: Function was not registered or doesn't exist.
 
-**Solução**:
-1. Verifique se a função está definida
-2. Verifique se está no escopo correto
-3. Para funções built-in, verifique se o módulo está disponível
+**Solution**:
+1. Check if the function is defined
+2. Check if it's in the correct scope
+3. For built-in functions, check if the module is available
 
-## Problemas do Servidor Wasm
+## Wasm Server Problems
 
-### Erro: "Port already in use"
+### Error: "Port already in use"
 
-**Causa**: Porta já está em uso.
+**Cause**: Port is already in use.
 
-**Solução**:
+**Solution**:
 ```bash
-# Use outra porta
+# Use another port
 ./run_wasm_server.sh 3000
 
-# Ou mate o processo na porta
+# Or kill the process on the port
 lsof -ti:8080 | xargs kill
 ```
 
-### Erro: "emcc não encontrado"
+### Error: "emcc not found"
 
-**Causa**: Emscripten não está instalado ou não está no PATH.
+**Cause**: Emscripten is not installed or not in PATH.
 
-**Solução**:
+**Solution**:
 ```bash
-# Instale Emscripten
+# Install Emscripten
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
 ./emsdk install latest
 ./emsdk activate latest
 source ./emsdk_env.sh
 
-# Volte ao diretório do projeto
+# Return to project directory
 cd ..
 ./build_wasm.sh
 ```
 
-### Erro: "asteron.js não encontrado" (404)
+### Error: "asteron.js not found" (404)
 
-**Causa**: Arquivo Wasm não foi compilado.
+**Cause**: Wasm file was not compiled.
 
-**Solução**:
+**Solution**:
 ```bash
-# Compile para Wasm
+# Compile for Wasm
 ./build_wasm.sh
 
-# Verifique se os arquivos existem
+# Check if files exist
 ls -la public/asteron.*
 ```
 
-### Erro: "compileCode is not defined"
+### Error: "compileCode is not defined"
 
-**Causa**: JavaScript não carregou corretamente.
+**Cause**: JavaScript didn't load correctly.
 
-**Solução**:
-1. Recarregue a página (Ctrl+F5)
-2. Verifique o console do navegador
-3. Verifique se o servidor está rodando
+**Solution**:
+1. Reload the page (Ctrl+F5)
+2. Check browser console
+3. Check if server is running
 
-## Problemas de Memória
+## Memory Problems
 
-### Erro: "Memory leak detected"
+### Error: "Memory leak detected"
 
-**Causa**: Objetos não estão sendo liberados.
+**Cause**: Objects are not being freed.
 
-**Solução**:
-1. Verifique se está usando `value_release` corretamente
-2. Use Region-based Memory para alocações temporárias
-3. Use Valgrind para detectar vazamentos:
+**Solution**:
+1. Check if you're using `value_release` correctly
+2. Use Region-based Memory for temporary allocations
+3. Use Valgrind to detect leaks:
    ```bash
-   valgrind --leak-check=full ./asteron seu_arquivo.ast
+   valgrind --leak-check=full ./asteron your_file.ast
    ```
 
-### Erro: "Out of memory"
+### Error: "Out of memory"
 
-**Causa**: Muita memória sendo usada.
+**Cause**: Too much memory being used.
 
-**Solução**:
+**Solution**:
 1. Use Region-based Memory
-2. Libere objetos quando não precisar mais
-3. Reduza o tamanho dos dados processados
+2. Free objects when you don't need them anymore
+3. Reduce the size of processed data
 
-## Problemas de Performance
+## Performance Problems
 
-### Código muito lento
+### Code is too slow
 
-**Causa**: Código não está sendo otimizado pelo JIT.
+**Cause**: Code is not being optimized by JIT.
 
-**Solução**:
-1. Execute o código várias vezes (JIT precisa de "warm-up")
-2. Use `@intent optimize_latency` ou `optimize_throughput`
-3. Verifique se o código está em um "hot path"
+**Solution**:
+1. Execute the code multiple times (JIT needs "warm-up")
+2. Use `@intent optimize_latency` or `optimize_throughput`
+3. Check if the code is in a "hot path"
 
-### JIT não está ativando
+### JIT is not activating
 
-**Causa**: Código não é executado frequentemente o suficiente.
+**Cause**: Code is not executed frequently enough.
 
-**Solução**:
-1. Execute o código em um loop
-2. Execute várias vezes
-3. Verifique as métricas do grafo unificado
+**Solution**:
+1. Execute the code in a loop
+2. Execute multiple times
+3. Check unified graph metrics
 
-## Problemas de Rede
+## Network Problems
 
-### Erro: "Connection refused"
+### Error: "Connection refused"
 
-**Causa**: Servidor não está rodando ou porta incorreta.
+**Cause**: Server is not running or wrong port.
 
-**Solução**:
+**Solution**:
 ```bash
-# Verifique se o servidor está rodando
+# Check if server is running
 ps aux | grep asteron
 
-# Verifique a porta
+# Check the port
 netstat -tuln | grep 8080
 ```
 
-### Erro: "Timeout"
+### Error: "Timeout"
 
-**Causa**: Conexão demorou muito.
+**Cause**: Connection took too long.
 
-**Solução**:
-1. Aumente o timeout
-2. Verifique a rede
-3. Verifique se o servidor está respondendo
+**Solution**:
+1. Increase timeout
+2. Check network
+3. Check if server is responding
 
-## Problemas de WebAssembly
+## WebAssembly Problems
 
-### Erro: "Wasm module failed to load"
+### Error: "Wasm module failed to load"
 
-**Causa**: Módulo Wasm não foi compilado corretamente.
+**Cause**: Wasm module was not compiled correctly.
 
-**Solução**:
-1. Recompile o Wasm:
+**Solution**:
+1. Recompile Wasm:
    ```bash
    ./build_wasm.sh
    ```
-2. Verifique se os arquivos foram gerados
-3. Verifique o console do navegador para mais detalhes
+2. Check if files were generated
+3. Check browser console for more details
 
-### Erro: "Function not exported"
+### Error: "Function not exported"
 
-**Causa**: Função não foi exportada no Wasm.
+**Cause**: Function was not exported in Wasm.
 
-**Solução**:
-1. Verifique `src/wasm/asteron_wasm.c`
-2. Verifique se a função está em `EXPORTED_FUNCTIONS` no `build_wasm.sh`
+**Solution**:
+1. Check `src/wasm/asteron_wasm.c`
+2. Check if function is in `EXPORTED_FUNCTIONS` in `build_wasm.sh`
 3. Recompile
 
-## Problemas de Debugging
+## Debugging Problems
 
-### Debugger não funciona
+### Debugger doesn't work
 
-**Causa**: Binário não foi compilado com debug.
+**Cause**: Binary was not compiled with debug.
 
-**Solução**:
+**Solution**:
 ```bash
-# Edite compile.sh e adicione -g
+# Edit compile.sh and add -g
 CFLAGS="-Wall -Wextra -std=c11 -g -O0 ..."
 
 # Recompile
@@ -256,75 +256,74 @@ bash compile.sh
 gdb ./asteron
 ```
 
-### Logs não aparecem
+### Logs don't appear
 
-**Causa**: Logs podem estar desabilitados.
+**Cause**: Logs may be disabled.
 
-**Solução**:
+**Solution**:
 1. Use `--debug` flag
-2. Verifique se `fprintf(stderr)` está sendo usado
-3. Verifique se `fflush` está sendo chamado
+2. Check if `fprintf(stderr)` is being used
+3. Check if `fflush` is being called
 
-## Problemas Específicos do Sistema
+## System-Specific Problems
 
 ### Linux
 
-#### Erro: "clock_gettime not found"
-**Solução**: Adicione `#define _POSIX_C_SOURCE 200809L`
+#### Error: "clock_gettime not found"
+**Solution**: Add `#define _POSIX_C_SOURCE 200809L`
 
-#### Erro: "pthread not found"
-**Solução**: Instale `libpthread-dev`
+#### Error: "pthread not found"
+**Solution**: Install `libpthread-dev`
 
 ### macOS
 
-#### Erro: "ld: library not found"
-**Solução**: Instale Xcode Command Line Tools
+#### Error: "ld: library not found"
+**Solution**: Install Xcode Command Line Tools
 
 ### Windows (WSL)
 
-#### Erro: "Address already in use"
-**Solução**: WSL pode ter problemas com portas. Tente outra porta.
+#### Error: "Address already in use"
+**Solution**: WSL may have port issues. Try another port.
 
-## Ainda com Problemas?
+## Still Having Problems?
 
-1. **Verifique os logs**: Procure por mensagens de erro
-2. **Consulte a documentação**: Veja [docs/](docs/)
-3. **Abra uma issue**: [GitHub Issues](https://github.com/seu-usuario/asteron/issues)
-4. **Entre em contato**: Discord/Forum da comunidade
+1. **Check logs**: Look for error messages
+2. **Consult documentation**: See [docs/](docs/)
+3. **Open an issue**: [GitHub Issues](https://github.com/your-user/asteron/issues)
+4. **Contact**: Community Discord/Forum
 
-## Informações Úteis
+## Useful Information
 
-### Coletar Informações para Debug
+### Collect Information for Debug
 
 ```bash
-# Versão
+# Version
 ./asteron --version
 
-# Informações do sistema
+# System information
 uname -a
 gcc --version
 
-# Logs detalhados
-./asteron --debug seu_arquivo.ast 2>&1 | tee debug.log
+# Detailed logs
+./asteron --debug your_file.ast 2>&1 | tee debug.log
 ```
 
-### Comandos Úteis
+### Useful Commands
 
 ```bash
-# Limpar build
+# Clean build
 rm -rf obj/ asteron
 
-# Recompilar tudo
+# Recompile everything
 bash compile.sh
 
-# Verificar arquivos
+# Check files
 find src -name "*.c" -o -name "*.h" | wc -l
 
-# Verificar tamanho
+# Check size
 du -sh .
 ```
 
 ---
 
-**Última atualização**: 2025-01-XX
-
+**Last updated**: 2025-01-XX

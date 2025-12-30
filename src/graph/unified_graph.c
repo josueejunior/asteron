@@ -76,7 +76,7 @@ UnifiedGraph* unified_graph_create(Graph* cfg, Graph* call_graph, Graph* dep_gra
     graph->auto_version = 0;
     graph->next_version_id = 1;
     
-    // Constrói nós unificados a partir dos grafos originais
+    // Build unified nodes from original graphs
     unified_graph_rebuild(graph);
     
     return graph;
@@ -91,19 +91,19 @@ void unified_graph_destroy(UnifiedGraph* graph) {
     }
     free(graph->nodes);
     
-    // Destrói todas as arestas
+    // Destroy all edges
     for (size_t i = 0; i < graph->edge_count; i++) {
         free(graph->edges[i]->label);
         free(graph->edges[i]);
     }
     free(graph->edges);
     
-    // Destrói histórico de versões
+    // Destroy version history
     GraphVersion* version = graph->version_history;
     while (version != NULL) {
         GraphVersion* next = version->next;
         if (version->snapshot) {
-            // Não destruímos o snapshot aqui, apenas a referência
+            // We don't destroy the snapshot here, just the reference
         }
         if (version->metrics_snapshot) {
             free(version->metrics_snapshot);
@@ -118,21 +118,21 @@ void unified_graph_destroy(UnifiedGraph* graph) {
 void unified_graph_rebuild(UnifiedGraph* graph) {
     if (graph == NULL) return;
     
-    // Limpa nós existentes
+    // Clear existing nodes
     for (size_t i = 0; i < graph->node_count; i++) {
         destroy_unified_node(graph->nodes[i]);
     }
     graph->node_count = 0;
     
-    // Limpa arestas existentes
+    // Clear existing edges
     for (size_t i = 0; i < graph->edge_count; i++) {
         free(graph->edges[i]->label);
         free(graph->edges[i]);
     }
     graph->edge_count = 0;
     
-    // Reconstrói a partir dos grafos originais
-    // 1. Adiciona nós do CFG
+    // Rebuild from original graphs
+    // 1. Add nodes from CFG
     if (graph->cfg != NULL) {
         for (size_t i = 0; i < graph->cfg->node_count; i++) {
             GraphNode* cfg_node = graph->cfg->nodes[i];
@@ -144,7 +144,7 @@ void unified_graph_rebuild(UnifiedGraph* graph) {
         }
     }
     
-    // 2. Adiciona nós do Call Graph
+    // 2. Add nodes from Call Graph
     if (graph->call_graph != NULL) {
         for (size_t i = 0; i < graph->call_graph->node_count; i++) {
             GraphNode* call_node = graph->call_graph->nodes[i];
@@ -159,7 +159,7 @@ void unified_graph_rebuild(UnifiedGraph* graph) {
         }
     }
     
-    // 3. Adiciona nós do Dependency Graph
+    // 3. Add nodes from Dependency Graph
     if (graph->dep_graph != NULL) {
         for (size_t i = 0; i < graph->dep_graph->node_count; i++) {
             GraphNode* dep_node = graph->dep_graph->nodes[i];
@@ -174,8 +174,8 @@ void unified_graph_rebuild(UnifiedGraph* graph) {
         }
     }
     
-    // 4. Reconstrói arestas
-    // (Implementação simplificada - em produção, mapearia todas as arestas)
+    // 4. Rebuild edges
+    // (Simplified implementation - in production, would map all edges)
 }
 
 /* =============================================================================
@@ -223,7 +223,7 @@ void unified_graph_add_dependency(UnifiedGraph* graph, UnifiedNode* from,
                                   UnifiedNode* to, const char* label, int edge_type) {
     if (graph == NULL || from == NULL || to == NULL) return;
     
-    // Cria aresta
+    // Create edge
     if (graph->edge_count >= graph->edge_capacity) {
         graph->edge_capacity *= 2;
         UnifiedEdge** new_edges = (UnifiedEdge**)realloc(
@@ -243,7 +243,7 @@ void unified_graph_add_dependency(UnifiedGraph* graph, UnifiedNode* from,
     
     graph->edges[graph->edge_count++] = edge;
     
-    // Adiciona às listas dos nós
+    // Add to node lists
     // (Simplificado - em produção, expandiria arrays dinamicamente)
 }
 
@@ -340,7 +340,7 @@ GraphVersion* unified_graph_create_version(UnifiedGraph* graph) {
     version->version_id = graph->next_version_id++;
     version->timestamp = time(NULL);
     
-    // Snapshot das métricas (não do grafo completo por enquanto)
+    // Snapshot of metrics (not full graph for now)
     version->metrics_snapshot = (NodeMetrics*)malloc(
         sizeof(NodeMetrics) * graph->node_count);
     if (version->metrics_snapshot != NULL) {
@@ -385,7 +385,7 @@ int unified_graph_restore_version(UnifiedGraph* graph, uint64_t version_id) {
 void unified_graph_list_versions(UnifiedGraph* graph) {
     if (graph == NULL) return;
     
-    printf("=== Histórico de Versões do Grafo ===\n");
+    printf("=== Graph Version History ===\n");
     GraphVersion* version = graph->version_history;
     while (version != NULL) {
         char time_str[64];
@@ -419,7 +419,7 @@ void unified_graph_export_dot(UnifiedGraph* graph, const char* filename) {
     fprintf(f, "  rankdir=LR;\n");
     fprintf(f, "  node [shape=box];\n\n");
     
-    // Nós
+    // Nodes
     for (size_t i = 0; i < graph->node_count; i++) {
         UnifiedNode* node = graph->nodes[i];
         if (node == NULL) continue;  // Proteção contra ponteiros nulos
@@ -433,7 +433,7 @@ void unified_graph_export_dot(UnifiedGraph* graph, const char* filename) {
                 color);
     }
     
-    // Arestas
+    // Edges
     for (size_t i = 0; i < graph->edge_count; i++) {
         UnifiedEdge* edge = graph->edges[i];
         if (edge == NULL || edge->from == NULL || edge->to == NULL) continue;  // Proteção crítica
@@ -451,15 +451,15 @@ void unified_graph_export_dot(UnifiedGraph* graph, const char* filename) {
 
 void unified_graph_export_json(UnifiedGraph* graph, const char* filename) {
     // Implementação simplificada
-    printf("Exportando grafo para JSON: %s\n", filename);
+    printf("Exporting graph to JSON: %s\n", filename);
 }
 
 void unified_graph_print_stats(UnifiedGraph* graph) {
     if (graph == NULL) return;
     
-    printf("\n=== Estatísticas do Grafo Unificado ===\n");
-    printf("Nós: %zu\n", graph->node_count);
-    printf("Arestas: %zu\n", graph->edge_count);
+    printf("\n=== Unified Graph Statistics ===\n");
+    printf("Nodes: %zu\n", graph->node_count);
+    printf("Edges: %zu\n", graph->edge_count);
     printf("Execuções totais: %llu\n", (unsigned long long)graph->global_stats.total_executions);
     printf("Tempo total: %.2f us\n", graph->global_stats.total_execution_time_us);
     printf("Memória total: %zu bytes\n", graph->global_stats.total_memory_used);
@@ -469,7 +469,7 @@ void unified_graph_print_stats(UnifiedGraph* graph) {
 void unified_node_print(UnifiedNode* node) {
     if (node == NULL) return;
     
-    printf("\n=== Nó: %s ===\n", node->name);
+    printf("\n=== Node: %s ===\n", node->name);
     printf("Tipo: %d\n", node->type);
     printf("Execuções: %zu\n", node->metrics.execution_count);
     printf("Tempo médio: %.2f us\n", node->metrics.avg_execution_time);

@@ -1,5 +1,5 @@
 # =============================================================================
-# MAKEFILE PARA SERVIDOR WASM
+# MAKEFILE FOR WASM SERVER
 # =============================================================================
 
 CC = gcc
@@ -14,29 +14,29 @@ SRC = src/server/wasm_server.c
 all: $(TARGET)
 
 $(TARGET): $(SRC)
-	@echo "Compilando servidor Wasm..."
+	@echo "Compiling Wasm server..."
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
-	@echo "✓ Servidor compilado: $(TARGET)"
+	@echo "✓ Server compiled: $(TARGET)"
 
 clean:
 	rm -f $(TARGET)
 
 run: $(TARGET)
-	@echo "Iniciando servidor na porta 8080..."
+	@echo "Starting server on port 8080..."
 	./$(TARGET) 8080
 
 run-port: $(TARGET)
-	@echo "Iniciando servidor na porta $(PORT)..."
+	@echo "Starting server on port $(PORT)..."
 	@if [ -z "$(PORT)" ]; then \
-		echo "ERRO: Especifique PORT=XXXX"; \
+		echo "ERROR: Specify PORT=XXXX"; \
 		exit 1; \
 	fi
 	./$(TARGET) $(PORT)
 
 help:
-	@echo "Uso:"
-	@echo "  make          - Compila servidor"
-	@echo "  make run       - Compila e executa na porta 8080"
-	@echo "  make run PORT=3000 - Compila e executa na porta 3000"
-	@echo "  make clean     - Remove arquivos compilados"
+	@echo "Usage:"
+	@echo "  make          - Compile server"
+	@echo "  make run       - Compile and run on port 8080"
+	@echo "  make run PORT=3000 - Compile and run on port 3000"
+	@echo "  make clean     - Remove compiled files"
 

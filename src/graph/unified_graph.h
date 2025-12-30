@@ -27,11 +27,11 @@
 /* =============================================================================
  * GRAFO UNIFICADO DE EXECUÇÃO
  * =============================================================================
- * Combina CFG + Call Graph + Dependencies + Data Flow em um único grafo
- * interativo com anotações inteligentes.
+ * Combines CFG + Call Graph + Dependencies + Data Flow into a single graph
+ * interactive with intelligent annotations.
  * ============================================================================= */
 
-// Tipos de nós no grafo unificado
+// Node types in unified graph
 typedef enum {
     UNIFIED_NODE_BLOCK,          // Bloco de código
     UNIFIED_NODE_FUNCTION,        // Função
@@ -44,7 +44,7 @@ typedef enum {
     UNIFIED_NODE_NETWORK          // Operação de rede
 } UnifiedNodeType;
 
-// Anotações inteligentes para cada nó
+// Intelligent annotations for each node
 typedef struct {
     // Métricas de execução
     double execution_time_us;     // Tempo de execução em microssegundos
@@ -85,42 +85,42 @@ typedef struct {
     int is_critical;               // É crítico para performance?
 } NodeMetrics;
 
-// Versão do grafo (para histórico)
+// Graph version (for history)
 typedef struct GraphVersion {
     uint64_t version_id;           // ID único da versão
     time_t timestamp;              // Quando foi criado
-    Graph* snapshot;               // Snapshot do grafo nesta versão
+    Graph* snapshot;               // Graph snapshot at this version
     NodeMetrics* metrics_snapshot; // Métricas nesta versão
     struct GraphVersion* next;     // Próxima versão (lista encadeada)
     struct GraphVersion* prev;     // Versão anterior
 } GraphVersion;
 
-// Nó unificado (combina informações de todos os grafos)
+// Unified node (combines information from all graphs)
 typedef struct UnifiedNode {
-    char* name;                    // Nome único do nó
-    UnifiedNodeType type;          // Tipo do nó
+    char* name;                    // Unique node name
+    UnifiedNodeType type;          // Node type
     
-    // Referências aos grafos originais
-    GraphNode* cfg_node;           // Nó no CFG (se existir)
-    GraphNode* call_node;          // Nó no call graph (se existir)
-    GraphNode* dep_node;           // Nó no dependency graph (se existir)
-    ASTNode* ast_node;             // Nó AST original (se existir)
+    // References to original graphs
+    GraphNode* cfg_node;           // Node in CFG (if exists)
+    GraphNode* call_node;          // Node in call graph (if exists)
+    GraphNode* dep_node;           // Node in dependency graph (if exists)
+    ASTNode* ast_node;             // Original AST node (if exists)
     
     // Anotações inteligentes
     NodeMetrics metrics;           // Métricas de execução
     
     // Dependências unificadas
-    struct UnifiedNode** dependencies;  // Nós dos quais depende
+    struct UnifiedNode** dependencies;  // Nodes it depends on
     size_t dep_count;
     size_t dep_capacity;
     
-    struct UnifiedNode** dependents;     // Nós que dependem deste
+    struct UnifiedNode** dependents;     // Nodes that depend on this
     size_t dependent_count;
     size_t dependent_capacity;
     
-    // Arestas unificadas
-    struct UnifiedEdge** edges_out;      // Arestas saindo
-    struct UnifiedEdge** edges_in;       // Arestas entrando
+    // Unified edges
+    struct UnifiedEdge** edges_out;      // Outgoing edges
+    struct UnifiedEdge** edges_in;       // Incoming edges
     size_t edge_out_count;
     size_t edge_in_count;
     
@@ -130,39 +130,39 @@ typedef struct UnifiedNode {
     int marked;                    // Flag genérica
 } UnifiedNode;
 
-// Aresta unificada
+// Unified edge
 typedef struct UnifiedEdge {
-    UnifiedNode* from;             // Nó origem
-    UnifiedNode* to;               // Nó destino
-    char* label;                   // Rótulo da aresta
-    int weight;                     // Peso (para algoritmos)
+    UnifiedNode* from;             // Source node
+    UnifiedNode* to;               // Destination node
+    char* label;                   // Edge label
+    int weight;                     // Weight (for algorithms)
     
-    // Tipo de dependência
+    // Dependency type
     enum {
-        EDGE_CONTROL_FLOW,         // Fluxo de controle
-        EDGE_DATA_FLOW,            // Fluxo de dados
-        EDGE_CALL,                 // Chamada de função
-        EDGE_DEPENDENCY,           // Dependência de variável
-        EDGE_IO,                   // Dependência I/O
-        EDGE_NETWORK                // Dependência de rede
+        EDGE_CONTROL_FLOW,         // Control flow
+        EDGE_DATA_FLOW,            // Data flow
+        EDGE_CALL,                 // Function call
+        EDGE_DEPENDENCY,           // Variable dependency
+        EDGE_IO,                   // I/O dependency
+        EDGE_NETWORK                // Network dependency
     } edge_type;
     
-    // Métricas da aresta
+    // Edge metrics
     size_t traversal_count;        // Quantas vezes foi atravessada
     double avg_weight;              // Peso médio
 } UnifiedEdge;
 
-// Grafo unificado
+// Unified graph
 typedef struct UnifiedGraph {
-    UnifiedNode** nodes;           // Todos os nós
+    UnifiedNode** nodes;           // All nodes
     size_t node_count;
     size_t node_capacity;
     
-    UnifiedEdge** edges;           // Todas as arestas
+    UnifiedEdge** edges;           // All edges
     size_t edge_count;
     size_t edge_capacity;
     
-    // Grafos originais (referências, não ownership)
+    // Original graphs (references, not ownership)
     Graph* cfg;                    // Control Flow Graph
     Graph* call_graph;             // Call Graph
     Graph* dep_graph;              // Dependency Graph
@@ -190,17 +190,17 @@ typedef struct UnifiedGraph {
  * ============================================================================= */
 
 /**
- * Cria um grafo unificado a partir dos grafos individuais
+ * Create a unified graph from individual graphs
  */
 UnifiedGraph* unified_graph_create(Graph* cfg, Graph* call_graph, Graph* dep_graph);
 
 /**
- * Destrói o grafo unificado
+ * Destroy the unified graph
  */
 void unified_graph_destroy(UnifiedGraph* graph);
 
 /**
- * Reconstrói o grafo unificado (útil após mudanças nos grafos originais)
+ * Rebuild the unified graph (useful after changes in original graphs)
  */
 void unified_graph_rebuild(UnifiedGraph* graph);
 
@@ -209,13 +209,13 @@ void unified_graph_rebuild(UnifiedGraph* graph);
  * ============================================================================= */
 
 /**
- * Adiciona um nó ao grafo unificado
+ * Add a node to the unified graph
  */
 UnifiedNode* unified_graph_add_node(UnifiedGraph* graph, const char* name, 
                                     UnifiedNodeType type, void* user_data);
 
 /**
- * Busca um nó pelo nome
+ * Find a node by name
  */
 UnifiedNode* unified_graph_find_node(UnifiedGraph* graph, const char* name);
 

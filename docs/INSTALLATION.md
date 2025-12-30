@@ -1,6 +1,6 @@
-# 📦 Guia de Instalação
+# 📦 Installation Guide
 
-## Pré-requisitos
+## Prerequisites
 
 ### Linux
 
@@ -19,69 +19,69 @@ sudo pacman -S base-devel git
 ### macOS
 
 ```bash
-# Instale Xcode Command Line Tools
+# Install Xcode Command Line Tools
 xcode-select --install
 
-# Ou use Homebrew
+# Or use Homebrew
 brew install gcc make git
 ```
 
 ### Windows
 
-1. Instale [WSL2](https://docs.microsoft.com/wsl/install) ou [MSYS2](https://www.msys2.org/)
-2. Siga as instruções do Linux dentro do WSL/MSYS2
+1. Install [WSL2](https://docs.microsoft.com/wsl/install) or [MSYS2](https://www.msys2.org/)
+2. Follow Linux instructions inside WSL/MSYS2
 
-## Instalação
+## Installation
 
-### 1. Clone o Repositório
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/seu-usuario/asteron.git
+git clone https://github.com/your-user/asteron.git
 cd asteron
 ```
 
-### 2. Compile o Projeto
+### 2. Compile the Project
 
 ```bash
 bash compile.sh
 ```
 
-Isso irá:
-- Compilar todos os arquivos fonte
-- Linkar o executável
-- Criar o binário `asteron`
+This will:
+- Compile all source files
+- Link the executable
+- Create the `asteron` binary
 
-### 3. Teste a Instalação
+### 3. Test the Installation
 
 ```bash
 ./asteron --version
 ```
 
-Ou execute um arquivo de teste:
+Or run a test file:
 
 ```bash
 echo 'print("Hello, Asteron!")' > test.ast
 ./asteron test.ast
 ```
 
-## Instalação Opcional: WebAssembly
+## Optional Installation: WebAssembly
 
-Para compilar para WebAssembly:
+To compile for WebAssembly:
 
-### 1. Instale Emscripten
+### 1. Install Emscripten
 
 ```bash
 # Clone Emscripten SDK
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
 
-# Instale e ative
+# Install and activate
 ./emsdk install latest
 ./emsdk activate latest
 source ./emsdk_env.sh
 ```
 
-### 2. Compile para Wasm
+### 2. Compile for Wasm
 
 ```bash
 cd asteron
@@ -89,32 +89,32 @@ chmod +x build_wasm.sh
 ./build_wasm.sh
 ```
 
-Isso gera:
+This generates:
 - `public/asteron.js`
 - `public/asteron.wasm`
 
-### 3. Execute o Servidor Wasm
+### 3. Run Wasm Server
 
 ```bash
 chmod +x run_wasm_server.sh
 ./run_wasm_server.sh
 ```
 
-Acesse: `http://localhost:8080`
+Access: `http://localhost:8080`
 
-## Instalação de Desenvolvimento
+## Development Installation
 
-Para desenvolvimento, você pode querer:
+For development, you may want to:
 
-### 1. Compilar com Debug
+### 1. Compile with Debug
 
 ```bash
-# Edite compile.sh e adicione -g -O0
+# Edit compile.sh and add -g -O0
 CFLAGS="-Wall -Wextra -std=c11 -g -O0 -I src ..."
 bash compile.sh
 ```
 
-### 2. Usar GDB/LLDB
+### 2. Use GDB/LLDB
 
 ```bash
 # GDB
@@ -133,71 +133,70 @@ valgrind --leak-check=full ./asteron test.ast
 
 ## Troubleshooting
 
-### Erro: "gcc: command not found"
+### Error: "gcc: command not found"
 
-**Solução**: Instale build-essential:
+**Solution**: Install build-essential:
 ```bash
 sudo apt-get install build-essential
 ```
 
-### Erro: "Permission denied"
+### Error: "Permission denied"
 
-**Solução**: Dê permissão de execução:
+**Solution**: Give execution permission:
 ```bash
 chmod +x compile.sh
 chmod +x asteron
 ```
 
-### Erro: "undefined reference"
+### Error: "undefined reference"
 
-**Solução**: Verifique se todos os arquivos foram compilados:
+**Solution**: Check if all files were compiled:
 ```bash
 bash compile.sh 2>&1 | grep error
 ```
 
-### Erro: "Port already in use" (Wasm Server)
+### Error: "Port already in use" (Wasm Server)
 
-**Solução**: Use outra porta:
+**Solution**: Use another port:
 ```bash
 ./run_wasm_server.sh 3000
 ```
 
-### Erro: "emcc not found" (Wasm)
+### Error: "emcc not found" (Wasm)
 
-**Solução**: Instale e ative Emscripten:
+**Solution**: Install and activate Emscripten:
 ```bash
 source emsdk/emsdk_env.sh
 ```
 
-## Verificação da Instalação
+## Installation Verification
 
-Execute o script de verificação:
+Run the verification script:
 
 ```bash
-# Crie um arquivo de teste
+# Create a test file
 cat > test_install.ast << 'EOF'
 function main() {
-    print("Asteron instalado com sucesso!")
+    print("Asteron installed successfully!")
     return 0
 }
 EOF
 
-# Execute
+# Run
 ./asteron test_install.ast
 ```
 
-Se você ver "Asteron instalado com sucesso!", a instalação está correta!
+If you see "Asteron installed successfully!", the installation is correct!
 
-## Próximos Passos
+## Next Steps
 
-- Veja [QUICKSTART.md](QUICKSTART.md) para começar
-- Veja [EXAMPLES.md](EXAMPLES.md) para exemplos
-- Veja [ARCHITECTURE.md](ARCHITECTURE.md) para entender a arquitetura
+- See [QUICKSTART.md](QUICKSTART.md) to get started
+- See [EXAMPLES.md](EXAMPLES.md) for examples
+- See [ARCHITECTURE.md](ARCHITECTURE.md) to understand the architecture
 
-## Suporte
+## Support
 
-Se tiver problemas:
-1. Verifique [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-2. Abra uma [issue](https://github.com/seu-usuario/asteron/issues)
-3. Entre em contato com os mantenedores
-
+If you have problems:
+1. Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+2. Open an [issue](https://github.com/your-user/asteron/issues)
+3. Contact the maintainers

@@ -1,8 +1,8 @@
-# 📝 Exemplos de Código
+# 📝 Code Examples
 
-Coleção de exemplos práticos usando o Asteron.
+Collection of practical examples using Asteron.
 
-## Básico
+## Basic
 
 ### Hello World
 
@@ -13,7 +13,7 @@ function main() {
 }
 ```
 
-### Variáveis e Tipos
+### Variables and Types
 
 ```asteron
 function main() {
@@ -31,7 +31,7 @@ function main() {
 }
 ```
 
-### Funções
+### Functions
 
 ```asteron
 function add(a, b) {
@@ -53,9 +53,9 @@ function main() {
 }
 ```
 
-## Estruturas de Controle
+## Control Structures
 
-### Condicionais
+### Conditionals
 
 ```asteron
 function check_number(n) {
@@ -109,7 +109,7 @@ function main() {
 }
 ```
 
-## Recursão
+## Recursion
 
 ### Fibonacci
 
@@ -131,13 +131,13 @@ function main() {
 }
 ```
 
-## Módulo Net
+## Net Module
 
-### Cliente HTTP Simples
+### Simple HTTP Client
 
 ```asteron
 function fetch_url(url) {
-    // Simplificado - em produção, use http_get()
+    // Simplified - in production, use http_get()
     let socket = tcp_connect("example.com", 80)
     if (socket <= 0) {
         return "Error: Could not connect"
@@ -159,9 +159,9 @@ function main() {
 }
 ```
 
-## Módulo FS
+## FS Module
 
-### Leitura de Arquivo
+### File Reading
 
 ```asteron
 function read_config() {
@@ -181,24 +181,24 @@ function main() {
 }
 ```
 
-## Sistema Reativo
+## Reactive System
 
-### Contador Reativo
+### Reactive Counter
 
 ```asteron
 function main() {
-    // Estado reativo
+    // Reactive state
     let count = state(0)
     
-    // Derivado (atualiza automaticamente)
+    // Derived (updates automatically)
     let doubled = derived(() => count * 2)
     
-    // Efeito (executa quando count muda)
+    // Effect (executes when count changes)
     effect(() => {
         print("Count: " + count + ", Doubled: " + doubled)
     })
     
-    // Modifica estado
+    // Modify state
     count = 5
     count = 10
     count = 15
@@ -207,7 +207,7 @@ function main() {
 }
 ```
 
-### Calculadora Reativa
+### Reactive Calculator
 
 ```asteron
 function main() {
@@ -231,13 +231,13 @@ function main() {
 
 ## Intent-Based Scheduling
 
-### Otimização de Latência
+### Latency Optimization
 
 ```asteron
 @intent optimize_latency
 function process_request(data) {
-    // Runtime otimiza automaticamente para baixa latência
-    // Pode usar SIMD, pré-alocação, etc.
+    // Runtime automatically optimizes for low latency
+    // May use SIMD, pre-allocation, etc.
     return heavy_computation(data)
 }
 
@@ -248,13 +248,13 @@ function main() {
 }
 ```
 
-### Otimização de Throughput
+### Throughput Optimization
 
 ```asteron
 @intent optimize_throughput
 function batch_process(items) {
-    // Runtime otimiza para alto throughput
-    // Pode paralelizar, usar cache, etc.
+    // Runtime optimizes for high throughput
+    // May parallelize, use cache, etc.
     let i = 0
     while (i < len(items)) {
         process_item(items[i])
@@ -266,17 +266,17 @@ function batch_process(items) {
 
 ## Ownership & Borrowing
 
-### Exemplo Básico
+### Basic Example
 
 ```asteron
 function create_data() {
     let data = create_object()
-    // Ownership de data
+    // Ownership of data
     return data
 }
 
 function process_data(data) {
-    // Borrow de data (read-only)
+    // Borrow of data (read-only)
     let borrowed = borrow(data)
     return process(borrowed)
 }
@@ -284,28 +284,28 @@ function process_data(data) {
 function main() {
     let my_data = create_data()
     let result = process_data(my_data)
-    // my_data ainda pode ser usado
+    // my_data can still be used
     return 0
 }
 ```
 
 ## Region Memory
 
-### Processamento de Requisição
+### Request Processing
 
 ```asteron
 function handle_request() {
-    // Cria região para a requisição
+    // Create region for the request
     let region = create_region("http_request")
     
-    // Todas as alocações vão para a região
+    // All allocations go to the region
     let buffer = alloc_in_region(region, 1024)
     let data = alloc_in_region(region, 512)
     
-    // Processa requisição...
+    // Process request...
     process(buffer, data)
     
-    // Quando termina, libera tudo de uma vez
+    // When done, free everything at once
     destroy_region(region)
     return 0
 }
@@ -313,18 +313,18 @@ function handle_request() {
 
 ## Graph
 
-### Construção de Grafo
+### Graph Construction
 
 ```asteron
 function build_graph() {
-    // Adiciona nós
+    // Add nodes
     graph_add_node("client_1", "client", "")
     graph_add_node("page_1", "page", "")
     
-    // Adiciona aresta
+    // Add edge
     graph_add_edge("client_1", "page_1", "visited", 1.0)
     
-    // Obtém vizinhos
+    // Get neighbors
     let neighbors = graph_get_neighbors("client_1")
     print("Neighbors: " + neighbors)
     
@@ -337,13 +337,13 @@ function main() {
 }
 ```
 
-## Task (Concorrência)
+## Task (Concurrency)
 
-### Processamento Paralelo
+### Parallel Processing
 
 ```asteron
 function process_item(item) {
-    // Processa item
+    // Process item
     return item * 2
 }
 
@@ -351,7 +351,7 @@ function main() {
     let items = [1, 2, 3, 4, 5]
     let tasks = []
     
-    // Cria tasks
+    // Create tasks
     let i = 0
     while (i < len(items)) {
         let task = task_spawn(() => process_item(items[i]))
@@ -359,7 +359,7 @@ function main() {
         i = i + 1
     }
     
-    // Espera todas terminarem
+    // Wait for all to finish
     i = 0
     while (i < len(tasks)) {
         task_join(tasks[i])
@@ -370,9 +370,9 @@ function main() {
 }
 ```
 
-## Combinando Conceitos
+## Combining Concepts
 
-### Sistema Completo
+### Complete System
 
 ```asteron
 @intent optimize_throughput
@@ -380,7 +380,7 @@ function process_data(data) {
     let region = create_region("processing")
     let buffer = alloc_in_region(region, 1024)
     
-    // Processa
+    // Process
     let result = heavy_computation(data, buffer)
     
     destroy_region(region)
@@ -388,7 +388,7 @@ function process_data(data) {
 }
 
 function main() {
-    // Estado reativo
+    // Reactive state
     let input = state("")
     let output = derived(() => process_data(input))
     
@@ -404,13 +404,12 @@ function main() {
 }
 ```
 
-## Mais Exemplos
+## More Examples
 
-- Veja [framework/](../framework/) para exemplos do framework de IA
-- Veja [test/](../test/) para testes
-- Veja [examples/](../examples/) para mais exemplos (quando disponível)
+- See [framework/](../framework/) for AI framework examples
+- See [test/](../test/) for tests
+- See [examples/](../examples/) for more examples (when available)
 
 ---
 
-**Contribua**: Adicione seus próprios exemplos!
-
+**Contribute**: Add your own examples!

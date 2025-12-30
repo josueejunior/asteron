@@ -1,302 +1,301 @@
-# 🧠 Conceitos Fundamentais do Asteron
+# 🧠 Fundamental Concepts of Asteron
 
-## 1. Runtime Autoconsciente
+## 1. Self-Aware Runtime
 
-O Asteron é um **runtime autoconsciente** - ele conhece seu próprio estado de execução e pode tomar decisões baseadas nesse conhecimento.
+Asteron is a **self-aware runtime** - it knows its own execution state and can make decisions based on that knowledge.
 
-### Exemplo:
+### Example:
 ```asteron
 function process(data) {
-    // O runtime sabe:
-    // - Quantas vezes esta função foi chamada
-    // - Quanto tempo leva para executar
-    // - Quais são suas dependências
-    // - Se pode ser paralelizada
+    // The runtime knows:
+    // - How many times this function was called
+    // - How long it takes to execute
+    // - What its dependencies are
+    // - If it can be parallelized
     return data * 2
 }
 ```
 
 ## 2. Unified Graph
 
-O **Unified Graph** é uma representação unificada que combina:
+The **Unified Graph** is a unified representation that combines:
 
-- **CFG**: Como o código flui (if/else, loops)
-- **Call Graph**: Quem chama quem
-- **Data Flow**: Como os dados fluem
-- **Dependencies**: O que depende de quê
+- **CFG**: How code flows (if/else, loops)
+- **Call Graph**: Who calls whom
+- **Data Flow**: How data flows
+- **Dependencies**: What depends on what
 
-### Benefícios:
-- **Visualização**: Veja o código como um grafo
-- **Análise**: Entenda dependências e fluxos
-- **Otimização**: Otimize baseado no grafo completo
-- **Debugging**: Depure visualmente
+### Benefits:
+- **Visualization**: See code as a graph
+- **Analysis**: Understand dependencies and flows
+- **Optimization**: Optimize based on the complete graph
+- **Debugging**: Debug visually
 
 ## 3. Tiered JIT
 
-Sistema de compilação em camadas:
+Multi-tier compilation system:
 
 ### Tier 0: Interpreter
-- Execução direta da AST
-- Sem overhead de compilação
-- Ideal para código executado poucas vezes
+- Direct AST execution
+- No compilation overhead
+- Ideal for code executed few times
 
 ### Tier 1: Baseline JIT
-- Compilação rápida (sem otimizações pesadas)
-- Ativado quando código é executado várias vezes
-- Gera código de máquina básico
+- Fast compilation (no heavy optimizations)
+- Activated when code is executed multiple times
+- Generates basic machine code
 
 ### Tier 2: Optimizing JIT
-- Otimizações agressivas (SSA, Graph Coloring)
-- Ativado para "hot paths" (código muito executado)
-- Gera código altamente otimizado
+- Aggressive optimizations (SSA, Graph Coloring)
+- Activated for "hot paths" (frequently executed code)
+- Generates highly optimized code
 
 ### OSR (On-Stack Replacement)
-- Troca código interpretado por JIT no meio da execução
-- Permite otimização de loops em execução
+- Swaps interpreted code for JIT in the middle of execution
+- Allows optimization of running loops
 
 ## 4. Ownership & Borrowing
 
-Sistema inspirado em Rust para gerenciamento seguro de memória:
+Rust-inspired system for safe memory management:
 
 ```asteron
-let x = create_object()  // Ownership de x
-let y = borrow(x)        // y empresta x (read-only)
-let z = borrow_mut(x)   // z empresta x mutável (exclusivo)
-// x não pode ser usado enquanto z existe
+let x = create_object()  // x owns the object
+let y = borrow(x)        // y borrows x (read-only)
+let z = borrow_mut(x)   // z borrows x mutably (exclusive)
+// x cannot be used while z exists
 ```
 
-### Benefícios:
-- **Segurança**: Previne use-after-free, double-free
-- **Performance**: Sem overhead de GC
-- **Clareza**: Fica explícito quem possui o quê
+### Benefits:
+- **Safety**: Prevents use-after-free, double-free
+- **Performance**: No GC overhead
+- **Clarity**: Makes explicit who owns what
 
 ## 5. Region-based Memory
 
-**Regiões** são áreas de memória que podem ser desalocadas de uma vez:
+**Regions** are memory areas that can be deallocated at once:
 
 ```asteron
-// Cria região para uma requisição HTTP
+// Create region for an HTTP request
 let region = create_region("http_request")
 
-// Todas as alocações vão para a região
+// All allocations go to the region
 let data = alloc_in_region(region, size)
 let buffer = alloc_in_region(region, size)
 
-// Quando a requisição termina, libera tudo de uma vez
-destroy_region(region)  // Libera tudo instantaneamente
+// When request ends, free everything at once
+destroy_region(region)  // Frees everything instantly
 ```
 
-### Benefícios:
-- **Performance**: Desalocação em massa é muito rápida
-- **Simplicidade**: Não precisa rastrear cada objeto
-- **Zero-Copy**: Dados podem ser compartilhados sem cópia
+### Benefits:
+- **Performance**: Bulk deallocation is very fast
+- **Simplicity**: No need to track each object
+- **Zero-Copy**: Data can be shared without copying
 
 ## 6. Holographic Memory (DVM)
 
-**Distributed Virtual Machine** - memória distribuída como se fosse local:
+**Distributed Virtual Machine** - distributed memory as if it were local:
 
 ```asteron
-// Objeto no Nó A
+// Object on Node A
 let obj = create_object()
 
-// Empresta para Nó B (transparente)
+// Borrow to Node B (transparent)
 let borrowed = borrow_remote(obj, "node_b")
 
-// Nó B usa como se fosse local
+// Node B uses it as if it were local
 process(borrowed)
 
-// Quando retorna, Nó A pode usar novamente
+// When returned, Node A can use it again
 ```
 
-### Características:
-- **Global Address Space**: Endereçamento unificado
-- **Distributed Ownership**: Ownership entre nós
-- **Transparent**: Código não precisa saber que é remoto
+### Characteristics:
+- **Global Address Space**: Unified addressing
+- **Distributed Ownership**: Ownership between nodes
+- **Transparent**: Code doesn't need to know it's remote
 
 ## 7. Reactive System
 
-Sistema reativo onde mudanças propagam automaticamente:
+Reactive system where changes propagate automatically:
 
 ```asteron
-// Estado reativo
+// Reactive state
 let count = state(0)
 
-// Derivado (atualiza automaticamente)
+// Derived (updates automatically)
 let doubled = derived(() => count * 2)
 
-// Efeito (executa quando count muda)
+// Effect (executes when count changes)
 effect(() => {
     print("Count is now: " + count)
 })
 
-count = 10  // doubled atualiza automaticamente, efeito executa
+count = 10  // doubled updates automatically, effect executes
 ```
 
-### Tipos de Nós:
-- **STATE**: Estado mutável
-- **DERIVED**: Valor derivado (read-only)
-- **EFFECT**: Efeito colateral
-- **COMPUTED**: Valor computado (com cache)
+### Node Types:
+- **STATE**: Mutable state
+- **DERIVED**: Derived value (read-only)
+- **EFFECT**: Side effect
+- **COMPUTED**: Computed value (with cache)
 
 ## 8. Self-Healing Runtime
 
-O runtime monitora e corrige problemas automaticamente:
+The runtime monitors and fixes problems automatically:
 
-### Auto-Paralelização
+### Auto-Parallelization
 ```asteron
-// Runtime detecta que estas funções não compartilham estado
+// Runtime detects these functions don't share state
 function process_a(data) { ... }
 function process_b(data) { ... }
 
-// Automaticamente paraleliza
+// Automatically parallelizes
 parallel([process_a, process_b], [data1, data2])
 ```
 
-### Re-otimização
-- Monitora métricas (tempo, cache misses, etc.)
-- Detecta degradação de performance
-- Re-compila com otimizações mais agressivas
+### Re-optimization
+- Monitors metrics (time, cache misses, etc.)
+- Detects performance degradation
+- Re-compiles with more aggressive optimizations
 
 ## 9. Intent-Based Scheduling
 
-Declare **o que** você quer, não **como** fazer:
+Declare **what** you want, not **how** to do it:
 
 ```asteron
 @intent optimize_latency
 function process_request(req) {
-    // Runtime decide:
-    // - Usar SIMD se disponível
-    // - Pré-alocar memória
-    // - Aquecer JIT
-    // - Paralelizar se possível
+    // Runtime decides:
+    // - Use SIMD if available
+    // - Pre-allocate memory
+    // - Warm up JIT
+    // - Parallelize if possible
     return handle(req)
 }
 ```
 
-### Intenções Disponíveis:
-- `optimize_latency`: Priorizar baixa latência
-- `optimize_throughput`: Priorizar alto throughput
-- `optimize_cost`: Priorizar baixo custo (recursos)
-- `ensure_availability`: Priorizar alta disponibilidade
-- `balance_load`: Balancear carga
+### Available Intentions:
+- `optimize_latency`: Prioritize low latency
+- `optimize_throughput`: Prioritize high throughput
+- `optimize_cost`: Prioritize low cost (resources)
+- `ensure_availability`: Prioritize high availability
+- `balance_load`: Balance load
 
 ## 10. Profile-Guided Optimization
 
-Otimização baseada em dados reais de execução:
+Optimization based on real execution data:
 
-1. **Coleta**: Coleta métricas durante execução
-2. **Análise**: Analisa padrões e gargalos
-3. **Otimização**: Aplica otimizações específicas
-4. **Validação**: Verifica se melhorou
+1. **Collection**: Collects metrics during execution
+2. **Analysis**: Analyzes patterns and bottlenecks
+3. **Optimization**: Applies specific optimizations
+4. **Validation**: Verifies if it improved
 
-### Métricas Coletadas:
-- Tempo de execução por função
-- Frequência de execução
+### Collected Metrics:
+- Execution time per function
+- Execution frequency
 - Cache misses
 - Branch mispredictions
-- Uso de memória
-- Contention (contenção)
+- Memory usage
+- Contention
 
 ## 11. Zero-Copy Integration
 
-Módulos nativos acessam memória diretamente, sem cópias:
+Native modules access memory directly, without copies:
 
 ```c
-// Módulo nativo acessa memória da VM diretamente
+// Native module accesses VM memory directly
 void* native_process(Value* data) {
-    // Acessa dados sem copiar
+    // Accesses data without copying
     char* buffer = data->as.obj->data;
-    // Processa diretamente
+    // Processes directly
     return buffer;
 }
 ```
 
-### Benefícios:
-- **Performance**: Sem overhead de cópia
-- **Eficiência**: Uso direto de memória
-- **Simplicidade**: Código mais simples
+### Benefits:
+- **Performance**: No copy overhead
+- **Efficiency**: Direct memory usage
+- **Simplicity**: Simpler code
 
 ## 12. Persistent Memory
 
-Variáveis reativas podem sobreviver a reinicializações:
+Reactive variables can survive reboots:
 
 ```asteron
-// Variável persistente (salva em PMEM)
+// Persistent variable (saved in PMEM)
 let config = persistent_state({
     theme: "dark",
-    language: "pt-BR"
+    language: "en-US"
 })
 
-// Mesmo após reinicialização, valor persiste
+// Even after reboot, value persists
 ```
 
-### Suporte:
-- **NVMe SSD**: Armazenamento não volátil
-- **Intel Optane**: Memória persistente
-- **File-based**: Arquivos mapeados
+### Support:
+- **NVMe SSD**: Non-volatile storage
+- **Intel Optane**: Persistent memory
+- **File-based**: Mapped files
 
 ## 13. WebAssembly Integration
 
-O compilador roda no navegador:
+The compiler runs in the browser:
 
-- **Compilação em tempo real**: Compila enquanto você digita
-- **Visualização de grafo**: Veja o grafo sendo gerado
-- **Hot paths**: Cores dinâmicas mostram código "quente"
-- **Interatividade**: Editor completo no navegador
+- **Real-time compilation**: Compiles as you type
+- **Graph visualization**: See the graph being generated
+- **Hot paths**: Dynamic colors show "hot" code
+- **Interactivity**: Full editor in the browser
 
 ## 14. Failure Analytics
 
-Sistema que analisa falhas e sugere correções:
+System that analyzes failures and suggests fixes:
 
-- **Detecção de padrões**: Identifica padrões de falha
-- **Análise de causa raiz**: Encontra causas de bugs
-- **Sugestões**: Sugere correções
-- **Prevenção**: Previne bugs similares
+- **Pattern detection**: Identifies failure patterns
+- **Root cause analysis**: Finds causes of bugs
+- **Suggestions**: Suggests fixes
+- **Prevention**: Prevents similar bugs
 
 ## 15. Hot Reload
 
-Recarregue código sem perder estado:
+Reload code without losing state:
 
 ```asteron
-// Código em execução
+// Running code
 function process(data) {
     return data * 2
 }
 
-// Modifica função
+// Modify function
 function process(data) {
-    return data * 3  // Nova versão
+    return data * 3  // New version
 }
 
-// Runtime recarrega automaticamente, mantendo estado
+// Runtime reloads automatically, maintaining state
 ```
 
-## Comparação com Outras Tecnologias
+## Comparison with Other Technologies
 
 ### vs JavaScript/V8
-- **JIT Similar**: Ambos usam JIT tiered
-- **Melhor**: Ownership system, unified graph, self-healing
+- **Similar JIT**: Both use tiered JIT
+- **Better**: Ownership system, unified graph, self-healing
 
 ### vs Rust
 - **Similar**: Ownership system
-- **Melhor**: JIT, reactive system, unified graph
+- **Better**: JIT, reactive system, unified graph
 
 ### vs Python
-- **Melhor Performance**: JIT, zero-copy
-- **Melhor**: Type safety, ownership
+- **Better Performance**: JIT, zero-copy
+- **Better**: Type safety, ownership
 
 ### vs Go
-- **Similar**: Concorrência
-- **Melhor**: JIT, reactive system, unified graph
+- **Similar**: Concurrency
+- **Better**: JIT, reactive system, unified graph
 
-## Filosofia
+## Philosophy
 
-O Asteron segue a filosofia:
+Asteron follows the philosophy:
 
-1. **Autoconsciência**: O runtime conhece seu estado
-2. **Automação**: Decisões automáticas quando possível
-3. **Transparência**: Código claro e explícito
-4. **Performance**: Otimizações agressivas
-5. **Segurança**: Prevenção de bugs de memória
-6. **Extensibilidade**: Fácil de estender
-
+1. **Self-Awareness**: The runtime knows its state
+2. **Automation**: Automatic decisions when possible
+3. **Transparency**: Clear and explicit code
+4. **Performance**: Aggressive optimizations
+5. **Safety**: Prevention of memory bugs
+6. **Extensibility**: Easy to extend

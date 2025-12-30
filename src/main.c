@@ -41,7 +41,14 @@
 #include "core/hotreload/hotreload.h"
 // #include "core/analytics/failure_analytics.h"  // TEMPORARIAMENTE DESABILITADO devido a crash
 
-/* Módulos nativos */
+/* Sistemas Brain (Meta-layer) */
+#include "core/brain/context_brain.h"
+#include "core/brain/intent_engine.h"
+#include "core/brain/self_tuning.h"
+#include "core/brain/adaptive_runtime.h"
+#include "devtools/visual_debugger.h"
+
+/* Native modules */
 #include "modules/native/net_module.h"
 #include "modules/native/fs_module.h"
 #include "modules/native/time_module.h"
@@ -51,18 +58,18 @@
 #include "modules/native/agent_module.h"
 #include "modules/native/graph_module.h"
 
-/* Declarações de funções básicas do loader */
+/* Basic loader function declarations */
 #include "loader/loader.h"
 
-/* Registra todas as funções nativas na VM */
+/* Register all native functions in VM */
 static void register_native_functions(void) {
-    /* FUNÇÕES BÁSICAS */
+    /* BASIC FUNCTIONS */
     vm_register_native("len", native_len, 1, 1);
     vm_register_native("substr", native_substr, 2, 3);
     vm_register_native("index_of", native_index_of, 2, 2);
     vm_register_native("print", native_print, 0, -1);
     
-    /* NET - Funções Básicas */
+    /* NET - Basic Functions */
     vm_register_native("hostname", net_hostname, 0, 0);
     vm_register_native("resolve", net_resolve, 1, 1);
     vm_register_native("resolve_all", net_resolve_all, 1, 1);
@@ -77,7 +84,7 @@ static void register_native_functions(void) {
     vm_register_native("tcp_recv_all", net_tcp_recv_all, 1, 2);
     vm_register_native("tcp_close", net_tcp_close, 1, 1);
     
-    /* NET - Configuração */
+    /* NET - Configuration */
     vm_register_native("set_timeout", net_set_timeout, 2, 2);
     vm_register_native("is_connected", net_is_connected, 1, 1);
     vm_register_native("socket_stats", net_socket_stats, 1, 1);
@@ -153,15 +160,15 @@ static void register_native_functions(void) {
     vm_register_native("tls_available", tls_available, 0, 0);
     vm_register_native("tls_version", tls_version, 0, 0);
     
-    /* GRAPH - Módulo de Grafos (registrado via graph_module_register) */
+    /* GRAPH - Graph Module (registered via graph_module_register) */
     graph_module_register();
 }
 
-// Lê um arquivo inteiro em uma string
+// Read entire file into a string
 static char* read_file(const char* path) {
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
-        fprintf(stderr, "Erro: Não foi possível abrir o arquivo '%s'\n", path);
+        fprintf(stderr, "Error: Could not open file '%s'\n", path);
         return NULL;
     }
     
@@ -182,7 +189,7 @@ static char* read_file(const char* path) {
     return buffer;
 }
 
-// Função auxiliar para registrar funções recursivamente em todos os blocos
+// Helper function to register functions recursively in all blocks
 static void register_functions_recursive(VM* vm, ASTNode* node) {
     if (node == NULL) {
         return;
@@ -224,13 +231,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    printf("=== Código Fonte ===\n%s\n\n", source);
+    printf("=== Source Code ===\n%s\n\n", source);
     
     // Fase 1: Lexer
     printf("=== Tokens ===\n");
     Lexer* lexer = lexer_create(source);
     if (lexer == NULL) {
-        fprintf(stderr, "Erro: Não foi possível criar o lexer\n");
+        fprintf(stderr, "Error: Could not create lexer\n");
         free(source);
         return 1;
     }
@@ -243,14 +250,14 @@ int main(int argc, char* argv[]) {
     
     printf("\n");
     
-    // Fase 2: Parser
+    // Phase 2: Parser
     printf("=== AST ===\n");
     lexer_destroy(lexer);
-    lexer = lexer_create(source); // Recria para o parser
+    lexer = lexer_create(source); // Recreate for parser
     
     Parser* parser = parser_create(lexer);
     if (parser == NULL) {
-        fprintf(stderr, "Erro: Não foi possível criar o parser\n");
+        fprintf(stderr, "Error: Could not create parser\n");
         lexer_destroy(lexer);
         free(source);
         return 1;
@@ -259,8 +266,8 @@ int main(int argc, char* argv[]) {
     ASTNode* ast = parser_parse(parser);
     
     if (parser_had_error(parser)) {
-        printf("Erros encontrados durante o parsing.\n");
-        // Não executa se houver erros de parsing
+        printf("Errors found during parsing.\n");
+        // Don't execute if there are parsing errors
         if (ast != NULL) {
             ast_destroy_node(ast);
             ast = NULL;
@@ -269,19 +276,19 @@ int main(int argc, char* argv[]) {
         ast_print_node(ast, 0);
         printf("\n");
         
-        // Fase 3: Type Checker
-        printf("=== Verificação de Tipos ===\n");
+        // Phase 3: Type Checker
+        printf("=== Type Checking ===\n");
         if (typechecker_check(ast)) {
-            printf("Erros de tipo encontrados. Execução abortada.\n");
+            printf("Type errors found. Execution aborted.\n");
             ast_destroy_node(ast);
             parser_destroy(parser);
             lexer_destroy(lexer);
             free(source);
             return 1;
         }
-        printf("✓ Verificação de tipos concluída com sucesso\n\n");
+        printf("✓ Type checking completed successfully\n\n");
         
-        // Fase Otimização: SSA Transformation
+        // Optimization Phase: SSA Transformation
         ssa_transform(ast);
         ssa_analyze_liveness(ast);
         speculative_inline(ast);
@@ -293,11 +300,11 @@ int main(int argc, char* argv[]) {
         ast_print_node(ast, 0);
         printf("\n");
         
-        // Fase 4: Compilação para Bytecode
-        printf("=== Compilação para Bytecode ===\n");
+        // Phase 4: Compilation to Bytecode
+        printf("=== Bytecode Compilation ===\n");
         BytecodeProgram* bytecode = compiler_compile(ast);
         if (bytecode == NULL) {
-            fprintf(stderr, "Erro: Falha ao compilar para bytecode\n");
+            fprintf(stderr, "Error: Failed to compile to bytecode\n");
             ast_destroy_node(ast);
             parser_destroy(parser);
             lexer_destroy(lexer);
@@ -305,19 +312,19 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         
-        // IMPORTANTE: Após compilação, AST torna-se READ-ONLY
-        // Tasks podem ler, mas nunca modificar ou liberar
+        // IMPORTANT: After compilation, AST becomes READ-ONLY
+        // Tasks can read, but never modify or free
         ast_mark_readonly(ast);
         
         bytecode_program_print(bytecode);
         printf("\n");
         
-        // Fase 5: Execução na VM (sequencial)
-        printf("=== Execução na VM (Sequencial) ===\n");
+        // Phase 5: VM Execution (sequential)
+        printf("=== VM Execution (Sequential) ===\n");
         fflush(stdout);
         VM* vm = vm_create(bytecode);
         if (vm == NULL) {
-            fprintf(stderr, "Erro: Falha ao criar VM\n");
+            fprintf(stderr, "Error: Failed to create VM\n");
             bytecode_program_destroy(bytecode);
             ast_destroy_node(ast);
             parser_destroy(parser);
@@ -326,59 +333,80 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         
-        // Registra funções nativas
+        // Register native functions
         register_native_functions();
         
-        // Registra funções definidas em Asteron na VM (recursivamente em todos os blocos)
+        // Register functions defined in Asteron in VM (recursively in all blocks)
         register_functions_recursive(vm, ast);
         
-        // Executa bytecode
+        // Execute bytecode
         int vm_result = vm_execute(vm);
         
-        // --- TESTE DE RESILIÊNCIA: Snapshot ---
+        // --- RESILIENCE TEST: Snapshot ---
         VMSnapshot snap = vm_take_snapshot(vm);
-        printf("  [Resilience] Snapshot de sistema íntegro gerado.\n");
+        printf("  [Resilience] System snapshot generated.\n");
         vm_snapshot_destroy(&snap);
         
         if (vm_result != 0) {
-            fprintf(stderr, "Erro durante execução na VM\n");
+            fprintf(stderr, "Error during VM execution\n");
         }
         
-        // NOTA: VM e bytecode são mantidos vivos para análises posteriores
-        // Serão destruídos após todas as análises
+        // ============================================================
+        // AUTOMATIC ADAPTATION POST-EXECUTION
+        // ============================================================
+        if (adaptive_rt != NULL) {
+            printf("\n=== Adaptive Runtime: Automatic Adaptation ===\n");
+            
+            // Execute adaptation cycle
+            adaptive_runtime_adapt(adaptive_rt);
+            
+            // Show statistics
+            adaptive_runtime_print_stats(adaptive_rt);
+        }
         
-        // Execução alternativa com interpretador direto (comentado)
-        // printf("=== Execução (Interpretador Direto) ===\n");
+        if (debugger != NULL) {
+            printf("\n=== Visual Debugger: Timeline ===\n");
+            visual_debugger_stop_recording(debugger);
+            visual_debugger_print_timeline(debugger);
+            visual_debugger_export_timeline_json(debugger, "execution_timeline.json");
+            printf("  Timeline exportada para 'execution_timeline.json'\n");
+        }
+        
+        // NOTE: VM and bytecode are kept alive for later analysis
+        // Will be destroyed after all analysis
+        
+        // Alternative execution with direct interpreter (commented)
+        // printf("=== Execution (Direct Interpreter) ===\n");
         // interpreter_execute(ast);
         
-        // Fase 6: Grafo Declarativo (Orientado a Grafos)
-        printf("\n=== Grafo Declarativo (Orientado a Grafos) ===\n");
+        // Phase 6: Declarative Graph (Graph-Oriented)
+        printf("\n=== Declarative Graph (Graph-Oriented) ===\n");
         DeclarativeGraph* declarative_graph = declarative_graph_create(ast);
         if (declarative_graph != NULL) {
             declarative_graph_print(declarative_graph);
             
-            // Exporta grafo de execução
+            // Export execution graph
             Graph* exec_graph = declarative_graph_get_execution_graph(declarative_graph);
             if (exec_graph != NULL) {
                 graph_export_dot(exec_graph, "declarative_execution.dot", GRAPH_DEPENDENCIES);
             }
         }
         
-        // Fase 7: Análise de Grafos (tradicional)
-        printf("\n=== Análise de Grafos (Tradicional) ===\n");
+        // Phase 7: Graph Analysis (traditional)
+        printf("\n=== Graph Analysis (Traditional) ===\n");
         
-        // Grafo de dependências
+        // Dependency graph
         Graph* dep_graph = graph_build_dependencies(ast);
         if (dep_graph != NULL) {
-            printf("\n--- Grafo de Dependências ---\n");
+            printf("\n--- Dependency Graph ---\n");
             graph_print(dep_graph);
             graph_export_dot(dep_graph, "dependencies.dot", GRAPH_DEPENDENCIES);
         }
         
-        // Grafo de chamadas
+        // Call graph
         Graph* call_graph = graph_build_call_graph(ast);
         if (call_graph != NULL) {
-            printf("\n--- Grafo de Chamadas ---\n");
+            printf("\n--- Call Graph ---\n");
             graph_print(call_graph);
             graph_export_dot(call_graph, "call_graph.dot", GRAPH_CALLS);
         }
@@ -391,47 +419,78 @@ int main(int argc, char* argv[]) {
             graph_export_dot(cfg, "control_flow.dot", GRAPH_CONTROL_FLOW);
         }
         
-        // Grafo Unificado (combina todos os grafos com anotações inteligentes)
+        // Unified Graph (combines all graphs with intelligent annotations)
         UnifiedGraph* unified = NULL;
         if (dep_graph != NULL && call_graph != NULL && cfg != NULL) {
-            printf("\n=== Grafo Unificado de Execução ===\n");
+            printf("\n=== Unified Execution Graph ===\n");
             unified = unified_graph_create(cfg, call_graph, dep_graph);
             if (unified != NULL) {
-                printf("✓ Grafo unificado criado com %zu nós\n", unified->node_count);
+                printf("✓ Unified graph created with %zu nodes\n", unified->node_count);
                 unified_graph_export_dot(unified, "unified_graph.dot");
-                printf("Grafo unificado exportado para 'unified_graph.dot'\n");
+                printf("Unified graph exported to 'unified_graph.dot'\n");
             }
         }
         
-        // Analítica de Falhas (análise estática)
-        // REMOVIDA COMPLETAMENTE devido a crash persistente
-        // O crash ocorre mesmo sem nenhum código executado nesta seção.
-        // 
-        // NOTA: O módulo de rede está funcionando perfeitamente até este ponto.
-        // Todas as funcionalidades principais (DNS, TCP, HTTP) estão operacionais.
-        //
-        // Para reabilitar no futuro, investigar com Valgrind ou AddressSanitizer:
-        // 1. Se unified_graph_export_dot está corrompendo memória
-        // 2. Se há double-free ou use-after-free nos grafos
-        // 3. Se há problema de alinhamento de memória nas estruturas
-        // 4. Se há inicialização estática de variáveis globais causando o problema
-        //
-        // Por enquanto, esta seção foi completamente removida para permitir que
-        // o programa complete com sucesso.
-        printf("\n=== Analítica de Falhas ===\n");
-        fflush(stdout);
-        printf("[Info] Programa concluído com sucesso. Retornando imediatamente para evitar crash.\n");
-        fflush(stdout);
-        return 0;  // CRÍTICO: Retorna imediatamente, evitando qualquer código adicional
+        // ============================================================
+        // CONSOLIDATED ADAPTIVE RUNTIME (Auto-Adaptation)
+        // ============================================================
+        printf("\n=== Initializing Adaptive Runtime ===\n");
         
-        // Sistema de Decisão e Otimização (usa os grafos antes de destruí-los)
-        // TEMPORARIAMENTE DESABILITADO para debug do crash
-        printf("\n=== Sistema de Otimização ===\n");
-        printf("  [Info] Análise de otimização temporariamente desabilitada para debug.\n");
+        AdaptiveRuntime* adaptive_rt = NULL;
+        VisualDebugger* debugger = NULL;
+        
+        if (vm != NULL && unified != NULL) {
+            // Create consolidated adaptive runtime
+            // (Self-Healing and Scheduler will be NULL for now, but can be passed later)
+            adaptive_rt = adaptive_runtime_create(vm, unified, NULL, NULL);
+            if (adaptive_rt != NULL) {
+                printf("✓ Adaptive Runtime initialized\n");
+                printf("  - Context Brain: ✓\n");
+                printf("  - Intent Engine: ✓\n");
+                printf("  - Self-Tuning: ✓\n");
+                
+                // Start automatic adaptation
+                adaptive_runtime_start(adaptive_rt);
+                printf("  - Auto-adaptation: ENABLED\n");
+            }
+            
+            // Visual Debugger - Developer Experience
+            debugger = visual_debugger_create(vm, unified);
+            if (debugger != NULL) {
+                printf("✓ Visual Debugger initialized\n");
+                visual_debugger_start_recording(debugger);
+            }
+        }
+        
+        // Failure Analytics (static analysis)
+        // COMPLETELY REMOVED due to persistent crash
+        // The crash occurs even without any code executed in this section.
+        // 
+        // NOTE: The network module is working perfectly up to this point.
+        // All main functionalities (DNS, TCP, HTTP) are operational.
+        //
+        // To re-enable in the future, investigate with Valgrind or AddressSanitizer:
+        // 1. If unified_graph_export_dot is corrupting memory
+        // 2. If there's double-free or use-after-free in graphs
+        // 3. If there's memory alignment issues in structures
+        // 4. If there's static initialization of global variables causing the problem
+        //
+        // For now, this section has been completely removed to allow
+        // the program to complete successfully.
+        printf("\n=== Failure Analytics ===\n");
+        fflush(stdout);
+        printf("[Info] Program completed successfully. Returning immediately to avoid crash.\n");
+        fflush(stdout);
+        return 0;  // CRITICAL: Return immediately, avoiding any additional code
+        
+        // Decision and Optimization System (uses graphs before destroying them)
+        // TEMPORARILY DISABLED for crash debugging
+        printf("\n=== Optimization System ===\n");
+        printf("  [Info] Optimization analysis temporarily disabled for debugging.\n");
         fflush(stdout);
         
         OptimizationPlan* opt_plan = NULL;
-        /* TEMPORARIAMENTE DESABILITADO
+        /* TEMPORARILY DISABLED
         opt_plan = graph_analyze_and_optimize(dep_graph, call_graph, cfg);
         if (opt_plan != NULL) {
             optimization_plan_print(opt_plan);
@@ -439,15 +498,15 @@ int main(int argc, char* argv[]) {
         }
         */
         
-        // Sistema de Execução Adaptativa
-        // TEMPORARIAMENTE DESABILITADO para debug do crash
+        // Adaptive Execution System
+        // TEMPORARILY DISABLED for crash debugging
         AdaptiveProfile* adaptive_profile = NULL;
         int parallelization_enabled = 0;
-        /* TEMPORARIAMENTE DESABILITADO
+        /* TEMPORARILY DISABLED
         adaptive_profile = adaptive_profile_create(dep_graph, call_graph, cfg);
         if (adaptive_profile != NULL) {
-            // Simula algumas chamadas de função durante execução
-            // (em implementação real, isso seria feito pelo interpretador)
+            // Simulate some function calls during execution
+            // (in real implementation, this would be done by the interpreter)
             adaptive_record_function_call(adaptive_profile, "soma", 0.0001); // 0.1ms
             adaptive_record_function_call(adaptive_profile, "soma", 0.00015);
             adaptive_record_function_call(adaptive_profile, "soma", 0.00012);
@@ -461,8 +520,8 @@ int main(int argc, char* argv[]) {
         }
         */
         
-        // Fase 8: Execução Paralela com Scheduler (se paralelização está ativada)
-        // Usa grafo declarativo se disponível, senão usa CFG tradicional
+        // Phase 8: Parallel Execution with Scheduler (if parallelization is enabled)
+        // Uses declarative graph if available, otherwise uses traditional CFG
         Graph* execution_graph = NULL;
         if (declarative_graph != NULL) {
             execution_graph = declarative_graph_get_execution_graph(declarative_graph);
@@ -472,29 +531,29 @@ int main(int argc, char* argv[]) {
         }
         
         if (parallelization_enabled && execution_graph != NULL) {
-            // Recria bytecode e VM para execução paralela
+            // Recreate bytecode and VM for parallel execution
             BytecodeProgram* parallel_bytecode = compiler_compile(ast);
             if (parallel_bytecode != NULL) {
                 VM* parallel_vm = vm_create(parallel_bytecode);
                 if (parallel_vm != NULL) {
-                    // Cria scheduler com workers
-                    size_t worker_count = 4;  // Número de threads worker
+                    // Create scheduler with workers
+                    size_t worker_count = 4;  // Number of worker threads
                     Scheduler* scheduler = scheduler_create(execution_graph, dep_graph, parallel_bytecode, parallel_vm, worker_count);
                     if (scheduler != NULL) {
                         scheduler_print_tasks(scheduler);
                         scheduler_execute(scheduler);
                         
-                        // --- LÓGICA DE DOWNGRADE ADAPTATIVO ---
+                        // --- ADAPTIVE DOWNGRADE LOGIC ---
                         if (scheduler->conflict_detected) {
-                            printf("\n[Adaptive] 📉 Downgrade: Conflito detectado. Reduzindo nível de otimização 3 -> 2\n");
-                            // Em um runtime real, aqui dispararíamos a re-execução ou re-compilação
+                            printf("\n[Adaptive] 📉 Downgrade: Conflict detected. Reducing optimization level 3 -> 2\n");
+                            // In a real runtime, here we would trigger re-execution or re-compilation
                         }
                         
-                        // IMPORTANTE: Destrói scheduler ANTES de destruir os grafos
-                        // O scheduler mantém referências aos grafos, mas não os possui
-                        // Garantimos que todas as threads terminaram antes de destruir os grafos
+                        // IMPORTANT: Destroy scheduler BEFORE destroying graphs
+                        // The scheduler maintains references to graphs, but doesn't own them
+                        // We ensure all threads have finished before destroying graphs
                         scheduler_destroy(scheduler);
-                        scheduler = NULL;  // Marca como NULL para evitar uso acidental
+                        scheduler = NULL;  // Mark as NULL to avoid accidental use
                     }
                     vm_destroy(parallel_vm);
                 }
@@ -502,11 +561,24 @@ int main(int argc, char* argv[]) {
             }
         }
         
-        // Snapshot Manager e Hot-Reload são demonstrações
-        // (Em produção, seriam usados durante execução, não após)
-        // Por isso, não os criamos aqui já que a VM será destruída
+        // Snapshot Manager and Hot-Reload are demonstrations
+        // (In production, they would be used during execution, not after)
+        // That's why we don't create them here since the VM will be destroyed
         
-        // Destrói VM e bytecode APÓS todas as análises
+        // ============================================================
+        // ADAPTIVE RUNTIME CLEANUP
+        // ============================================================
+        if (debugger != NULL) {
+            visual_debugger_destroy(debugger);
+            debugger = NULL;
+        }
+        if (adaptive_rt != NULL) {
+            adaptive_runtime_stop(adaptive_rt);
+            adaptive_runtime_destroy(adaptive_rt);
+            adaptive_rt = NULL;
+        }
+        
+        // Destroy VM and bytecode AFTER all analysis
         if (vm != NULL) {
             vm_destroy(vm);
             vm = NULL;
@@ -516,20 +588,20 @@ int main(int argc, char* argv[]) {
             bytecode = NULL;
         }
         
-        // Pequeno delay para garantir que todas as threads do scheduler terminaram completamente
-        // (embora scheduler_destroy já faça pthread_join, isso é uma precaução extra)
+        // Small delay to ensure all scheduler threads have completely finished
+        // (although scheduler_destroy already does pthread_join, this is an extra precaution)
         struct timespec ts = {0, 10000000};  // 10ms
         nanosleep(&ts, NULL);
         
         // ============================================================
-        // LIMPEZA DE GRAFOS - ORDEM SEGURA
+        // GRAPH CLEANUP - SAFE ORDER
         // ============================================================
-        // NOTA: Este código nunca será executado devido ao return 0 acima
-        // Removido para evitar erros de compilação com variáveis não declaradas
-        // (hotreload_mgr e snapshot_mgr nunca foram inicializados neste teste)
+        // NOTE: This code will never be executed due to return 0 above
+        // Removed to avoid compilation errors with undeclared variables
+        // (hotreload_mgr and snapshot_mgr were never initialized in this test)
     }
     
-    // Limpeza (só se ast não foi destruído antes)
+    // Cleanup (only if ast wasn't destroyed before)
     if (ast != NULL) {
         ast_destroy_node(ast);
     }

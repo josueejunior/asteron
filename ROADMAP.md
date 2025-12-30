@@ -1,11 +1,11 @@
-# 🗺️ Roadmap do Asteron
+# 🗺️ Asteron Roadmap
 
-Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades planejadas, melhorias e objetivos de longo prazo.
+This document describes the Asteron project roadmap, including planned features, improvements, and long-term goals.
 
-## ✅ Concluído
+## ✅ Completed
 
 ### Core Runtime
-- [x] Lexer e Parser
+- [x] Lexer and Parser
 - [x] AST (Abstract Syntax Tree)
 - [x] Type Checker
 - [x] Bytecode Compiler
@@ -38,7 +38,7 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [x] Dependency Tracking
 
 ### Self-Healing Runtime
-- [x] Auto-Paralelização
+- [x] Auto-Parallelization
 - [x] Profile-Guided Re-optimization
 - [x] Performance Monitoring
 
@@ -59,13 +59,19 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [x] Real-time Visualization
 - [x] Interactive Editor
 
-## 🚧 Em Progresso
+### Adaptive Runtime
+- [x] Context Brain (Meta-layer coordinator)
+- [x] Intent Engine (Declarative intention system)
+- [x] Self-Tuning Runtime (Continuous learning)
+- [x] Visual Debugger (Developer Experience)
 
-### Módulos Nativos
-- [ ] Módulo HTTP completo
-- [ ] Módulo Database
-- [ ] Módulo Crypto
-- [ ] Módulo Regex
+## 🚧 In Progress
+
+### Native Modules
+- [ ] Complete HTTP module
+- [ ] Database module
+- [ ] Crypto module
+- [ ] Regex module
 
 ### Tooling
 - [ ] LSP (Language Server Protocol)
@@ -73,26 +79,26 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [ ] Profiler
 - [ ] Formatter
 
-### Documentação
-- [ ] Tutorial completo
-- [ ] API Reference completa
-- [ ] Guias de melhores práticas
+### Documentation
+- [ ] Complete tutorial
+- [ ] Complete API Reference
+- [ ] Best practices guides
 
-## 📋 Planejado (Curto Prazo)
+## 📋 Planned (Short Term)
 
 ### Performance
-- [ ] Melhorias no JIT
-- [ ] Otimizações de memória
-- [ ] Cache de compilação
+- [ ] JIT improvements
+- [ ] Memory optimizations
+- [ ] Compilation cache
 - [ ] Lazy Loading
 
-### Segurança
-- [ ] Sandbox melhorado
+### Security
+- [ ] Improved sandbox
 - [ ] Permissions system
 - [ ] Code signing
 - [ ] Audit logging
 
-### Concorrência
+### Concurrency
 - [ ] Async/await
 - [ ] Channels
 - [ ] Actor model
@@ -102,12 +108,12 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [ ] Generics
 - [ ] Traits/Interfaces
 - [ ] Pattern Matching
-- [ ] Type Inference melhorado
+- [ ] Improved Type Inference
 
-## 🔮 Planejado (Médio Prazo)
+## 🔮 Planned (Medium Term)
 
 ### Machine Learning
-- [ ] Integração com TensorFlow/PyTorch
+- [ ] TensorFlow/PyTorch integration
 - [ ] AutoML
 - [ ] Model serving
 - [ ] Training pipelines
@@ -116,10 +122,10 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [ ] GNN Library
 - [ ] Graph Embeddings
 - [ ] Graph Algorithms
-- [ ] Graph Visualization avançada
+- [ ] Advanced Graph Visualization
 
 ### LLM Integration
-- [ ] Integração com LLMs
+- [ ] LLM integration
 - [ ] Code generation
 - [ ] Natural language queries
 - [ ] AI-assisted debugging
@@ -130,7 +136,7 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [ ] Fault tolerance
 - [ ] Service mesh
 
-## 🌟 Visão de Longo Prazo
+## 🌟 Long-term Vision
 
 ### Language Features
 - [ ] Macros
@@ -156,69 +162,25 @@ Este documento descreve o roadmap do projeto Asteron, incluindo funcionalidades 
 - [ ] Performance research
 - [ ] Academic papers
 
-## Prioridades
+## Priorities
 
-### Alta Prioridade
-1. **Stability**: Corrigir bugs conhecidos
-2. **Performance**: Otimizações críticas
-3. **Documentation**: Melhorar documentação
-4. **Testing**: Aumentar cobertura de testes
+### High Priority
+1. **Stability**: Fix known bugs
+2. **Performance**: Critical optimizations
+3. **Documentation**: Improve documentation
+4. **Testing**: Increase test coverage
 
-### Média Prioridade
-1. **Features**: Novas funcionalidades
-2. **Tooling**: Ferramentas de desenvolvimento
-3. **Ecosystem**: Biblioteca padrão
-4. **Community**: Engajamento da comunidade
+### Medium Priority
+1. **Features**: New features
+2. **Tooling**: Development tools
+3. **Ecosystem**: Standard library
+4. **Community**: Community engagement
 
-### Baixa Prioridade
-1. **Research**: Pesquisa e experimentação
-2. **Nice-to-have**: Funcionalidades desejáveis
-3. **Future**: Planejamento de longo prazo
+### Low Priority
+1. **Research**: Research and experimentation
+2. **Nice-to-have**: Desirable features
+3. **Future**: Long-term planning
 
-## Contribuindo
+## Contributing
 
-Quer ajudar a implementar algo do roadmap?
-
-1. Veja [CONTRIBUTING.md](docs/CONTRIBUTING.md)
-2. Escolha uma tarefa do roadmap
-3. Abra uma issue para discutir
-4. Faça um Pull Request
-
-## Feedback
-
-Tem sugestões para o roadmap?
-
-- Abra uma issue com a tag `roadmap`
-- Participe das discussões
-- Compartilhe suas ideias
-
-## Versões
-
-### v0.1.0 (Atual)
-- Core runtime funcional
-- JIT básico
-- Sistema reativo
-- WebAssembly
-
-### v0.2.0 (Planejado)
-- Melhorias de performance
-- Mais módulos nativos
-- Tooling básico
-- Documentação completa
-
-### v0.3.0 (Planejado)
-- Async/await
-- Generics
-- Package manager
-- LSP
-
-### v1.0.0 (Futuro)
-- Estabilidade completa
-- API estável
-- Ecosystem maduro
-- Production-ready
-
----
-
-**Última atualização**: 2025-01-XX
-
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for how to contribute.

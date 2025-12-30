@@ -205,7 +205,7 @@ static char* serialize_graph_to_json(UnifiedGraph* graph) {
     
     json_buffer_append(buf, "],\"edges\":[");
     
-    // Serializa arestas
+    // Serialize edges
     first = true;
     for (size_t i = 0; i < graph->edge_count; i++) {
         UnifiedEdge* edge = graph->edges[i];

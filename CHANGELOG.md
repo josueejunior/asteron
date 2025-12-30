@@ -1,36 +1,44 @@
 # Changelog
 
-Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+All notable changes to this project will be documented in this file.
 
-O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Adicionado
-- Sistema de licença GPL v3
-- Cabeçalhos de licença em arquivos principais
-- Documentação completa (ARCHITECTURE, CONCEPTS, API, etc.)
-- Servidor WebAssembly
-- Modo simulado para compilação sem Wasm
-- Tratamento de favicon.ico no servidor
+### Added
+- GPL v3 license system
+- License headers in main files
+- Complete documentation (ARCHITECTURE, CONCEPTS, API, etc.)
+- WebAssembly server
+- Simulated mode for compilation without Wasm
+- favicon.ico handling in server
+- Adaptive Runtime (Context Brain, Intent Engine, Self-Tuning)
+- Visual Debugger
+- Test framework
+- Real metrics collection in Context Brain
+- Integration with Self-Healing and JIT
 
-### Corrigido
-- Servidor não fecha mais após requisições
-- Função compileCode agora está no escopo global
-- Erros 404 do favicon.ico
-- Estruturas incompletas em holographic.c
-- Campo prediction_capacity em intent_based.h
+### Fixed
+- Server no longer closes after requests
+- compileCode function now in global scope
+- favicon.ico 404 errors
+- Incomplete structures in holographic.c
+- prediction_capacity field in intent_based.h
+- Integration between Brain systems
 
-### Mudado
-- Melhorado tratamento de erros no servidor Wasm
-- Melhorada experiência do usuário no frontend
+### Changed
+- Improved error handling in Wasm server
+- Improved user experience in frontend
+- Consolidated adaptive runtime system
+- Improved metrics collection
 
 ## [0.1.0] - 2025-01-XX
 
-### Adicionado
-- Core runtime completo
-- Lexer e Parser
+### Added
+- Complete core runtime
+- Lexer and Parser
 - AST (Abstract Syntax Tree)
 - Type Checker
 - Bytecode Compiler
@@ -63,7 +71,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Dependency Tracking
 
 ### Self-Healing Runtime
-- Auto-Paralelização
+- Auto-Parallelization
 - Profile-Guided Re-optimization
 - Performance Monitoring
 
@@ -84,24 +92,23 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Real-time Visualization
 - Interactive Editor
 
-### Módulos Nativos
+### Native Modules
 - net: Networking (TCP, HTTP)
-- fs: Sistema de arquivos
-- math: Operações matemáticas
-- time: Manipulação de tempo
-- task: Concorrência
-- graph: Sistema de grafos
-- agent: Sistema de agentes
-- os: Operações do sistema
+- fs: File system
+- math: Mathematical operations
+- time: Time manipulation
+- task: Concurrency
+- graph: Graph system
+- agent: Agent system
+- os: System operations
 
 ---
 
-## Formato
+## Format
 
-- **Adicionado**: Para novas funcionalidades
-- **Mudado**: Para mudanças em funcionalidades existentes
-- **Descontinuado**: Para funcionalidades que serão removidas
-- **Removido**: Para funcionalidades removidas
-- **Corrigido**: Para correções de bugs
-- **Segurança**: Para vulnerabilidades
-
+- **Added**: For new features
+- **Changed**: For changes in existing features
+- **Deprecated**: For soon-to-be removed features
+- **Removed**: For removed features
+- **Fixed**: For bug fixes
+- **Security**: For vulnerabilities

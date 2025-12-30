@@ -1,55 +1,55 @@
-# 🚀 Asteron - Runtime Autoconsciente com JIT Avançado
+# 🚀 Asteron - Self-Aware Runtime with Advanced JIT
 
-**Desenvolvido por:** Josué Junior da Cruz de Freitas
+**Developed by:** Josué Junior da Cruz de Freitas
 
-**Asteron** é uma linguagem de programação e runtime revolucionário que combina:
-- ⚡ **JIT Tiered** (Baseline + Optimizing)
-- 🧠 **Grafo Unificado** (CFG + Call Graph + Dependencies)
-- 🔄 **Sistema Reativo Distribuído**
-- 🧬 **Memória Holográfica** (DVM + PMEM)
+**Asteron** is a revolutionary programming language and runtime that combines:
+- ⚡ **Tiered JIT** (Baseline + Optimizing)
+- 🧠 **Unified Graph** (CFG + Call Graph + Dependencies)
+- 🔄 **Distributed Reactive System**
+- 🧬 **Holographic Memory** (DVM + PMEM)
 - 🎯 **Intent-Based Scheduling**
 - 🔧 **Self-Healing Runtime**
 - 🌐 **WebAssembly Integration**
 
-## 📋 Índice
+## 📋 Table of Contents
 
-- [Características](#-características)
-- [Instalação](#-instalação)
-- [Uso Rápido](#-uso-rápido)
-- [Arquitetura](#-arquitetura)
-- [Documentação](#-documentação)
-- [Contribuição](#-contribuição)
-- [Licença](#-licença)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Usage](#-quick-usage)
+- [Architecture](#-architecture)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-## ✨ Características
+## ✨ Features
 
 ### Core
-- **Parser e Lexer** completos
-- **Type System** com inferência
-- **VM** com bytecode otimizado
-- **Interpreter** para execução direta
+- Complete **Parser and Lexer**
+- **Type System** with inference
+- **VM** with optimized bytecode
+- **Interpreter** for direct execution
 
-### JIT Avançado
+### Advanced JIT
 - **Tiered JIT**: Baseline → Optimizing (SSA + Graph Coloring)
 - **OSR** (On-Stack Replacement)
 - **Hot Path Detection**
 - **Type Feedback**
 
-### Memória
+### Memory
 - **Reference Counting**
 - **Ownership & Borrowing** (Rust-inspired)
 - **Region-based Memory** (Arenas)
 - **Zero-Copy Integration**
 - **Holographic Memory** (DVM)
 
-### Grafos e Métricas
+### Graphs and Metrics
 - **Unified Graph** (CFG + Call Graph + Data Flow)
 - **Node Metrics** (execution time, cache, contention)
 - **Profile-Guided Optimization**
-- **Auto-Paralelização**
+- **Auto-Parallelization**
 
-### Reactividade
-- **Reactive Runtime** local
+### Reactivity
+- Local **Reactive Runtime**
 - **Distributed State Propagation**
 - **Transparent RPC**
 - **Cluster-Aware Reactivity**
@@ -60,25 +60,25 @@
 - **AI-driven Load Prediction**
 - **Pre-allocation & JIT Warming**
 
-### Persistência
+### Persistence
 - **Snapshot Manager**
 - **Persistent Memory** (PMEM/NVMe/Optane)
-- **Reactive Variables** sobrevivem reboots
+- **Reactive Variables** survive reboots
 
 ### WebAssembly
-- **Compilação para Wasm** (Emscripten)
-- **Servidor HTTP** para frontend
-- **Visualização de grafo em tempo real**
+- **Compilation to Wasm** (Emscripten)
+- **HTTP Server** for frontend
+- **Real-time graph visualization**
 
-## 🛠️ Instalação
+## 🛠️ Installation
 
-### Pré-requisitos
+### Prerequisites
 
 ```bash
-# GCC ou Clang
+# GCC or Clang
 sudo apt-get install build-essential
 
-# Para WebAssembly (opcional)
+# For WebAssembly (optional)
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
 ./emsdk install latest
@@ -86,40 +86,40 @@ cd emsdk
 source ./emsdk_env.sh
 ```
 
-### Compilação
+### Compilation
 
 ```bash
-# Compilar runtime
+# Compile runtime
 bash compile.sh
 
-# Compilar para WebAssembly (opcional)
+# Compile for WebAssembly (optional)
 chmod +x build_wasm.sh
 ./build_wasm.sh
 ```
 
-## 🚀 Uso Rápido
+## 🚀 Quick Usage
 
-### Executar código Asteron
+### Run Asteron code
 
 ```bash
-./asteron seu_arquivo.ast
+./asteron your_file.ast
 ```
 
-### Servidor Wasm
+### Wasm Server
 
 ```bash
 chmod +x run_wasm_server.sh
 ./run_wasm_server.sh
-# Acesse: http://localhost:8080
+# Access: http://localhost:8080
 ```
 
-### Framework de IA
+### AI Framework
 
 ```bash
 ./asteron framework/main.ast
 ```
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────┐
@@ -139,7 +139,7 @@ chmod +x run_wasm_server.sh
 └─────────────────────────────────────────┘
 ```
 
-## 📚 Documentação
+## 📚 Documentation
 
 - [Tiered JIT](docs/TIERED_JIT.md)
 - [Region Memory](docs/REGION_MEMORY.md)
@@ -148,75 +148,75 @@ chmod +x run_wasm_server.sh
 - [Intent-Based Scheduling](docs/INTENT_BASED_SCHEDULING.md)
 - [Holographic Memory](docs/HOLOGRAPHIC_MEMORY.md)
 - [WebAssembly Integration](docs/WASM_INTEGRATION.md)
-- [Framework de IA](framework/README.md)
+- [AI Framework](framework/README.md)
+- [Adaptive Runtime](docs/ADAPTIVE_RUNTIME.md)
 
-## 🤝 Contribuição
+## 🤝 Contributing
 
-Contribuições são bem-vindas! Por favor:
+Contributions are welcome! Please:
 
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-### Diretrizes
+### Guidelines
 
-- Siga o estilo de código existente
-- Adicione testes quando possível
-- Documente novas funcionalidades
-- Mantenha a licença GPL v3
+- Follow the existing code style
+- Add tests when possible
+- Document new features
+- Maintain GPL v3 license
 
-## 🛡️ Licença
+## 🛡️ License
 
-O **Asteron** é um projeto de código aberto sob a licença **GNU GPL v3**.
+**Asteron** is an open-source project under the **GNU GPL v3** license.
 
-### Regra de Ouro
+### Golden Rule
 
-Se você utilizar o Asteron como base para sua própria linguagem, ferramenta ou runtime, a licença exige que:
+If you use Asteron as a base for your own language, tool, or runtime, the license requires that:
 
-1. **Mantenha o Código Aberto:** Suas modificações devem ser públicas.
-2. **Divulgue para a Comunidade:** Você deve informar à comunidade Asteron sobre o seu projeto para que possamos evoluir o ecossistema juntos.
-3. **Preserve a Licença:** Qualquer trabalho derivado deve ser distribuído sob a mesma licença GPL v3.
+1. **Keep Code Open:** Your modifications must be public.
+2. **Share with Community:** You must inform the Asteron community about your project so we can evolve the ecosystem together.
+3. **Preserve License:** Any derivative work must be distributed under the same GPL v3 license.
 
-> *Transformar o conhecimento em algo fechado é o fim da inovação. Vamos construir o futuro do JIT juntos.*
+> *Turning knowledge into something closed is the end of innovation. Let's build the future of JIT together.*
 
-### O que você pode fazer
+### What you can do
 
-✅ **Usar** o Asteron em seus projetos  
-✅ **Modificar** o código-fonte  
-✅ **Distribuir** versões modificadas  
-✅ **Comercializar** produtos que usam Asteron (desde que o código-fonte seja disponibilizado)
+✅ **Use** Asteron in your projects  
+✅ **Modify** the source code  
+✅ **Distribute** modified versions  
+✅ **Commercialize** products that use Asteron (as long as source code is made available)
 
-### O que você deve fazer
+### What you must do
 
-📋 **Incluir** o arquivo LICENSE em distribuições  
-📋 **Manter** os avisos de copyright  
-📋 **Disponibilizar** o código-fonte de trabalhos derivados  
-📋 **Informar** a comunidade sobre melhorias significativas
+📋 **Include** the LICENSE file in distributions  
+📋 **Maintain** copyright notices  
+📋 **Make available** the source code of derivative works  
+📋 **Inform** the community about significant improvements
 
-### Por que GPL v3?
+### Why GPL v3?
 
-A GPL v3 garante que:
+GPL v3 ensures that:
 
-- **Inovações permaneçam abertas:** Melhorias no runtime beneficiam toda a comunidade
-- **Transparência:** Todos podem ver e auditar o código
-- **Colaboração:** Facilita contribuições e melhorias coletivas
-- **Proteção:** Previne apropriação indevida do trabalho comunitário
+- **Innovations remain open:** Runtime improvements benefit the entire community
+- **Transparency:** Everyone can see and audit the code
+- **Collaboration:** Facilitates contributions and collective improvements
+- **Protection:** Prevents misappropriation of community work
 
-**Texto completo da licença:** Veja o arquivo [LICENSE](LICENSE) na raiz do projeto.
+**Full license text:** See the [LICENSE](LICENSE) file in the project root.
 
-## 👨‍💻 Desenvolvedor
+## 👨‍💻 Developer
 
 **Josué Junior da Cruz de Freitas**
 
-Desenvolvedor principal e mantenedor do projeto Asteron.
+Main developer and maintainer of the Asteron project.
 
-## 📞 Contato
+## 📞 Contact
 
-Para questões sobre licenciamento ou contribuições, abra uma issue no repositório.
+For questions about licensing or contributions, open an issue in the repository.
 
 ---
 
-**Asteron** - Construindo o futuro do JIT, juntos. 🚀
-
+**Asteron** - Building the future of JIT, together. 🚀
