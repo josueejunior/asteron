@@ -140,6 +140,9 @@ gcc $CFLAGS -c src/core/brain/self_tuning.c -o obj/core/brain/self_tuning.o
 echo "Compilando visual_debugger..."
 gcc $CFLAGS -c src/devtools/visual_debugger.c -o obj/devtools/visual_debugger.o
 
+echo "Compilando adaptive_runtime..."
+gcc $CFLAGS -c src/core/brain/adaptive_runtime.c -o obj/core/brain/adaptive_runtime.o
+
 echo "Compilando runtime..."
 gcc $CFLAGS -c src/sys/runtime.c -o obj/sys/runtime.o
 
@@ -237,6 +240,7 @@ gcc $CFLAGS -pthread -o asteron \
     obj/core/brain/context_brain.o \
     obj/core/brain/intent_engine.o \
     obj/core/brain/self_tuning.o \
+    obj/core/brain/adaptive_runtime.o \
     obj/devtools/visual_debugger.o \
     obj/sys/runtime.o \
     obj/sys/cli.o \

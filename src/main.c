@@ -45,6 +45,7 @@
 #include "core/brain/context_brain.h"
 #include "core/brain/intent_engine.h"
 #include "core/brain/self_tuning.h"
+#include "core/brain/adaptive_runtime.h"
 #include "devtools/visual_debugger.h"
 
 /* Módulos nativos */
@@ -351,25 +352,16 @@ int main(int argc, char* argv[]) {
         }
         
         // ============================================================
-        // ANÁLISE E ADAPTAÇÃO PÓS-EXECUÇÃO
+        // ADAPTAÇÃO AUTOMÁTICA PÓS-EXECUÇÃO
         // ============================================================
-        if (brain != NULL) {
-            printf("\n=== Context Brain: Análise Pós-Execução ===\n");
-            context_brain_observe(brain);
-            BrainDecision* decision = context_brain_analyze(brain);
-            if (decision != NULL) {
-                printf("  Decisão: %s (confiança: %.2f%%)\n", 
-                    decision->reason ? decision->reason : "N/A",
-                    decision->confidence * 100.0);
-                context_brain_execute_decision(brain, decision);
-                free(decision);
-            }
-            context_brain_print_state(brain);
-        }
-        
-        if (self_tuning != NULL && unified != NULL) {
-            printf("\n=== Self-Tuning: Análise de Estratégias ===\n");
-            self_tuning_print_strategies(self_tuning);
+        if (adaptive_rt != NULL) {
+            printf("\n=== Runtime Adaptativo: Adaptação Automática ===\n");
+            
+            // Executar ciclo de adaptação
+            adaptive_runtime_adapt(adaptive_rt);
+            
+            // Mostrar estatísticas
+            adaptive_runtime_print_stats(adaptive_rt);
         }
         
         if (debugger != NULL) {
@@ -440,32 +432,26 @@ int main(int argc, char* argv[]) {
         }
         
         // ============================================================
-        // SISTEMAS BRAIN (Meta-layer Coordenador)
+        // RUNTIME ADAPTATIVO CONSOLIDADO (Auto-Adaptação)
         // ============================================================
-        printf("\n=== Inicializando Sistemas Brain ===\n");
+        printf("\n=== Inicializando Runtime Adaptativo ===\n");
         
-        ContextBrain* brain = NULL;
-        IntentEngine* intent_engine = NULL;
-        SelfTuningRuntime* self_tuning = NULL;
+        AdaptiveRuntime* adaptive_rt = NULL;
         VisualDebugger* debugger = NULL;
         
         if (vm != NULL && unified != NULL) {
-            // Context Brain - Meta-layer coordenador
-            brain = context_brain_create(vm, unified);
-            if (brain != NULL) {
-                printf("✓ Context Brain inicializado\n");
-            }
-            
-            // Intent Engine - Sistema de intenção declarativa
-            intent_engine = intent_engine_create(vm);
-            if (intent_engine != NULL) {
-                printf("✓ Intent Engine inicializado\n");
-            }
-            
-            // Self-Tuning Runtime - Aprendizado contínuo
-            self_tuning = self_tuning_create(unified);
-            if (self_tuning != NULL) {
-                printf("✓ Self-Tuning Runtime inicializado\n");
+            // Criar runtime adaptativo consolidado
+            // (Self-Healing e Scheduler serão NULL por enquanto, mas podem ser passados depois)
+            adaptive_rt = adaptive_runtime_create(vm, unified, NULL, NULL);
+            if (adaptive_rt != NULL) {
+                printf("✓ Runtime Adaptativo inicializado\n");
+                printf("  - Context Brain: ✓\n");
+                printf("  - Intent Engine: ✓\n");
+                printf("  - Self-Tuning: ✓\n");
+                
+                // Iniciar adaptação automática
+                adaptive_runtime_start(adaptive_rt);
+                printf("  - Auto-adaptação: ATIVADA\n");
             }
             
             // Visual Debugger - Developer Experience
@@ -580,23 +566,16 @@ int main(int argc, char* argv[]) {
         // Por isso, não os criamos aqui já que a VM será destruída
         
         // ============================================================
-        // LIMPEZA DOS SISTEMAS BRAIN
+        // LIMPEZA DO RUNTIME ADAPTATIVO
         // ============================================================
         if (debugger != NULL) {
             visual_debugger_destroy(debugger);
             debugger = NULL;
         }
-        if (self_tuning != NULL) {
-            self_tuning_destroy(self_tuning);
-            self_tuning = NULL;
-        }
-        if (intent_engine != NULL) {
-            intent_engine_destroy(intent_engine);
-            intent_engine = NULL;
-        }
-        if (brain != NULL) {
-            context_brain_destroy(brain);
-            brain = NULL;
+        if (adaptive_rt != NULL) {
+            adaptive_runtime_stop(adaptive_rt);
+            adaptive_runtime_destroy(adaptive_rt);
+            adaptive_rt = NULL;
         }
         
         // Destrói VM e bytecode APÓS todas as análises
